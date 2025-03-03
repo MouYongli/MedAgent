@@ -3,14 +3,20 @@
 import React from 'react';
 import { Menu } from 'antd';
 import type { MenuProps } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
+import { EditOutlined, PlusOutlined } from '@ant-design/icons';
+import Link from "next/link";
 
 const items: MenuProps['items'] = [
   {
     key: 'todo',
     icon: <EditOutlined />,
-    label: 'TODO',
+    label: <Link href="/knowledge/">{'TODO'}</Link>,
   },
+  {
+    key: 'create vector',
+    icon: <PlusOutlined />,
+    label: <Link href="/knowledge/vector_create">{'Create new vector DB'}</Link>
+  }
 ];
 
 const StudioSidebar: React.FC = () => {

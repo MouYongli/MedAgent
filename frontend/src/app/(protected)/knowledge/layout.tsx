@@ -6,11 +6,11 @@ import KnowledgeSidebar from "@/components/common/Sidebar/KnowledgeSidebar";
 
 const { Sider, Content } = Layout;
 
-interface StudioLayoutProps {
+interface KnowledgeLayoutProps {
   children: React.ReactNode;
 }
 
-const KnowledgeLayout: React.FC<StudioLayoutProps> = ({ children }) => {
+const KnowledgeLayout: React.FC<KnowledgeLayoutProps> = ({ children }) => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider width={200} style={{ background: '#fff' }}>

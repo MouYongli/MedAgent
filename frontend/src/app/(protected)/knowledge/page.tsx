@@ -5,7 +5,7 @@ import { Typography, Divider } from 'antd';
 
 const { Title, Paragraph } = Typography;
 
-const StudioPage: React.FC = () => {
+const KnowledgePage: React.FC = () => {
   return (
     <div>
       <Title level={2}>Knowledge overview</Title>
@@ -20,4 +20,4 @@ const StudioPage: React.FC = () => {
   );
 };
 
-export default StudioPage;
+export default KnowledgePage;
