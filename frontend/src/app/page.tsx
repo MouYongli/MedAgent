@@ -1,9 +1,8 @@
-// // app/page.tsx
 'use client';
 
 import React from 'react';
-import { Typography, Row, Col, Divider, Button } from 'antd';
-import { RocketOutlined, SearchOutlined, ExperimentOutlined } from '@ant-design/icons';
+import { Typography, Grid, Divider, Button } from '@mui/material';
+import { RocketLaunchOutlined, SearchOutlined, ScienceOutlined } from '@mui/icons-material';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import ExpandableCard from '@/components/common/ExpandableCard';
@@ -39,7 +38,7 @@ const HomePage: React.FC = () => {
         <Paragraph style={{ fontSize: '1.1rem' }}>
           {t('home.subtitle')}
         </Paragraph>
-        <Button type="primary" size="large">
+        <Button variant="contained" color="primary" size="large">
           <Link href="/chat">{t('home.try_now')}</Link>
         </Button>
       </div>
@@ -47,29 +46,29 @@ const HomePage: React.FC = () => {
       <Divider />
 
       {/* 系统介绍 - 三个卡片保持等高 */}
-      <Row gutter={[24, 24]} justify="center">
-        <Col xs={24} sm={12} md={8}>
+      <Grid container spacing={2} justifyContent="center">
+        <Grid item xs={12} sm={6} md={4}>
           <ExpandableCard
-            icon={<RocketOutlined style={{ fontSize: '2.5rem', color: '#1890ff' }} />}
+            icon={<RocketLaunchOutlined style={{ fontSize: '2.5rem', color: '#1890ff' }} />}
             title="高效检索"
             text={longText1}
           />
-        </Col>
-        <Col xs={24} sm={12} md={8}>
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
           <ExpandableCard
             icon={<SearchOutlined style={{ fontSize: '2.5rem', color: '#52c41a' }} />}
             title="智能问答"
             text={longText2}
           />
-        </Col>
-        <Col xs={24} sm={12} md={8}>
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
           <ExpandableCard
-            icon={<ExperimentOutlined style={{ fontSize: '2.5rem', color: '#faad14' }} />}
+            icon={<ScienceOutlined style={{ fontSize: '2.5rem', color: '#faad14' }} />}
             title="AI 工作流"
             text={longText3}
           />
-        </Col>
-      </Row>
+        </Grid>
+      </Grid>
 
       <Divider style={{ margin: '48px 0' }} />
 
@@ -86,7 +85,7 @@ const HomePage: React.FC = () => {
         <Paragraph style={{ fontSize: '1.1rem' }}>
           输入您的医疗问题，我们的系统将结合最新指南和文献，为您提供个性化的解答和推荐。
         </Paragraph>
-        <Button type="primary" size="large">
+        <Button variant="contained" color="primary" size="large">
           <Link href="/chat">开始问答</Link>
         </Button>
       </div>
@@ -95,4 +94,3 @@ const HomePage: React.FC = () => {
 };
 
 export default HomePage;
-

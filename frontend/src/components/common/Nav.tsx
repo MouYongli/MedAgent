@@ -1,13 +1,15 @@
-// components/common/Navigation.tsx
-
+'use client';
 import React from 'react';
-import { Menu } from 'antd';
+import { Menu, MenuItem } from '@mui/material';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
-import { HomeOutlined, MessageOutlined, EditOutlined, DashboardOutlined } from '@ant-design/icons';
+import HomeOutlined from '@mui/icons-material/HomeOutlined';
+import MessageOutlined from '@mui/icons-material/MessageOutlined';
+import EditOutlined from '@mui/icons-material/EditOutlined';
+import DashboardOutlined from '@mui/icons-material/DashboardOutlined';
 import { usePathname } from 'next/navigation';
 
-const AppNav: React.FC = () => {
+export default function AppNav() {
   const { t } = useTranslation();
 
   const pathname = usePathname();
@@ -34,9 +36,12 @@ const AppNav: React.FC = () => {
       selectedKeys={[selectedKey]}  // now controlled by the current route
       theme="dark"
       style={{ flex: 1, overflow: 'hidden', display: 'flex', justifyContent: 'center' }}
-      items={menuItems}
-    />
+    >
+      {menuItems.map((item) => (
+        <MenuItem key={item.key} icon={item.icon}>
+          {item.label}
+        </MenuItem>
+      ))}
+    </Menu>
   );
-};
-
-export default AppNav;
+}

@@ -1,10 +1,7 @@
-// src/app/(protected)/chat/layout.tsx
 'use client';
 import React from 'react';
-import { Layout } from 'antd';
+import { Box, Grid } from '@mui/material';
 import ChatSidebar from '@/components/common/Sidebar/ChatSidebar';
-
-const { Sider, Content } = Layout;
 
 interface ChatLayoutProps {
   children: React.ReactNode;
@@ -12,16 +9,16 @@ interface ChatLayoutProps {
 
 const ChatLayout: React.FC<ChatLayoutProps> = ({ children }) => {
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Box sx={{ minHeight: '100vh', display: 'flex' }}>
       {/* 左侧 Sider */}
-      <Sider width={200} style={{ background: '#fff' }}>
+      <Box sx={{ width: 200, background: '#fff' }}>
         <ChatSidebar />
-      </Sider>
+      </Box>
 
       {/* 右侧内容区域 */}
-      <Layout style={{ padding: '24px' }}>
-        <Content
-          style={{
+      <Box sx={{ flex: 1, padding: '24px' }}>
+        <Box
+          sx={{
             background: '#fff',
             padding: '24px',
             margin: 0,
@@ -29,11 +26,10 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({ children }) => {
           }}
         >
           {children}
-        </Content>
-      </Layout>
-    </Layout>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 
 export default ChatLayout;
-

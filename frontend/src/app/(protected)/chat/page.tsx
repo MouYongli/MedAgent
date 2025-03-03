@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { List, Input, Button, Typography, Divider } from 'antd';
-import { SendOutlined } from '@ant-design/icons';
+import { List, TextField, Button, Typography, Divider } from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
 
 const { Text } = Typography;
 
@@ -69,16 +69,21 @@ const ChatPage: React.FC = () => {
 
       {/* 输入框和发送按钮 */}
       <div style={styles.inputArea}>
-        <Input
+        <TextField
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          onPressEnter={handleSend}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              handleSend();
+            }
+          }}
           placeholder="Enter the message..."
           style={{ marginRight: 8 }}
         />
         <Button
-          type="primary"
-          icon={<SendOutlined />}
+          variant="contained"
+          color="primary"
+          endIcon={<SendIcon />}
           onClick={handleSend}
         >
           Send
@@ -102,7 +107,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     wordWrap: 'break-word',
   },
   bubbleMine: {
-    backgroundColor: '#1890ff',
+    backgroundColor: '#1976d2',
     color: '#fff',
   },
   bubbleOther: {

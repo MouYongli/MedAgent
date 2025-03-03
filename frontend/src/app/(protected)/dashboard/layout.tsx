@@ -1,11 +1,9 @@
 'use client';
 
 import React from 'react';
-import { Layout } from 'antd';
+import { Box, Grid } from '@mui/material';
 import DashboardSidebar from '@/components/common/Sidebar/DashboardSidebar';
 import withRole from '@/auth/withRole';
-
-const { Sider, Content } = Layout;
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -13,13 +11,16 @@ interface DashboardLayoutProps {
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Sider width={200} style={{ background: '#fff' }}>
+    <Box sx={{ minHeight: '100vh', display: 'flex' }}>
+      {/* 左侧 Sider */}
+      <Box sx={{ width: 200, background: '#fff' }}>
         <DashboardSidebar />
-      </Sider>
-      <Layout style={{ padding: '24px' }}>
-        <Content
-          style={{
+      </Box>
+
+      {/* 右侧内容区域 */}
+      <Box sx={{ flex: 1, padding: '24px' }}>
+        <Box
+          sx={{
             background: '#fff',
             padding: '24px',
             margin: 0,
@@ -27,12 +28,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           }}
         >
           {children}
-        </Content>
-      </Layout>
-    </Layout>
+        </Box>
+      </Box>
+    </Box>
   );
 };
-
-// export default DashboardLayout;
 
 export default withRole(DashboardLayout, ['admin']);

@@ -1,12 +1,9 @@
-// src/components/common/sidebar/ChatSidebar.tsx
 'use client';
 import React from 'react';
-import { Menu } from 'antd';
-import type { MenuProps } from 'antd';
-import { MessageOutlined, SearchOutlined, UserOutlined, NotificationOutlined } from '@ant-design/icons';
+import { Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
+import { MessageOutlined, SearchOutlined, UserOutlined, NotificationOutlined } from '@mui/icons-material';
 
-
-const items: MenuProps['items'] = [
+const items = [
   {
     key: 'chats',
     icon: <MessageOutlined />,
@@ -43,8 +40,23 @@ const ChatSidebar: React.FC = () => {
       defaultSelectedKeys={['current']}
       defaultOpenKeys={['sub1']}
       style={{ height: '100%', borderRight: 0 }}
-      items={items}
-    />
+    >
+      {items.map((item) => (
+        <MenuItem key={item.key}>
+          <ListItemIcon>{item.icon}</ListItemIcon>
+          <ListItemText primary={item.label} />
+          {item.children && (
+            <Menu>
+              {item.children.map((child) => (
+                <MenuItem key={child.key}>
+                  <ListItemText primary={child.label} />
+                </MenuItem>
+              ))}
+            </Menu>
+          )}
+        </MenuItem>
+      ))}
+    </Menu>
   );
 };
 

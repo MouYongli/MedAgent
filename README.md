@@ -73,6 +73,17 @@ Role-based Interactions: The system is designed to serve two primary user roles:
 
 ## Usage
 
+## Getting Started
+
+First, run the development server:
+
+```bash
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
 Here's an example of how to use the model:
 
 ```python
@@ -102,9 +113,9 @@ More detailed tutorials can be found in our [documentation](https://your-project
 
 ## Benchmark Results
 
-| Model        | MedQA | OMSRec |
-|--------------|-------:|---------:|
-| TransE | xx     | xx       |  xx.x%|  xx.x%  | xx.x%|
+| Model  | MedQA | OMSRec |
+| ------ | ----: | -----: |
+| TransE |    xx |     xx | xx.x% | xx.x% | xx.x% |
 
 More benchmarks are available in the [research paper](https://your-project-website.com/paper).
 

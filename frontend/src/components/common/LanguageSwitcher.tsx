@@ -1,11 +1,9 @@
 'use client';
 
 import React from 'react';
-import { Select } from 'antd';
+import { Select, MenuItem } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { languages, languageLabels } from '@/i18n/settings';
-
-const { Option } = Select;
 
 const LanguageSwitcher: React.FC = () => {
     const { i18n } = useTranslation();
@@ -20,12 +18,12 @@ const LanguageSwitcher: React.FC = () => {
         <Select
             defaultValue={i18n.language || 'en'}
             style={{ width: 100 }}
-            onChange={handleChange}
+            onChange={(event) => handleChange(event.target.value)}
         >
             {languages.map((lang) => (
-                <Option key={lang} value={lang}>
+                <MenuItem key={lang} value={lang}>
                     {languageLabels[lang]}
-                </Option>
+                </MenuItem>
             ))}
         </Select>
     );

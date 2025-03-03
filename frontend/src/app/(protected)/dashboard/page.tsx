@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Typography, Row, Col, Card } from 'antd';
+import { Typography, Grid, Card } from '@mui/material';
 
 const { Title, Paragraph } = Typography;
 
@@ -17,16 +17,16 @@ const DashboardPage: React.FC = () => {
       <Title level={2}>Dashboard Overview</Title>
       <Paragraph>Here you can see a quick snapshot of system metrics.</Paragraph>
 
-      <Row gutter={16}>
+      <Grid container spacing={2}>
         {stats.map((item, index) => (
-          <Col key={index} xs={24} sm={12} md={8}>
+          <Grid item key={index} xs={12} sm={6} md={4}>
             <Card style={{ marginBottom: '16px' }}>
               <Title level={4}>{item.title}</Title>
               <Paragraph style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{item.value}</Paragraph>
             </Card>
-          </Col>
+          </Grid>
         ))}
-      </Row>
+      </Grid>
     </div>
   );
 };

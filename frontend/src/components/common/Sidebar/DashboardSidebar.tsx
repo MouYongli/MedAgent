@@ -1,11 +1,10 @@
 'use client';
 
 import React from 'react';
-import { Menu } from 'antd';
-import type { MenuProps } from 'antd';
-import { DashboardOutlined, BarChartOutlined, FileOutlined } from '@ant-design/icons';
+import { Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
+import { DashboardOutlined, BarChartOutlined, FileOutlined } from '@mui/icons-material';
 
-const items: MenuProps['items'] = [
+const items = [
   {
     key: 'overview',
     icon: <DashboardOutlined />,
@@ -29,8 +28,14 @@ const DashboardSidebar: React.FC = () => {
       mode="inline"
       defaultSelectedKeys={['overview']}
       style={{ height: '100%', borderRight: 0 }}
-      items={items}
-    />
+    >
+      {items.map((item) => (
+        <MenuItem key={item.key}>
+          <ListItemIcon>{item.icon}</ListItemIcon>
+          <ListItemText primary={item.label} />
+        </MenuItem>
+      ))}
+    </Menu>
   );
 };
 

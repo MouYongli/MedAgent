@@ -1,4 +1,3 @@
-// app/layout.tsx
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -8,6 +7,7 @@ import { initReactI18next } from 'react-i18next';
 import AppHeader from '@/components/common/Header';
 import AppFooter from '@/components/common/Footer';
 import { getOptions, languages } from '@/i18n/settings';
+import { Box, Grid } from '@mui/material';
 
 const i18n = i18next.createInstance();
 

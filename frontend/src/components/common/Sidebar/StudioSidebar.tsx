@@ -1,11 +1,10 @@
 'use client';
 
 import React from 'react';
-import { Menu } from 'antd';
-import type { MenuProps } from 'antd';
-import { EditOutlined, FolderOpenOutlined, SettingOutlined } from '@ant-design/icons';
+import { Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
+import { EditOutlined, FolderOpenOutlined, SettingsOutlined } from '@mui/icons-material';
 
-const items: MenuProps['items'] = [
+const items = [
   {
     key: 'projects',
     icon: <EditOutlined />,
@@ -18,7 +17,7 @@ const items: MenuProps['items'] = [
   },
   {
     key: 'settings',
-    icon: <SettingOutlined />,
+    icon: <SettingsOutlined />,
     label: 'Settings',
   },
 ];
@@ -29,8 +28,14 @@ const StudioSidebar: React.FC = () => {
       mode="inline"
       defaultSelectedKeys={['projects']}
       style={{ height: '100%', borderRight: 0 }}
-      items={items}
-    />
+    >
+      {items.map((item) => (
+        <MenuItem key={item.key}>
+          <ListItemIcon>{item.icon}</ListItemIcon>
+          <ListItemText primary={item.label} />
+        </MenuItem>
+      ))}
+    </Menu>
   );
 };
 

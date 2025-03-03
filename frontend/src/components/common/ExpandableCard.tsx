@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Card, Button, Typography } from 'antd';
+import { Card, Button, Typography } from '@mui/material';
 
 const { Title, Paragraph } = Typography;
 
@@ -34,7 +34,7 @@ const ExpandableCard: React.FC<ExpandableCardProps> = ({ icon, title, text }) =>
 
   return (
     <Card
-      variant="borderless"
+      variant="outlined"
       style={{
         textAlign: 'center',
         display: 'flex',
@@ -57,7 +57,7 @@ const ExpandableCard: React.FC<ExpandableCardProps> = ({ icon, title, text }) =>
         <Paragraph>{text}</Paragraph>
       </div>
       {needsExpand && (
-        <Button type="link" onClick={toggleExpand}>
+        <Button variant="text" onClick={toggleExpand}>
           {expanded ? '收起' : '点击详情'}
         </Button>
       )}

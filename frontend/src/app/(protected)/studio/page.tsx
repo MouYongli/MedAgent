@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Typography, Divider } from 'antd';
+import { Typography, Divider } from '@mui/material';
 
 const { Title, Paragraph } = Typography;
 
