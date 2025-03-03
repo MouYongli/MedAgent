@@ -37,24 +37,32 @@ The Medical Guidelines Recommendation System (MedAgent) is an advanced AI-powere
 
 
 ## Features
+
+### Key components and terms
 - **Large Language Models (LLMs)**: At the core of the system, LLMs such as GPT-based models are utilized to understand medical queries and generate responses in natural language, ensuring that recommendations are presented in an intuitive, easy-to-understand format for doctors.
 
 - **Agentic AI Workflow**: This component enables the system to perform complex tasks autonomously. It orchestrates the interaction between different models and databases, ensuring a smooth process for retrieving relevant medical guidelines, processing them, and providing actionable insights. The agentic behavior allows the system to adapt to different contexts based on user input and system status.
 
 - **RAG Pipeline**: The system integrates the Retrieve-and-Generate (RAG) pipeline, which enables it to query relevant databases for up-to-date medical information. This includes using retrieval-based techniques to extract the most relevant data from external sources (e.g., medical research, guidelines databases) and then generating personalized recommendations or explanations for the doctor.
 
-Role-based Interactions: The system is designed to serve two primary user roles:
+### Role-based interactions
+
+The system is designed to serve two primary user roles:
 
 - **Doctors (End-users)**: They interact with the system to receive medical recommendations, guidelines, and insights based on patient data and clinical queries.
-- **Knowledge Maintainers (Developers)**: These users are responsible for keeping the system's knowledge base up to date, ensuring that medical guidelines and AI models are regularly improved and trained to handle emerging medical trends and innovations.
 
+- **Knowledge Maintainers (Developers)**: These users are responsible for developing / adjusting the system in two ways:
+  - Update the system's knowledge base (ensure medical guidelines are updated, so medical knowledge is up-to-date)
+  - Update the system's workflows (integrate also new AI models, test new workflows, regularly improve and handle emerging technical trends and innovations)
+
+To ensure that end-users cannot change established systems AND are not confused / overwhelmed by technical details, these users will not see all interaction possibilities, but instead have only access to the chatbot and overview over the system's knowledge base
 
 ## Components
 
-- Frontend (Next.js): The user interface is built with Next.js, providing a modern, responsive, and fast application where doctors can input queries, review recommendations, and interact with the AI-powered assistant. The frontend communicates with the backend (Flask) to handle the logic and AI operations.
 
-- Backend (Flask): The backend is built with Flask, handling API requests, interacting with databases, running AI models, and serving the AI-generated guidelines and recommendations to the frontend.
-  
+- Frontend [Next.js](https://nextjs.org/docs): The user interface is built with Next.js, providing a modern, responsive, and fast application where doctors can input queries, review recommendations, and interact with the AI-powered assistant. The frontend communicates with the backend (Flask) to handle the logic and AI operations.
+
+- Backend [Flask](https://flask.palletsprojects.com/en/stable/): The backend is built with Flask, handling API requests, interacting with databases, running AI models, and serving the AI-generated guidelines and recommendations to the frontend.
 - Databases:
   - Postgres is used to store and manage structured medical data.
   - Neo4j (Graph Database) is used for knowledge representation, allowing the system to model medical relationships, such as drug interactions or disease pathways.
@@ -65,9 +73,12 @@ Role-based Interactions: The system is designed to serve two primary user roles:
 
 
 ## Installation
-
+To keep installation easy and independent of the concrete machine executing it, docker will be used to handle start up and also installation.
 
 ### Docker-compose
+Execute `docker/docker-compose.yml` as you would execute any docker-compose file.
+- See e.g., [this documentation](https://www.geeksforgeeks.org/docker-compose/) for aid
+
 
 ## Datasets
 
@@ -101,21 +112,9 @@ More detailed tutorials can be found in our [documentation](https://your-project
 ```
 
 ## Benchmark Results
+The system will be tested on a custom validation setup on a dataset specifically designed to assess performance on questions answered using the guidelines from the oral and maxillofacial surgery specialty.
 
-| Model        | MedQA | OMSRec |
-|--------------|-------:|---------:|
-| TransE | xx     | xx       |  xx.x%|  xx.x%  | xx.x%|
-
-More benchmarks are available in the [research paper](https://your-project-website.com/paper).
-
-
-## Internationalization (i18n)
-
-MedAgent supports English, Chinese, and German languages, implemented using `react-i18next` and `i18next` with dynamic language switching, JSON translation texts, and modularized file structure. To add a new language, update `settings.ts`, create a new language folder, add a translation file, and update the language switcher component.
-
-
-More information in the [i18n README](frontend/src/i18n/README.md)
-
+**! TODO: display for performance**
 
 ## License
 
@@ -133,6 +132,3 @@ If you use this project in your research, please cite:
   year    = {202X}
 }
 ```
-
----
-<!-- ---Developed by **Your Name** | [LinkedIn](https://linkedin.com/in/YOURNAME) | [Twitter](https://twitter.com/YOURHANDLE) -->
