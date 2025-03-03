@@ -10,7 +10,7 @@ interface KnowledgeLayoutProps {
 const KnowledgeLayout: React.FC<KnowledgeLayoutProps> = ({ children }) => {
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-      {/* 左侧 Sidebar */}
+      {/* Left Sidebar */}
       <Box
         component="aside"
         sx={{
@@ -22,7 +22,7 @@ const KnowledgeLayout: React.FC<KnowledgeLayoutProps> = ({ children }) => {
         <KnowledgeSidebar />
       </Box>
 
-      {/* 右侧内容区域 */}
+      {/* Right Content Area */}
       <Box
         component="main"
         sx={{

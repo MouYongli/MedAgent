@@ -23,7 +23,7 @@ export default function RootLayout({
   useEffect(() => {
     const initI18n = async () => {
       try {
-        // 动态导入所有配置的语言翻译
+        // Dynamically import translations for all configured languages
         const translations = await Promise.all(
           languages.map(async (lang) => {
             const module = await import(`@/i18n/${lang}/common.json`);
@@ -31,7 +31,7 @@ export default function RootLayout({
           })
         );
 
-        // 构建 resources 对象
+        // Construct the resources object
         const resources = translations.reduce((acc, { lang, translation }) => ({
           ...acc,
           [lang]: {

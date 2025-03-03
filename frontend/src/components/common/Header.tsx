@@ -9,29 +9,23 @@ import { useTranslation } from 'react-i18next';
 import AppNav from '@/components/common/Nav';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 
-const menuItems = [
-  { key: 'nav1', label: 'nav 1' },
-  { key: 'nav2', label: 'nav 2' },
-  { key: 'nav3', label: 'nav 3' },
-];
-
 const AppHeader: React.FC = () => {
   const { t } = useTranslation();
 
   return (
     <AppBar position="static">
       <Toolbar sx={{ justifyContent: 'space-between' }}>
-        {/* 左侧 Logo */}
+        {/* Left side: Logo */}
         <Box sx={{ typography: 'h6', fontWeight: 'bold' }}>
           MedAgent
         </Box>
 
-        {/* 中间导航 */}  
+        {/* Center: Navigation */}
         <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
           <AppNav />
         </Box>
 
-        {/* 右侧语言切换器和登录按钮 */}
+        {/* Right side: Language switcher and sign-in button */}
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
           <LanguageSwitcher />
           <Link href="/sign-in" style={{ textDecoration: 'none' }}>

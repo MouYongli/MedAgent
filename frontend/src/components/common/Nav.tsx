@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { Tabs, Tab } from '@mui/material';
-import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { Home, Chat, Edit, Dashboard, MenuBook } from '@mui/icons-material';
 import { usePathname, useRouter } from 'next/navigation';
