@@ -12,6 +12,7 @@ import {
   MenuBook as KnowledgeIcon,
   Search as SearchIcon,
   Person as UserIcon,
+  Storage as VectorDBIcon,
   ExpandLess,
   ExpandMore
 } from '@mui/icons-material';
@@ -44,6 +45,11 @@ const menuItems = [
       { key: 'settings', label: 'Settings' },
     ],
   },
+  {
+    key: 'create vector',
+    icon: <VectorDBIcon />,
+    label: <Link href="/knowledge/vector_create">{'Create new vector DB'}</Link>
+  }
 ];
 
 const KnowledgeSidebar: React.FC = () => {
