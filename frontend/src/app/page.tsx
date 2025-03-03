@@ -13,19 +13,22 @@ const { Title, Paragraph } = Typography;
 const HomePage: React.FC = () => {
   const { t } = useTranslation();
 
-  // 示例长文本，可以根据实际数据调整
-  const longText1 = '利用 RAG 框架，实现文献、指南的精准检索，为问答提供有力的知识支持。' +
-    ' 这部分内容可能会比较长，如果超出一定高度则会自动折叠，点击详情可展开查看更多详细信息。';
-    
-  const longText2 = '结合大语言模型，自动生成专业且易懂的回答，助力医疗决策与指导。' +
-    ' 此处文本内容同样可能较长，需要根据实际情况进行折叠处理。';
-    
-  const longText3 = '完整的 AI 工作流，涵盖数据预处理、模型训练、实时推理与反馈，确保结果精准可靠。' +
-    ' 额外的说明信息可能会使内容溢出固定区域，用户可点击详情展开查看更多内容。';
+  // Example long text, can be adjusted based on actual data
+  const longText1 =
+    'Using the RAG framework, precisely retrieve literature and guidelines to provide strong knowledge support for Q&A.' +
+    ' This section may be relatively long. If it exceeds a certain height, it will automatically collapse. Click "More Details" to expand and view additional information.';
+
+  const longText2 =
+    'Combining large language models to automatically generate professional and easy-to-understand answers, assisting medical decision-making and guidance.' +
+    ' This text may also be lengthy and needs to be collapsed based on actual conditions.';
+
+  const longText3 =
+    'A complete AI workflow covering data preprocessing, model training, real-time inference, and feedback, ensuring accurate and reliable results.' +
+    ' Additional explanatory information may overflow the fixed area, and users can click "More Details" to expand and see more content.';
 
   return (
     <div style={{ padding: '24px', background: '#f0f2f5' }}>
-      {/* 英雄区 */}
+      {/* Hero Section */}
       <div
         style={{
           textAlign: 'center',
@@ -46,26 +49,26 @@ const HomePage: React.FC = () => {
 
       <Divider />
 
-      {/* 系统介绍 - 三个卡片保持等高 */}
+      {/* System Introduction - Three equally high cards */}
       <Row gutter={[24, 24]} justify="center">
         <Col xs={24} sm={12} md={8}>
           <ExpandableCard
             icon={<RocketOutlined style={{ fontSize: '2.5rem', color: '#1890ff' }} />}
-            title="高效检索"
+            title="Efficient Retrieval"
             text={longText1}
           />
         </Col>
         <Col xs={24} sm={12} md={8}>
           <ExpandableCard
             icon={<SearchOutlined style={{ fontSize: '2.5rem', color: '#52c41a' }} />}
-            title="智能问答"
+            title="Intelligent Q&A"
             text={longText2}
           />
         </Col>
         <Col xs={24} sm={12} md={8}>
           <ExpandableCard
             icon={<ExperimentOutlined style={{ fontSize: '2.5rem', color: '#faad14' }} />}
-            title="AI 工作流"
+            title="AI Workflow"
             text={longText3}
           />
         </Col>
@@ -73,7 +76,7 @@ const HomePage: React.FC = () => {
 
       <Divider style={{ margin: '48px 0' }} />
 
-      {/* 使用案例 */}
+      {/* Use Case Demonstration */}
       <div
         style={{
           background: '#fff',
@@ -82,12 +85,12 @@ const HomePage: React.FC = () => {
           textAlign: 'center',
         }}
       >
-        <Title level={3}>系统演示</Title>
+        <Title level={3}>System Demonstration</Title>
         <Paragraph style={{ fontSize: '1.1rem' }}>
-          输入您的医疗问题，我们的系统将结合最新指南和文献，为您提供个性化的解答和推荐。
+          Enter your medical question, and our system will combine the latest guidelines and literature to provide you with personalized answers and recommendations.
         </Paragraph>
         <Button type="primary" size="large">
-          <Link href="/chat">开始问答</Link>
+          <Link href="/chat">Start Q&A</Link>
         </Button>
       </div>
     </div>
@@ -95,4 +98,3 @@ const HomePage: React.FC = () => {
 };
 
 export default HomePage;
-

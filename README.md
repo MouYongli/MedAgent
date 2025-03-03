@@ -116,6 +116,13 @@ The system will be tested on a custom validation setup on a dataset specifically
 
 **! TODO: display for performance**
 
+## Internationalization (i18n)
+
+MedAgent supports English, Chinese, and German languages, implemented using `react-i18next` and `i18next` with dynamic language switching, JSON translation texts, and modularized file structure. To add a new language, update `settings.ts`, create a new language folder, add a translation file, and update the language switcher component.
+
+
+More information in the [i18n README](frontend/src/i18n/README.md)
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

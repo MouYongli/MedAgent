@@ -7,6 +7,7 @@
     "nav": {
         "home": "Home",
         "chat": "Chat",
+        "knowledge": "Knowledge",
         "studio": "Studio", 
         "dashboard": "Dashboard",
         "sign_in": "Sign In"

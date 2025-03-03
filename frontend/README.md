@@ -27,6 +27,9 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 │   │   ├── dashboard
 │   │   │   ├── layout.tsx
 │   │   │   └── page.tsx
+│   │   ├── knowledge
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
 │   │   └── studio
 │   │       ├── layout.tsx
 │   │       └── page.tsx
@@ -55,6 +58,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 │   ├── dashboard
 │   │   ├── SystemHealth.tsx
 │   │   └── UserStats.tsx
+│   ├── knowledge
+│   │   └── ..
 │   └── studio
 │       ├── AgentManagement.tsx
 │       └── KnowledgeBaseManagement.tsx
