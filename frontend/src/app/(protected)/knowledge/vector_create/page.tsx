@@ -1,16 +1,19 @@
 'use client';
 
 import React, { useState } from 'react';
-import {Row, Col, Typography, Divider, message, Grid} from 'antd';
+import dynamic from "next/dynamic";
+import {Row, Col, Typography, Divider, message} from 'antd';
 import PDFList from "@/components/knowledge/PDFList";
 import UploadPDFButton from "@/components/knowledge/UploadPDFButton";
+
+const PDFViewer = dynamic(() => import('@/components/knowledge/PDFViewer'), { ssr: false });
 
 const { Title, Paragraph } = Typography;
 
 const VectorCreatePage: React.FC = () => {
   const [pdfList, setPdfList] = useState([
-    { id: '0', name: 'Document 0', url: '@/app/(protected)/knowledge/vector_create/pdfs/0.pdf' },
-    { id: '1', name: 'Document 1', url: '@/app/(protected)/knowledge/vector_create/pdfs/1.pdf' },
+    { id: '0', name: 'Document 0', url: '/pdfs/0.pdf' },
+    { id: '1', name: 'Document 1', url: '/pdfs/1.pdf' },
   ]);
   const [selectedPdfId, setSelectedPdfId] = useState<string | null>(null);
 
@@ -25,6 +28,7 @@ const VectorCreatePage: React.FC = () => {
   };
 
   const selectedGuideline = pdfList.find(pdf => pdf.id === selectedPdfId)?.name || "Select guideline";
+  const selectedPdfUrl = pdfList.find(pdf => pdf.id === selectedPdfId)?.url || null;
 
   return (
     <div>
@@ -44,7 +48,12 @@ const VectorCreatePage: React.FC = () => {
           <Title level={3} style={{ marginBlock: '0' }}>{ selectedGuideline }</Title>
         </Col>
         <Col style={{ backgroundColor: '#f5f5f5', borderRadius: '12px', padding: '16px', margin: '0 6px', flexGrow: 1 }}>
-          <Title level={3} style={{ marginBlock: '0' }}>Test</Title>
+          {selectedPdfUrl ? (<div>
+            <Paragraph>{selectedPdfUrl}</Paragraph>
+            <PDFViewer pdfUrl={selectedPdfUrl} />
+          </div>) : (
+            <Paragraph>Select a guideline to view the PDF</Paragraph>
+          )}
         </Col>
       </Row>
     </div>
