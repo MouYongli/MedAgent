@@ -22,7 +22,9 @@
     "next-i18next": "^15.4.2",
     "react": "~18.2.0",
     "react-dom": "~18.2.0",
-    "react-i18next": "^15.4.1"
+    "react-i18next": "^15.4.1",
+    "react-pdf": "^9.2.1",
+    "pdfjs-dist": "4.8.69"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
