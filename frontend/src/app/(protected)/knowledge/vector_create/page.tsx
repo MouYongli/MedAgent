@@ -48,8 +48,8 @@ const VectorCreatePage: React.FC = () => {
           <Title level={3} style={{ marginBlock: '0' }}>{ selectedGuideline }</Title>
         </Col>
         <Col style={{ backgroundColor: '#f5f5f5', borderRadius: '12px', padding: '16px', margin: '0 6px', flexGrow: 1 }}>
+          <Title level={3} style={{ marginBlock: '0' }}>PDF display</Title>
           {selectedPdfUrl ? (<div>
-            <Paragraph>{selectedPdfUrl}</Paragraph>
             <PDFViewer pdfUrl={selectedPdfUrl} />
           </div>) : (
             <Paragraph>Select a guideline to view the PDF</Paragraph>
