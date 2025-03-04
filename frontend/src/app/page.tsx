@@ -2,13 +2,11 @@
 'use client';
 
 import React from 'react';
-import { Typography, Row, Col, Divider, Button } from 'antd';
-import { RocketOutlined, SearchOutlined, ExperimentOutlined } from '@ant-design/icons';
+import { Typography, Grid, Button, Container, Box, Divider } from '@mui/material';
+import { Rocket, Search, Science } from '@mui/icons-material';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import ExpandableCard from '@/components/common/ExpandableCard';
-
-const { Title, Paragraph } = Typography;
 
 const HomePage: React.FC = () => {
   const { t } = useTranslation();
@@ -24,73 +22,85 @@ const HomePage: React.FC = () => {
     ' 额外的说明信息可能会使内容溢出固定区域，用户可点击详情展开查看更多内容。';
 
   return (
-    <div style={{ padding: '24px', background: '#f0f2f5' }}>
+    <Box sx={{ py: 3, bgcolor: 'grey.100' }}>
       {/* 英雄区 */}
-      <div
-        style={{
-          textAlign: 'center',
-          marginBottom: '48px',
-          padding: '40px 20px',
-          background: '#fff',
-          borderRadius: 8,
-        }}
-      >
-        <Title>{t('home.title')}</Title>
-        <Paragraph style={{ fontSize: '1.1rem' }}>
-          {t('home.subtitle')}
-        </Paragraph>
-        <Button type="primary" size="large">
-          <Link href="/chat">{t('home.try_now')}</Link>
-        </Button>
-      </div>
+      <Container>
+        <Box
+          sx={{
+            textAlign: 'center',
+            mb: 6,
+            py: 5,
+            px: 2,
+            bgcolor: 'background.paper',
+            borderRadius: 2,
+          }}
+        >
+          <Typography variant="h2" component="h1" gutterBottom>
+            {t('home.title')}
+          </Typography>
+          <Typography variant="h5" color="text.secondary" paragraph>
+            {t('home.subtitle')}
+          </Typography>
+          <Link href="/chat" style={{ textDecoration: 'none' }}>
+            <Button variant="contained" size="large">
+              {t('home.try_now')}
+            </Button>
+          </Link>
+        </Box>
 
-      <Divider />
+        <Divider sx={{ my: 6 }} />
 
-      {/* 系统介绍 - 三个卡片保持等高 */}
-      <Row gutter={[24, 24]} justify="center">
-        <Col xs={24} sm={12} md={8}>
-          <ExpandableCard
-            icon={<RocketOutlined style={{ fontSize: '2.5rem', color: '#1890ff' }} />}
-            title="高效检索"
-            text={longText1}
-          />
-        </Col>
-        <Col xs={24} sm={12} md={8}>
-          <ExpandableCard
-            icon={<SearchOutlined style={{ fontSize: '2.5rem', color: '#52c41a' }} />}
-            title="智能问答"
-            text={longText2}
-          />
-        </Col>
-        <Col xs={24} sm={12} md={8}>
-          <ExpandableCard
-            icon={<ExperimentOutlined style={{ fontSize: '2.5rem', color: '#faad14' }} />}
-            title="AI 工作流"
-            text={longText3}
-          />
-        </Col>
-      </Row>
+        {/* 系统介绍 - 三个卡片保持等高 */}
+        <Grid container spacing={3} justifyContent="center">
+          <Grid item xs={12} sm={6} md={4}>
+            <ExpandableCard
+              icon={<Rocket sx={{ fontSize: 40, color: 'primary.main' }} />}
+              title="高效检索"
+              text={longText1}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <ExpandableCard
+              icon={<Search sx={{ fontSize: 40, color: 'success.main' }} />}
+              title="智能问答"
+              text={longText2}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <ExpandableCard
+              icon={<Science sx={{ fontSize: 40, color: 'warning.main' }} />}
+              title="AI 工作流"
+              text={longText3}
+            />
+          </Grid>
+        </Grid>
 
-      <Divider style={{ margin: '48px 0' }} />
+        <Divider sx={{ my: 6 }} />
 
-      {/* 使用案例 */}
-      <div
-        style={{
-          background: '#fff',
-          padding: '40px 20px',
-          borderRadius: 8,
-          textAlign: 'center',
-        }}
-      >
-        <Title level={3}>系统演示</Title>
-        <Paragraph style={{ fontSize: '1.1rem' }}>
-          输入您的医疗问题，我们的系统将结合最新指南和文献，为您提供个性化的解答和推荐。
-        </Paragraph>
-        <Button type="primary" size="large">
-          <Link href="/chat">开始问答</Link>
-        </Button>
-      </div>
-    </div>
+        {/* 使用案例 */}
+        <Box
+          sx={{
+            bgcolor: 'background.paper',
+            py: 5,
+            px: 2,
+            borderRadius: 2,
+            textAlign: 'center',
+          }}
+        >
+          <Typography variant="h4" component="h3" gutterBottom>
+            系统演示
+          </Typography>
+          <Typography variant="h6" color="text.secondary" paragraph>
+            输入您的医疗问题，我们的系统将结合最新指南和文献，为您提供个性化的解答和推荐。
+          </Typography>
+          <Link href="/chat" style={{ textDecoration: 'none' }}>
+            <Button variant="contained" size="large">
+              开始问答
+            </Button>
+          </Link>
+        </Box>
+      </Container>
+    </Box>
   );
 };
 

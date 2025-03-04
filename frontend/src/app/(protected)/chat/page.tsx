@@ -1,10 +1,17 @@
 'use client';
 
 import React, { useState } from 'react';
-import { List, Input, Button, Typography, Divider } from 'antd';
-import { SendOutlined } from '@ant-design/icons';
-
-const { Text } = Typography;
+import {
+  List,
+  ListItem,
+  TextField,
+  Button,
+  Typography,
+  Divider,
+  Box,
+  Container,
+} from '@mui/material';
+import { Send as SendIcon } from '@mui/icons-material';
 
 interface Message {
   id: number;
@@ -38,81 +45,73 @@ const ChatPage: React.FC = () => {
     setInputValue('');
   };
 
+  const handleKeyPress = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      handleSend();
+    }
+  };
+
   return (
-    <div style={styles.container}>
-      <Divider orientation="left" style={{ fontSize: '1.25rem' }}>
+    <Container maxWidth="md" sx={{ py: 3 }}>
+      <Typography variant="h5" sx={{ mb: 2 }}>
         Chat with Alice
-      </Divider>
+      </Typography>
+      <Divider sx={{ mb: 3 }} />
 
       {/* 消息列表 */}
-      <List
-        dataSource={messages}
-        renderItem={(item) => {
-          const bubbleStyle = item.isMine
-            ? { ...styles.bubble, ...styles.bubbleMine }
-            : { ...styles.bubble, ...styles.bubbleOther };
-          const itemStyle = item.isMine
-            ? { justifyContent: 'flex-end' }
-            : { justifyContent: 'flex-start' };
-
-          return (
-            <List.Item style={{ display: 'flex', ...itemStyle }}>
-              <div style={bubbleStyle}>
-                <Text style={{ color: item.isMine ? '#fff' : '#000' }}>
-                  {item.content}
-                </Text>
-              </div>
-            </List.Item>
-          );
-        }}
-      />
+      <List sx={{ mb: 2, height: '60vh', overflowY: 'auto' }}>
+        {messages.map((item) => (
+          <ListItem
+            key={item.id}
+            sx={{
+              display: 'flex',
+              justifyContent: item.isMine ? 'flex-end' : 'flex-start',
+              px: 2,
+              py: 1,
+            }}
+          >
+            <Box
+              sx={{
+                maxWidth: '60%',
+                p: 1.5,
+                borderRadius: 3,
+                bgcolor: item.isMine ? 'primary.main' : 'grey.100',
+                color: item.isMine ? 'white' : 'text.primary',
+                wordWrap: 'break-word',
+              }}
+            >
+              <Typography variant="body1">
+                {item.content}
+              </Typography>
+            </Box>
+          </ListItem>
+        ))}
+      </List>
 
       {/* 输入框和发送按钮 */}
-      <div style={styles.inputArea}>
-        <Input
+      <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+        <TextField
+          fullWidth
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          onPressEnter={handleSend}
+          onKeyPress={handleKeyPress}
           placeholder="Enter the message..."
-          style={{ marginRight: 8 }}
+          size="small"
+          multiline
+          maxRows={4}
         />
         <Button
-          type="primary"
-          icon={<SendOutlined />}
+          variant="contained"
+          endIcon={<SendIcon />}
           onClick={handleSend}
+          sx={{ minWidth: 100 }}
         >
           Send
         </Button>
-      </div>
-    </div>
+      </Box>
+    </Container>
   );
-};
-
-// 简易内联样式
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    maxWidth: 800,
-    margin: '0 auto',
-    padding: 24,
-  },
-  bubble: {
-    padding: '8px 12px',
-    borderRadius: 16,
-    maxWidth: '60%',
-    wordWrap: 'break-word',
-  },
-  bubbleMine: {
-    backgroundColor: '#1890ff',
-    color: '#fff',
-  },
-  bubbleOther: {
-    backgroundColor: '#f0f0f0',
-    color: '#000',
-  },
-  inputArea: {
-    display: 'flex',
-    marginTop: 16,
-  },
 };
 
 export default ChatPage;

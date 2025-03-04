@@ -2,39 +2,112 @@
 'use client';
 
 import React from 'react';
-import { Form, Input, Button } from 'antd';
+import {
+  Box,
+  Paper,
+  Typography,
+  TextField,
+  Button,
+  Container
+} from '@mui/material';
+
+interface FormValues {
+  username: string;
+  password: string;
+}
 
 const SignInPage: React.FC = () => {
-  const onFinish = (values: any) => {
+  const [values, setValues] = React.useState<FormValues>({
+    username: '',
+    password: ''
+  });
+  const [errors, setErrors] = React.useState<Partial<FormValues>>({});
+
+  const handleChange = (prop: keyof FormValues) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValues({ ...values, [prop]: event.target.value });
+    // Clear error when user starts typing
+    if (errors[prop]) {
+      setErrors({ ...errors, [prop]: undefined });
+    }
+  };
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    
+    // Validation
+    const newErrors: Partial<FormValues> = {};
+    if (!values.username) {
+      newErrors.username = 'Please enter the username!';
+    }
+    if (!values.password) {
+      newErrors.password = 'Please enter the password!';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     //TODO
     console.log('Login Information', values);
   };
 
   return (
-    <div style={{ maxWidth: 300, margin: '50px auto', padding: '20px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' }}>
-      <h2 style={{ textAlign: 'center' }}>Sign In</h2>
-      <Form name="sign_in" onFinish={onFinish} layout="vertical">
-        <Form.Item 
-          label="Username" 
-          name="username" 
-          rules={[{ required: true, message: 'Please enter the username!' }]}
+    <Container maxWidth="sm">
+      <Box sx={{ mt: 8, mb: 4 }}>
+        <Paper
+          elevation={3}
+          sx={{
+            p: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
         >
-          <Input placeholder="Please enter the username" />
-        </Form.Item>
-        <Form.Item 
-          label="password" 
-          name="password" 
-          rules={[{ required: true, message: 'Please enter the password!' }]}
-        >
-          <Input.Password placeholder="Please enter the password" />
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
+          <Typography component="h1" variant="h5" gutterBottom>
             Sign In
-          </Button>
-        </Form.Item>
-      </Form>
-    </div>
+          </Typography>
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="username"
+              label="Username"
+              name="username"
+              autoComplete="username"
+              autoFocus
+              value={values.username}
+              onChange={handleChange('username')}
+              error={!!errors.username}
+              helperText={errors.username}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              value={values.password}
+              onChange={handleChange('password')}
+              error={!!errors.password}
+              helperText={errors.password}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Sign In
+            </Button>
+          </Box>
+        </Paper>
+      </Box>
+    </Container>
   );
 };
 

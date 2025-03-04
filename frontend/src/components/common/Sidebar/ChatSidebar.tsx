@@ -1,15 +1,26 @@
 // src/components/common/sidebar/ChatSidebar.tsx
 'use client';
 import React from 'react';
-import { Menu } from 'antd';
-import type { MenuProps } from 'antd';
-import { MessageOutlined, SearchOutlined, UserOutlined, NotificationOutlined } from '@ant-design/icons';
+import {
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Collapse,
+  Box
+} from '@mui/material';
+import {
+  Chat as MessageIcon,
+  Search as SearchIcon,
+  Person as UserIcon,
+  ExpandLess,
+  ExpandMore
+} from '@mui/icons-material';
 
-
-const items: MenuProps['items'] = [
+const menuItems = [
   {
     key: 'chats',
-    icon: <MessageOutlined />,
+    icon: <MessageIcon />,
     label: 'My Chats',
     children: [
       { key: 'current', label: 'Current Chat' },
@@ -18,7 +29,7 @@ const items: MenuProps['items'] = [
   },
   {
     key: 'search',
-    icon: <SearchOutlined />,
+    icon: <SearchIcon />,
     label: 'Guidelines',
     children: [
       { key: 'quick-search', label: 'Quick Search' },
@@ -27,7 +38,7 @@ const items: MenuProps['items'] = [
   },
   {
     key: 'center',
-    icon: <UserOutlined />,
+    icon: <UserIcon />,
     label: 'User Settings',
     children: [
       { key: 'profile', label: 'My Profile' },
@@ -37,14 +48,47 @@ const items: MenuProps['items'] = [
 ];
 
 const ChatSidebar: React.FC = () => {
+  const [openItems, setOpenItems] = React.useState<string[]>(['chats']);
+  const [selectedItem, setSelectedItem] = React.useState('current');
+
+  const handleClick = (key: string) => {
+    setOpenItems(prev =>
+      prev.includes(key) ? prev.filter(item => item !== key) : [...prev, key]
+    );
+  };
+
+  const handleItemClick = (key: string) => {
+    setSelectedItem(key);
+  };
+
   return (
-    <Menu
-      mode="inline"
-      defaultSelectedKeys={['current']}
-      defaultOpenKeys={['sub1']}
-      style={{ height: '100%', borderRight: 0 }}
-      items={items}
-    />
+    <Box sx={{ width: '100%', borderRight: 1, borderColor: 'divider' }}>
+      <List component="nav">
+        {menuItems.map((item) => (
+          <React.Fragment key={item.key}>
+            <ListItemButton onClick={() => handleClick(item.key)}>
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.label} />
+              {openItems.includes(item.key) ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+            <Collapse in={openItems.includes(item.key)} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                {item.children?.map((child) => (
+                  <ListItemButton
+                    key={child.key}
+                    selected={selectedItem === child.key}
+                    onClick={() => handleItemClick(child.key)}
+                    sx={{ pl: 4 }}
+                  >
+                    <ListItemText primary={child.label} />
+                  </ListItemButton>
+                ))}
+              </List>
+            </Collapse>
+          </React.Fragment>
+        ))}
+      </List>
+    </Box>
   );
 };
 

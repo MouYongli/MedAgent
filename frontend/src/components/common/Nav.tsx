@@ -1,15 +1,15 @@
 // components/common/Navigation.tsx
 
 import React from 'react';
-import { Menu } from 'antd';
+import { Tabs, Tab } from '@mui/material';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
-import { HomeOutlined, MessageOutlined, EditOutlined, DashboardOutlined } from '@ant-design/icons';
-import { usePathname } from 'next/navigation';
+import { Home, Chat, Edit, Dashboard } from '@mui/icons-material';
+import { usePathname, useRouter } from 'next/navigation';
 
 const AppNav: React.FC = () => {
   const { t } = useTranslation();
-
+  const router = useRouter();
   const pathname = usePathname();
   
   let selectedKey = 'home';
@@ -22,20 +22,46 @@ const AppNav: React.FC = () => {
   }
 
   const menuItems = [
-    { key: 'home', icon: <HomeOutlined />, label: <Link href="/">{t('nav.home')}</Link> },
-    { key: 'chat', icon: <MessageOutlined />, label: <Link href="/chat">{t('nav.chat')}</Link> },
-    { key: 'studio', icon: <EditOutlined />, label: <Link href="/studio">{t('nav.studio')}</Link> },
-    { key: 'dashboard', icon: <DashboardOutlined />, label: <Link href="/dashboard">{t('nav.dashboard')}</Link> },
+    { key: 'home', icon: <Home />, label: t('nav.home'), path: '/' },
+    { key: 'chat', icon: <Chat />, label: t('nav.chat'), path: '/chat' },
+    { key: 'studio', icon: <Edit />, label: t('nav.studio'), path: '/studio' },
+    { key: 'dashboard', icon: <Dashboard />, label: t('nav.dashboard'), path: '/dashboard' },
   ];
 
+  const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
+    const item = menuItems.find(item => item.key === newValue);
+    if (item) {
+      router.push(item.path);
+    }
+  };
+
   return (
-    <Menu
-      mode="horizontal"
-      selectedKeys={[selectedKey]}  // now controlled by the current route
-      theme="dark"
-      style={{ flex: 1, overflow: 'hidden', display: 'flex', justifyContent: 'center' }}
-      items={menuItems}
-    />
+    <Tabs
+      value={selectedKey}
+      onChange={handleChange}
+      centered
+      sx={{
+        '& .MuiTab-root': {
+          color: 'white',
+          '&.Mui-selected': {
+            color: 'white',
+          }
+        },
+        '& .MuiTabs-indicator': {
+          backgroundColor: 'white',
+        }
+      }}
+    >
+      {menuItems.map((item) => (
+        <Tab
+          key={item.key}
+          value={item.key}
+          icon={item.icon}
+          label={item.label}
+          iconPosition="start"
+        />
+      ))}
+    </Tabs>
   );
 };
 

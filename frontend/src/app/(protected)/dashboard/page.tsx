@@ -1,9 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Typography, Row, Col, Card } from 'antd';
-
-const { Title, Paragraph } = Typography;
+import { Typography, Grid, Card, CardContent, Box } from '@mui/material';
 
 const DashboardPage: React.FC = () => {
   const stats = [
@@ -13,21 +11,31 @@ const DashboardPage: React.FC = () => {
   ];
 
   return (
-    <div>
-      <Title level={2}>Dashboard Overview</Title>
-      <Paragraph>Here you can see a quick snapshot of system metrics.</Paragraph>
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h4" gutterBottom>
+        Dashboard Overview
+      </Typography>
+      <Typography variant="body1" paragraph>
+        Here you can see a quick snapshot of system metrics.
+      </Typography>
 
-      <Row gutter={16}>
+      <Grid container spacing={2}>
         {stats.map((item, index) => (
-          <Col key={index} xs={24} sm={12} md={8}>
-            <Card style={{ marginBottom: '16px' }}>
-              <Title level={4}>{item.title}</Title>
-              <Paragraph style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{item.value}</Paragraph>
+          <Grid item key={index} xs={12} sm={6} md={4}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  {item.title}
+                </Typography>
+                <Typography variant="h4" color="primary">
+                  {item.value}
+                </Typography>
+              </CardContent>
             </Card>
-          </Col>
+          </Grid>
         ))}
-      </Row>
-    </div>
+      </Grid>
+    </Box>
   );
 };
 

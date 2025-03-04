@@ -1,36 +1,59 @@
 'use client';
 
 import React from 'react';
-import { Menu } from 'antd';
-import type { MenuProps } from 'antd';
-import { EditOutlined, FolderOpenOutlined, SettingOutlined } from '@ant-design/icons';
+import {
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Box
+} from '@mui/material';
+import {
+  Edit as EditIcon,
+  Folder as FolderIcon,
+  Settings as SettingsIcon
+} from '@mui/icons-material';
 
-const items: MenuProps['items'] = [
+const items = [
   {
     key: 'projects',
-    icon: <EditOutlined />,
+    icon: <EditIcon />,
     label: 'Projects',
   },
   {
     key: 'assets',
-    icon: <FolderOpenOutlined />,
+    icon: <FolderIcon />,
     label: 'Assets',
   },
   {
     key: 'settings',
-    icon: <SettingOutlined />,
+    icon: <SettingsIcon />,
     label: 'Settings',
   },
 ];
 
 const StudioSidebar: React.FC = () => {
+  const [selectedItem, setSelectedItem] = React.useState('projects');
+
+  const handleItemClick = (key: string) => {
+    setSelectedItem(key);
+  };
+
   return (
-    <Menu
-      mode="inline"
-      defaultSelectedKeys={['projects']}
-      style={{ height: '100%', borderRight: 0 }}
-      items={items}
-    />
+    <Box sx={{ width: '100%', borderRight: 1, borderColor: 'divider' }}>
+      <List component="nav">
+        {items.map((item) => (
+          <ListItemButton
+            key={item.key}
+            selected={selectedItem === item.key}
+            onClick={() => handleItemClick(item.key)}
+          >
+            <ListItemIcon>{item.icon}</ListItemIcon>
+            <ListItemText primary={item.label} />
+          </ListItemButton>
+        ))}
+      </List>
+    </Box>
   );
 };
 
