@@ -15,6 +15,7 @@ const VectorCreateLayout: React.FC<VectorCreateLayoutProps> = ({ children }) => 
       style={{
         background: '#fff',
         margin: 0,
+        minHeight: '100%'
       }}
     >
       {children}
