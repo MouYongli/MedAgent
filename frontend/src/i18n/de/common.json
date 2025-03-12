@@ -7,9 +7,9 @@
     "nav": {
         "home": "Startseite",
         "chat": "Chat",
-        "sign_in": "Anmelden",
-        "knowledge": "Wissen",
+        "knowledge": "Wissensbasis",
         "studio": "Studio",
-        "dashboard": "Dashboard"
+        "dashboard": "Dashboard",
+        "sign_in": "Anmelden"
     }
-}
+} 

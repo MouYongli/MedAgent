@@ -2,44 +2,48 @@
 'use client';
 
 import React from 'react';
-import { AppBar, Toolbar, Button, Box } from '@mui/material';
-import { Person as PersonIcon } from '@mui/icons-material';
+import { Layout, Button, Space } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import AppNav from '@/components/common/Nav';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 
+const { Header } = Layout;
+
 const AppHeader: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <AppBar position="static">
-      <Toolbar sx={{ justifyContent: 'space-between' }}>
-        {/* Left side: Logo */}
-        <Box sx={{ typography: 'h6', fontWeight: 'bold' }}>
-          MedAgent
-        </Box>
+    <Header
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        backgroundColor: '#001529', // Dark background
+        justifyContent: 'space-between',
+        padding: '0 20px',
+      }}
+    >
+      {/* Left side: Logo */}
+      <div style={{ flex: 'none', color: '#fff', fontSize: '1.2rem', fontWeight: 'bold' }}>
+        MedAgent
+      </div>
 
-        {/* Center: Navigation */}
-        <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-          <AppNav />
-        </Box>
+      {/* Center: Navigation */}
+      <div style={{ flex: 1, overflow: 'hidden', display: 'flex', justifyContent: 'center' }}>
+        <AppNav />
+      </div>
 
-        {/* Right side: Language switcher and sign-in button */}
-        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-          <LanguageSwitcher />
-          <Link href="/sign-in" style={{ textDecoration: 'none' }}>
-            <Button
-              variant="contained"
-              startIcon={<PersonIcon />}
-              sx={{ borderRadius: 28 }}
-            >
-              {t('nav.sign_in')}
-            </Button>
-          </Link>
-        </Box>
-      </Toolbar>
-    </AppBar>
+      {/* Right side: Language switcher and sign-in button */}
+      <Space>
+        <LanguageSwitcher />
+        <Link href="/sign-in">
+          <Button type="primary" shape="round" icon={<UserOutlined />}>
+            {t('nav.sign_in')}
+          </Button>
+        </Link>
+      </Space>
+    </Header>
   );
 };
 
