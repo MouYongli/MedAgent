@@ -13,7 +13,6 @@ import {
   MenuBook as KnowledgeIcon,
   Search as SearchIcon,
   Person as UserIcon,
-  Storage as VectorDBIcon,
   ExpandLess,
   ExpandMore
 } from '@mui/icons-material';
@@ -25,7 +24,7 @@ const menuItems = [
     label: 'Knowledge Base',
     children: [
       { key: 'pdf', label: 'PDF Files' },
-      { key: 'vdb', label: 'Vector Databases' },
+      { key: 'vdb', label: 'Vector Databases' }, /*Before: <Link href="/knowledge/vector_create">{'Create new vector DB'}</Link>*/
     ],
   },
   {
@@ -45,11 +44,6 @@ const menuItems = [
       { key: 'profile', label: 'My Profile' },
       { key: 'settings', label: 'Settings' },
     ],
-  },
-  {
-    key: 'create vector',
-    icon: <VectorDBIcon />,
-    label: <Link href="/knowledge/vector_create">{'Create new vector DB'}</Link>
   }
 ];
 
