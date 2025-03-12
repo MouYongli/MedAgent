@@ -26,11 +26,13 @@ services:
       - VECTOR_DB_URL=http://vector-db:5001
       - GRAPH_DB_URL=neo4j://neo4j:7687
       - KEYCLOAK_URL=http://keycloak:8080
+      - MONGODB_URL=mongodb://root:root@mongodb:27017
     depends_on:
       - db
       - vector-db
       - neo4j
       - keycloak
+      - mongodb
     networks:
       - backend
 
@@ -79,6 +81,23 @@ services:
       - "8080:8080"
     networks:
       - backend
+
+  # Database to store PDFs (and maybe some metadata about guideline collections)
+  mongodb:
+    image: mongo:latest
+    container_name: medagent-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - backend
+
+volumes:
+  mongodb_data:
 
 networks:
   backend:

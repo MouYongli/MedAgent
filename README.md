@@ -67,7 +67,7 @@ To ensure that end-users cannot change established systems AND are not confused 
   - Postgres is used to store and manage structured medical data.
   - Neo4j (Graph Database) is used for knowledge representation, allowing the system to model medical relationships, such as drug interactions or disease pathways.
   - Vector Database (e.g., FAISS or similar) is employed to store and query embeddings of medical guidelines and knowledge for efficient retrieval.
-
+  - [MongoDB](https://www.mongodb.com/) is used to store PDFs (mostly guidelines in our case), and potentially some metadata about these guidelines. 
 - Authentication & Security: The system uses Keycloak for secure authentication and user management. This ensures that only authorized personnel (e.g., doctors and developers) can access the system and modify sensitive data.
 
 
