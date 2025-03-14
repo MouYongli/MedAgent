@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Any
 
 from app.models.workflow import Generator
 
@@ -13,6 +13,11 @@ class SimpleGenerator(Generator, ABC):
     def __init__(self):
         super().__init__()
         self.response_count = 0
+
+    @classmethod
+    def get_init_parameters(cls) -> Dict[str, Dict[str, Any]]:
+        """SimpleGenerator does not require parameters."""
+        return {}
 
     def generate_response(self, conversation_context: "Chat") -> str:
         """Generates a simple numbered response."""
