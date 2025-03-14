@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from app.models.chat import Chat, MessageType
+from app.models.generators.DeepSeekGenerator import DeepSeekGenerator
 from app.models.generators.OpenAIGenerator import OpenAIGenerator
 from app.models.generators.SimpleGenerator import SimpleGenerator
 
@@ -29,7 +30,8 @@ class MessageResponse(BaseModel):
 
 GENERATORS = {
     "simple": SimpleGenerator,
-    "openai": OpenAIGenerator
+    "openai": OpenAIGenerator,
+    "deepseek": DeepSeekGenerator,
 }
 
 @router.get("/generators") # Maybe move to workflow??
