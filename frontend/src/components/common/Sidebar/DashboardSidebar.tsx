@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import {List, ListItem, ListItemButton, ListItemIcon, ListItemText} from '@mui/material';
 import { Dashboard, BarChart, Description } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 
@@ -35,19 +35,19 @@ const DashboardSidebar: React.FC = () => {
   return (
     <List component="nav" sx={{ height: '100%', borderRight: 1, borderColor: 'divider' }}>
       {items.map((item) => (
-        <ListItem
-          key={item.key}
-          button
-          selected={selectedKey === item.key}
-          onClick={() => handleItemClick(item.key)}
-          sx={{
-            '&.Mui-selected': {
-              backgroundColor: 'action.selected',
-            }
-          }}
-        >
-          <ListItemIcon>{item.icon}</ListItemIcon>
-          <ListItemText primary={item.label} />
+        <ListItem key={item.key} disablePadding>
+          <ListItemButton
+            selected={selectedKey === item.key}
+            onClick={() => handleItemClick(item.key)}
+            sx={{
+              '&.Mui-selected': {
+                backgroundColor: 'action.selected',
+              },
+            }}
+          >
+            <ListItemIcon>{item.icon}</ListItemIcon>
+            <ListItemText primary={item.label} />
+          </ListItemButton>
         </ListItem>
       ))}
     </List>
