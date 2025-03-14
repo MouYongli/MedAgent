@@ -1,28 +1,37 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
+from app.models.chat import Conversation
+
 router = APIRouter()
 
-# Simple counter variables to track interactions
-interaction_counters = {"input_count": 0, "output_count": 0}
+conversations = {}
 
-class ChatRequest(BaseModel):
+class InitResponse(BaseModel):
+    conversation_id: str
     message: str
 
-class ChatResponse(BaseModel):
-    input_count: int
-    output_count: int
-    reply: str
+class MessageRequest(BaseModel):
+    conversation_id: str
+    message: str
 
-@router.post("/chat", response_model=ChatResponse)
-async def chat_with_system(request: ChatRequest):
-    interaction_counters["input_count"] += 1
-    interaction_counters["output_count"] += 1  # For now, we assume one reply per message
+class MessageResponse(BaseModel):
+    conversation_id: str
+    message: str
 
-    response_message = f"This is message #{interaction_counters['input_count']}"
+@router.post("/init", response_model=InitResponse)
+async def init_conversation():
+    conversation = Conversation()
+    conversation.add_message('System', 'Welcome')
+    conversations[conversation.id] = conversation
+    return InitResponse(conversation_id=conversation.id, message='Welcome')
 
-    return ChatResponse(
-        input_count=interaction_counters["input_count"],
-        output_count=interaction_counters["output_count"],
-        reply=response_message
-    )
+@router.post("/message", response_model=MessageResponse)
+async def send_message(request: MessageRequest):
+    conversation = conversations.get(request.conversation_id)
+    if not conversation:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+    conversation.add_message('User', request.message)
+    response = conversation.get_response()
+    conversation.add_message('System', response)
+    return MessageResponse(conversation_id=conversation.id, message=response)

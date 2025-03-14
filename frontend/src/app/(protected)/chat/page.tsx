@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   List,
   ListItem,
@@ -24,48 +24,55 @@ interface Message {
 const API_URL = "http://localhost:5000/api/chat" /* TODO: update (set in some config??) */
 
 const ChatPage: React.FC = () => {
-  // Initial chat history (example)
   const [messages, setMessages] = useState<Message[]>([]);
-
-  // Textbox content
   const [inputValue, setInputValue] = useState('');
+  const [conversationId, setConversationId] = useState<string | null>(null);
 
-  // Send message
-  const handleSend = async () => {
-    if (!inputValue.trim()) return;
-
-    const newMessage: Message = {
-      id: messages.length + 1,
-      sender: 'User', // TODO: update sender (set to concrete user of default, set in config??)
-      content: inputValue,
-      isMine: true
-    }
-
-    setMessages((prev) => [...prev, newMessage]);
-
-    try {
-      const response = await axios.post(API_URL, { message: inputValue })
-
-      const systemMessage: Message = {
-        id: newMessage.id + 1,
-        sender: 'System',
-        content: response.data.reply,
-        isMine: false,
+  useEffect(() => {
+    const initConversation = async () => {
+      try {
+        const response = await axios.post(API_URL + '/init');
+        setConversationId(response.data.conversation_id);
+        setMessages([{ id: 1, sender: 'System', content: response.data.message, isMine: false, }]);
+      } catch (error) {
+        console.error('Error initializing conversation:', error);
       }
-
-      setMessages((prev) => [...prev, systemMessage]);
-    } catch (error) {
-      console.error('Error sending and receiving message: ', error);
-    }
-
-    setInputValue('');
-  };
+    };
+    initConversation();
+  }, []);
 
   const handleKeyPress = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       handleSend();
     }
+  };
+
+  const handleSend = async () => {
+    if (!inputValue.trim() || !conversationId) return;
+    const userMessage: Message = {
+      id: messages.length + 1,
+      sender: 'User',
+      content: inputValue,
+      isMine: true,
+    };
+    setMessages((prev) => [...prev, userMessage]);
+    try {
+      const response = await axios.post(API_URL + '/message', {
+        conversation_id: conversationId,
+        message: inputValue,
+      });
+      const systemMessage: Message = {
+        id: userMessage.id + 1,
+        sender: 'System',
+        content: response.data.message,
+        isMine: false,
+      };
+      setMessages((prev) => [...prev, systemMessage]);
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+    setInputValue('');
   };
 
   return (
