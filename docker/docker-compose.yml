@@ -5,6 +5,7 @@ services:
   frontend:
     build:
       context: ../frontend
+      dockerfile: ../docker/frontend/Dockerfile
     container_name: medagent-frontend
     ports:
       - "3000:3000"
@@ -13,22 +14,23 @@ services:
     depends_on:
       - backend
 
-  # Backend (Flask)
+  # Backend (FastAPI)
   backend:
     build:
-      context: ../backend
+      context: ../
+      dockerfile: docker/backend/Dockerfile  # Name of the Dockerfile
     container_name: medagent-backend
+    working_dir: /src
+    volumes:
+    - ../backend/src:/src  # Ensure `app/` is inside `/src/`
     ports:
       - "5000:5000"
     environment:
-      - FLASK_APP=app.py
-      - DATABASE_URL=postgres://user:password@db:5432/mydatabase
-      - VECTOR_DB_URL=http://vector-db:5001
+      - DATABASE_URL=postgres://user:password@postgres-db:5432/mydatabase
       - GRAPH_DB_URL=neo4j://neo4j:7687
       - KEYCLOAK_URL=http://keycloak:8080
     depends_on:
-      - db
-      - vector-db
+      - postgres-db
       - neo4j
       - keycloak
     networks:
@@ -48,13 +50,13 @@ services:
       - backend
 
   # Vector Database (example: Faiss)
-  vector-db:
-    image: some-vector-db-image
-    container_name: vector-db
-    ports:
-      - "5001:5001"
-    networks:
-      - backend
+  #vector-db:
+  #  image: some-vector-db-image
+  #  container_name: vector-db
+  #  ports:
+  #    - "5001:5001"
+  #  networks:
+  #    - backend
 
   # Neo4j Graph Database
   neo4j:
@@ -70,8 +72,8 @@ services:
 
   # Keycloak (Authenticator)
   keycloak:
-    image: jboss/keycloak:latest
-    container_name: medagent-neo4j
+    image: quay.io/keycloak/keycloak:latest
+    container_name: medagent-keycloak
     environment:
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=admin

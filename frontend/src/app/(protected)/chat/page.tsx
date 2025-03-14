@@ -12,6 +12,7 @@ import {
   Container,
 } from '@mui/material';
 import { Send as SendIcon } from '@mui/icons-material';
+import axios from 'axios';
 
 interface Message {
   id: number;
@@ -20,28 +21,43 @@ interface Message {
   isMine: boolean;
 }
 
-const ChatPage: React.FC = () => {
-  // 初始聊天记录（示例）
-  const [messages, setMessages] = useState<Message[]>([
-    { id: 1, sender: 'Alice', content: 'Hello there!', isMine: false },
-    { id: 2, sender: 'You', content: 'Hi, Alice!', isMine: true },
-  ]);
+const API_URL = "http://localhost:5000/api/chat" /* TODO: update (set in some config??) */
 
-  // 文本框内容
+const ChatPage: React.FC = () => {
+  // Initial chat history (example)
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  // Textbox content
   const [inputValue, setInputValue] = useState('');
 
-  // 发送消息
-  const handleSend = () => {
+  // Send message
+  const handleSend = async () => {
     if (!inputValue.trim()) return;
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: prev.length + 1,
-        sender: 'You',
-        content: inputValue,
-        isMine: true,
-      },
-    ]);
+
+    const newMessage: Message = {
+      id: messages.length + 1,
+      sender: 'User', // TODO: update sender (set to concrete user of default, set in config??)
+      content: inputValue,
+      isMine: true
+    }
+
+    setMessages((prev) => [...prev, newMessage]);
+
+    try {
+      const response = await axios.post(API_URL, { message: inputValue })
+
+      const systemMessage: Message = {
+        id: newMessage.id + 1,
+        sender: 'System',
+        content: response.data.reply,
+        isMine: false,
+      }
+
+      setMessages((prev) => [...prev, systemMessage]);
+    } catch (error) {
+      console.error('Error sending and receiving message: ', error);
+    }
+
     setInputValue('');
   };
 
@@ -59,7 +75,7 @@ const ChatPage: React.FC = () => {
       </Typography>
       <Divider sx={{ mb: 3 }} />
 
-      {/* 消息列表 */}
+      {/* Message list */}
       <List sx={{ mb: 2, height: '60vh', overflowY: 'auto' }}>
         {messages.map((item) => (
           <ListItem
@@ -89,7 +105,7 @@ const ChatPage: React.FC = () => {
         ))}
       </List>
 
-      {/* 输入框和发送按钮 */}
+      {/* Input box and send button */}
       <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
         <TextField
           fullWidth
