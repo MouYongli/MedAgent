@@ -1,18 +1,19 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
+  Container,
+  Typography,
   List,
   ListItem,
   TextField,
   Button,
-  Typography,
-  Divider,
   Box,
-  Container,
-} from '@mui/material';
-import { Send as SendIcon } from '@mui/icons-material';
-import axios from 'axios';
+  Divider,
+} from "@mui/material";
+import { Send as SendIcon } from "@mui/icons-material";
+import { useRouter, useSearchParams } from "next/navigation";
+import axios from "axios";
 
 interface Message {
   id: number;
@@ -21,28 +22,38 @@ interface Message {
   isMine: boolean;
 }
 
-const API_URL = "http://localhost:5000/api/chat" /* TODO: update (set in some config??) */
+const API_URL = "http://localhost:5000/api/chat";
 
 const ChatPage: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [inputValue, setInputValue] = useState('');
-  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [inputValue, setInputValue] = useState("");
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const conversationId = searchParams.get("conversation_id");
 
   useEffect(() => {
-    const initConversation = async () => {
+    if (!conversationId) {
+      router.push("/chat/systemSelection");
+      return;
+    }
+
+    const fetchInitialMessage = async () => {
       try {
-        const response = await axios.post(API_URL + '/init');
-        setConversationId(response.data.conversation_id);
-        setMessages([{ id: 1, sender: 'System', content: response.data.message, isMine: false, }]);
+        const response = await axios.post(`${API_URL}/init`, {
+          generator_name: "simple",
+          parameters: {},
+        });
+        setMessages([{ id: 1, sender: "System", content: response.data.message, isMine: false }]);
       } catch (error) {
-        console.error('Error initializing conversation:', error);
+        console.error("Error initializing conversation:", error);
       }
     };
-    initConversation();
-  }, []);
+
+    fetchInitialMessage();
+  }, [conversationId, router]);
 
   const handleKeyPress = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       handleSend();
     }
@@ -50,86 +61,85 @@ const ChatPage: React.FC = () => {
 
   const handleSend = async () => {
     if (!inputValue.trim() || !conversationId) return;
+
     const userMessage: Message = {
       id: messages.length + 1,
-      sender: 'User',
+      sender: "User",
       content: inputValue,
       isMine: true,
     };
+
     setMessages((prev) => [...prev, userMessage]);
+
     try {
-      const response = await axios.post(API_URL + '/message', {
+      const response = await axios.post(`${API_URL}/message`, {
         conversation_id: conversationId,
         message: inputValue,
       });
+
       const systemMessage: Message = {
         id: userMessage.id + 1,
-        sender: 'System',
+        sender: "System",
         content: response.data.message,
         isMine: false,
       };
+
       setMessages((prev) => [...prev, systemMessage]);
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error("Error sending message:", error);
     }
-    setInputValue('');
+
+    setInputValue("");
   };
 
   return (
     <Container maxWidth="md" sx={{ py: 3 }}>
       <Typography variant="h5" sx={{ mb: 2 }}>
-        Chat with Alice
+        Chat
       </Typography>
       <Divider sx={{ mb: 3 }} />
 
-      {/* Message list */}
-      <List sx={{ mb: 2, height: '60vh', overflowY: 'auto' }}>
+      {/* Message List */}
+      <List sx={{ mb: 2, height: "60vh", overflowY: "auto" }}>
         {messages.map((item) => (
           <ListItem
             key={item.id}
             sx={{
-              display: 'flex',
-              justifyContent: item.isMine ? 'flex-end' : 'flex-start',
+              display: "flex",
+              justifyContent: item.isMine ? "flex-end" : "flex-start",
               px: 2,
               py: 1,
             }}
           >
             <Box
               sx={{
-                maxWidth: '60%',
+                maxWidth: "60%",
                 p: 1.5,
                 borderRadius: 3,
-                bgcolor: item.isMine ? 'primary.main' : 'grey.100',
-                color: item.isMine ? 'white' : 'text.primary',
-                wordWrap: 'break-word',
+                bgcolor: item.isMine ? "primary.main" : "grey.100",
+                color: item.isMine ? "white" : "text.primary",
+                wordWrap: "break-word",
               }}
             >
-              <Typography variant="body1">
-                {item.content}
-              </Typography>
+              <Typography variant="body1">{item.content}</Typography>
             </Box>
           </ListItem>
         ))}
       </List>
 
-      {/* Input box and send button */}
-      <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+      {/* Input Box and Send Button */}
+      <Box sx={{ display: "flex", gap: 1, mt: 2 }}>
         <TextField
           fullWidth
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyPress={handleKeyPress}
-          placeholder="Enter the message..."
+          placeholder="Enter your message..."
           size="small"
           multiline
           maxRows={4}
         />
-        <Button
-          variant="contained"
-          endIcon={<SendIcon />}
-          onClick={handleSend}
-          sx={{ minWidth: 100 }}
-        >
+        <Button variant="contained" endIcon={<SendIcon />} onClick={handleSend} sx={{ minWidth: 100 }}>
           Send
         </Button>
       </Box>
