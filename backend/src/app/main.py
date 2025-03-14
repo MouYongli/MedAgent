@@ -21,7 +21,7 @@ fast_app.add_middleware(
 
 # Register file management routes
 fast_app.include_router(pdf_files.router, prefix="/api/knowledge/pdf", tags=["files"])
-fast_app.include_router(chat.router, prefix="/api", tags=["chat"])
+fast_app.include_router(chat.router, prefix="/api/chat")
 
 # Start the service: Run with `python app/main.py` or `uvicorn app.main:app --reload`
 if __name__ == "__main__":
