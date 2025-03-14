@@ -1,11 +1,14 @@
+from typing import Dict
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from app.models.chat import Conversation
+from app.models.chat import Chat, MessageType
+from app.models.generators.SimpleGenerator import SimpleGenerator
 
 router = APIRouter()
 
-conversations = {}
+conversations: Dict[str, Chat] = {}
 
 class InitResponse(BaseModel):
     conversation_id: str
@@ -21,17 +24,16 @@ class MessageResponse(BaseModel):
 
 @router.post("/init", response_model=InitResponse)
 async def init_conversation():
-    conversation = Conversation()
-    conversation.add_message('System', 'Welcome')
+    conversation = Chat(generator=SimpleGenerator())
+    message = f'Welcome, this is chat {conversation.id}'
+    conversation.add_message(MessageType.ANSWER, message)
     conversations[conversation.id] = conversation
-    return InitResponse(conversation_id=conversation.id, message='Welcome')
+    return InitResponse(conversation_id=conversation.id, message=message)
 
 @router.post("/message", response_model=MessageResponse)
 async def send_message(request: MessageRequest):
     conversation = conversations.get(request.conversation_id)
     if not conversation:
         raise HTTPException(status_code=404, detail="Conversation not found")
-    conversation.add_message('User', request.message)
-    response = conversation.get_response()
-    conversation.add_message('System', response)
+    response = conversation.pose_question(request.message)
     return MessageResponse(conversation_id=conversation.id, message=response)
