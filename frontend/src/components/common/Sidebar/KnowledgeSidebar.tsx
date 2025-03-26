@@ -35,15 +35,6 @@ const menuItems = [
       { key: 'advanced-search', label: 'Advanced Search' },
     ],
   },
-  {
-    key: 'user',
-    icon: <UserIcon />,
-    label: 'User Settings',
-    children: [
-      { key: 'profile', label: 'My Profile' },
-      { key: 'settings', label: 'Settings' },
-    ],
-  },
 ];
 
 const KnowledgeSidebar: React.FC = () => {

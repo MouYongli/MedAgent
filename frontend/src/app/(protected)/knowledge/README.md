@@ -15,8 +15,7 @@
 
 2. `page.tsx`
    - 知识库首页内容
-   - 显示欢迎信息和基本导航链接
-   - 提供到 PDF 文件区域的快捷链接
+   - 提供到 PDF 文件列表和pdf 展示
 
 3. `KnowledgeSidebar.tsx`
    - 位置：`@/components/common/Sidebar/KnowledgeSidebar`
@@ -27,9 +26,6 @@
      - Search（搜索）
        - Quick Search
        - Advanced Search
-     - User Settings（用户设置）
-       - My Profile
-       - Settings
 
 ### 功能特点
 
@@ -45,36 +41,33 @@
 3. PDF 文件管理
    - 独立的 PDF 文件页面
    - 通过 API 获取 PDF 文件列表
-   - 位于 `/knowledge/pdfs` 路径
 
 ## 技术栈
 
 - Material-UI (MUI)
 - react-pdf-viewer
 
-## 开发指南
+## API 集成
 
-### 添加新的知识库内容
+下面的表格展示了如何使用 RESTful API 来获取 PDF 文件列表和访问单个 PDF 文件。请确保 .env 文件中配置了后端数据库地址和端口。
 
-1. 在 `pdfs` 目录下添加新的 PDF 文件
-2. 更新后端 API 以支持新添加的文件
-3. 文件会自动显示在 PDF 文件列表中
+| API Endpoint                     | HTTP Method | Description                                |
+| -------------------------------- | ----------- | ------------------------------------------ |
+| `http://localhost:8000/`         | GET         | 获取 PDF 文件列表                           |
+| `http://localhost:8000/{file}.pdf` | GET         | 访问特定 PDF 文件（例如: `xxxx.pdf`）       |
 
-### 扩展侧边栏
 
-在 `KnowledgeSidebar.tsx` 的 `menuItems` 数组中添加新的菜单项：
 
-```typescript
-{
-  key: 'your-key',
-  icon: <YourIcon />,
-  label: 'Your Label',
-  children: [
-    { key: 'sub-item', label: 'Sub Item' },
-  ],
-}
-```
+## 后续开发建议
+添加高亮持久化功能：
 
-### API 集成
+创建后端 API 存储每个 PDF 的高亮信息
+编写 saveHighlightToServer 和 fetchHighlightsForPdf 函数
+改进用户体验：
 
-PDF 文件列表通过以下 API 端点获取：
+添加删除高亮的功能
+考虑添加高亮颜色选择功能
+可以添加高亮列表，方便用户查看所有高亮内容
+性能优化：
+
+对大型 PDF 文件，考虑分页加载高亮信息

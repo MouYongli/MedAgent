@@ -36,15 +36,6 @@ const menuItems = [
       { key: 'favorites', label: 'Available Guidelines' },
     ],
   },
-  {
-    key: 'center',
-    icon: <UserIcon />,
-    label: 'User Settings',
-    children: [
-      { key: 'profile', label: 'My Profile' },
-      { key: 'settings', label: 'Settings' },
-    ],
-  },
 ];
 
 const ChatSidebar: React.FC = () => {
