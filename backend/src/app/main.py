@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+import app.models.components.component_registry
+
 from app.api.routes import pdf_files
-from app.routes import chat
+from app.routes import chat, workflow
 
 fast_app = FastAPI(
     title="PDF File Manager",
@@ -22,6 +24,7 @@ fast_app.add_middleware(
 # Register file management routes
 fast_app.include_router(pdf_files.router, prefix="/api/knowledge/pdf", tags=["files"])
 fast_app.include_router(chat.router, prefix="/api/chat")
+fast_app.include_router(workflow.router, prefix="/api/workflow")
 
 # Start the service: Run with `python app/main.py` or `uvicorn app.main:app --reload`
 if __name__ == "__main__":

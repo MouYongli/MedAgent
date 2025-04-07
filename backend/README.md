@@ -1,75 +1,82 @@
 # MedAgent Backend
 
-## 项目结构
+## Project structure
 ```
 📦 MedAgent 
-├── 📁 backend       # 后端项目根目录
-│   ├── 📁 src      # 源代码目录
-│   ├── pyproject.toml  # 项目依赖配置
-│   ├── app.py      # 应用入口
-│   └── README.md   # 项目说明文档
+├── 📁 backend       # Backend project root directory
+│   ├── 📁 src      # Source code directory
+│   ├── pyproject.toml  # Project dependency configuration
+│   ├── app.py      # Application entry point
+│   └── README.md   # Project documentation
 ├── ...   
-└── README.md       # 主项目说明文档
+└── README.md       # Main project documentation
 ```
 
-## 环境配置
+## Environment Setup
 
-### 前置要求
-- Python 3.10 或更高版本
-- Conda 包管理器
+### Prerequisites
+- Python 3.10 or higher
+- Conda package manager
 
-### 安装步骤
-1. 创建并激活 Conda 环境
+### Installation Steps
+1. Create and activate the Conda environment
 ```bash
-# 创建环境
+# Create environment
 conda create --name medagent python=3.10
 
-# 激活环境
+# Activate environment
 conda activate medagent
 
-# 安装依赖
+# Install dependencies
 pip install -e .
 ```
 
-2. 启动服务
+2. Start the service
 ```bash
-# 开发模式启动（支持热重载）
+# Start in development mode (with hot reload)
 python -m uvicorn app.main:app --reload
 ```
 
-## API 文档
+## API Documentation
 
-### 概述
-- 基础 URL: `http://127.0.0.1:8000/api/knowledge/pdf/`
+### Overview
+- Base URL: `http://127.0.0.1:8000/api/knowledge/pdf/`
 
+### API Endpoints Description
 
-
-
-### API 端点说明
-
-#### 1. 列出所有 PDF 文件
+#### 1. List all PDF files
 ```http
 GET /api/knowledge/pdf/
 ```
 
-**响应示例：**
+**Example Response:**
 ```json
 ["file1.pdf", "file2.pdf"]
 ```
 
-**curl 示例：**
+**Curl Example:**
 ```bash
 curl http://127.0.0.1:8000/api/knowledge/pdf/
 ```
 
+### Notes
+1. File Storage
+   - All PDF files are stored in the backend `data` directory
+   - The directory is automatically created when the service starts
 
-### 注意事项
-1. 文件存储
-   - 所有 PDF 文件存储在后端的 `data` 目录中
-   - 目录会在服务启动时自动创建
+2. File Restrictions
+   - Only `.pdf` files are supported
+   - Filenames should not contain special characters
+   - English filenames are recommended
 
-2. 文件限制
-   - 仅支持 `.pdf` 格式文件
-   - 文件名不应包含特殊字符
-   - 建议使用英文文件名
+---
 
+## Overview API
+
+| Core Category | Method | Endpoint              | Description                                |
+|:--------------|--------|-----------------------|--------------------------------------------|
+| Workflow      | POST   | `/workflow/init`      | Initialize a new workflow from JSON config |
+| Workflow      | GET    | `/workflow/list`      | List all active workflow instances         |
+| Chat          | POST   | `/chat/init`          | Create a new chat for a given workflow     |
+| Chat          | GET    | `/chat/list`          | List all active chat sessions              |
+| Chat          | POST   | `/chat/{chat_id}/ask` | Pose a question to a specific chat         |

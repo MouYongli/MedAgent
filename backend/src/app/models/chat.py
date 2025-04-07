@@ -1,8 +1,10 @@
 from datetime import datetime, timezone
 from enum import Enum
+from typing import TYPE_CHECKING
 from uuid import uuid4
 
-from app.models.workflow import Generator
+if TYPE_CHECKING:
+    from app.models.system.WorkflowSystem import WorkflowSystem
 
 
 class MessageType(Enum):
@@ -19,17 +21,18 @@ class ConversationMessage:
         return f"[{self.timestamp}] {self.messageType.value}: {self.content}"
 
 class Chat:
-    def __init__(self, generator: Generator, user: str = "no user"):
+    def __init__(self, system: "WorkflowSystem", user: str = "no user"):
         self.id = str(uuid4())
         self.messages = []
-        self.user = user # userID -> string?
-        self.system: Generator = generator # Maybe later systemID? Then call this via another API call?
+        self.user = user
+        self.system: WorkflowSystem = system
 
     def add_message(self, message_type: MessageType, content: str):
         message = ConversationMessage(message_type, content)
         self.messages.append(message)
 
     def pose_question(self, question: str) -> str:
+        # TODO: maybe adjust return value to something else later (not only string, but also retrieved context etc.)
         self.add_message(MessageType.QUESTION, question)
         return self.generate_response()
 

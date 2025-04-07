@@ -6,4 +6,4 @@ python-multipart
 pydantic[email]
 passlib[bcrypt]
 python-jose[cryptography]
-openai
+openai~=1.70.0
