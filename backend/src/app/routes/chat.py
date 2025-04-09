@@ -23,6 +23,7 @@ class AskRequest(BaseModel):
 class AskResponse(BaseModel):
     chat_id: str
     response: str
+    response_latency: float # measured in seconds
 
 @router.post("/init", response_model=InitChatResponse)
 async def init_chat(request: InitChatRequest):
@@ -45,8 +46,8 @@ async def ask_chat(chat_id: str, request: AskRequest):
     if not chat:
         raise HTTPException(status_code=404, detail="Chat ID not found")
 
-    response = chat.pose_question(request.question)
-    return AskResponse(chat_id=chat.id, response=response)
+    response, response_latency = chat.pose_question(request.question)
+    return AskResponse(chat_id=chat.id, response=response, response_latency=response_latency)
 
 @router.get("/list")
 async def list_chats() -> Dict[str, str]:

@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from enum import Enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Tuple
 from uuid import uuid4
 
 if TYPE_CHECKING:
@@ -31,12 +31,12 @@ class Chat:
         message = ConversationMessage(message_type, content)
         self.messages.append(message)
 
-    def pose_question(self, question: str) -> str:
+    def pose_question(self, question: str) -> Tuple[str, float]:
         # TODO: maybe adjust return value to something else later (not only string, but also retrieved context etc.)
         self.add_message(MessageType.QUESTION, question)
         return self.generate_response()
 
-    def generate_response(self) -> str:
-        response = self.system.generate_response(self)
+    def generate_response(self) -> Tuple[str, float]:
+        response, response_latency = self.system.generate_response(self)
         self.add_message(MessageType.ANSWER, response)
-        return response
+        return response, response_latency

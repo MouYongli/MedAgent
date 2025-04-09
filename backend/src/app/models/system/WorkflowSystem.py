@@ -1,7 +1,7 @@
 import uuid
-from typing import Dict, Any, Type
+import time
+from typing import Dict, Any, Type, Tuple
 from app.models.components.AbstractComponent import AbstractComponent
-from app.models.components.generator.Generator import Generator
 from app.models.chat import Chat
 
 
@@ -13,12 +13,14 @@ class WorkflowSystem:
     def __init__(self, config: Dict[str, Any]):
         self.id = str(uuid.uuid4())
         self.components: Dict[str, AbstractComponent] = {}
+        self.edges: Dict[str, str] = {}
 
-        nodes = config.get("nodes", {})
+        nodes = config.get("nodes", [])
         if not nodes:
             raise ValueError("No nodes defined in the config.")
 
-        for node_id, node_config in nodes.items():
+        for node_config in nodes:
+            node_id = node_config["id"]
             type_string = node_config["type"]  # e.g., "generator/azure_openai/foo"
             path = type_string.split("/")
 
@@ -34,14 +36,44 @@ class WorkflowSystem:
 
             self.components[node_id] = component
 
-    def generate_response(self, chat: Chat) -> str:
+        edges = config.get("edges", [])
+        for edge in edges:
+            source, target = edge["source"], edge["target"]
+
+            if source in self.edges:
+                raise ValueError(f"Multiple outgoing edges from node '{source}' are not supported")
+
+            self.edges[source] = target
+
+        if "start" not in self.edges:
+            raise ValueError("No 'start' node defined in edges.")
+
+        self.start_node, self.end_node = "start", "end"
+
+    def generate_response(self, chat: Chat) -> Tuple[str, float]:
         """
         Generate a response from the generator component using the provided Chat object.
         """
-        generator_component = self.components.get("generator")
-        if not isinstance(generator_component, Generator):
-            raise ValueError("No valid 'generator' node of type Generator found.")
-        return generator_component.generate_response(chat)
+        current_node = self.start_node
+        data: Dict[str, Any] = {
+            "chat": chat,
+        }
+
+        start_time = time.time()
+        while current_node in self.edges:
+            component = self.components.get(current_node)
+            if component is None:
+                raise ValueError(f"Component '{current_node}' not found in workflow definition")
+            data.update(component.execute(data))
+            if current_node == self.end_node:
+                break
+            current_node = self.edges[current_node]
+        end_time = time.time()
+
+        if current_node != self.end_node:
+            raise ValueError(f"Reached end component '{current_node}' which is not defined end '{self.end_node}'")
+        else:
+            return data.get("response"), float(end_time - start_time) # TODO: see how to make this presentable in a useful way
 
     def _resolve_component_path(self, path: list[str]) -> Type[AbstractComponent]:
         """
