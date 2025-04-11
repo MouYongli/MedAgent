@@ -11,7 +11,7 @@ interface ChatLayoutProps {
 const ChatLayout: React.FC<ChatLayoutProps> = ({ children }) => {
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-      {/* Left Sidebar */}
+      {/* 左侧 Sidebar */}
       <Box
         component="aside"
         sx={{
@@ -23,7 +23,7 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({ children }) => {
         <ChatSidebar />
       </Box>
 
-      {/* Right Content Area */}
+      {/* 右侧内容区域 */}
       <Box
         component="main"
         sx={{
@@ -41,3 +41,4 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({ children }) => {
 };
 
 export default ChatLayout;
+

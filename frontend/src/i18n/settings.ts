@@ -1,3 +1,5 @@
+import { getAvailableLanguages } from './utils';
+
 export const fallbackLng = 'en'
 export const languages = ['en', 'zh', 'de']
 export const defaultNS = 'common'
