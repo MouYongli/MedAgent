@@ -16,6 +16,7 @@ conda activate medagent || {
 # Start backend service
 echo "Starting backend service..."
 cd backend
+conda activate medagent
 pip install -e . >/dev/null 2>&1
 python -m uvicorn app.main:app --reload &
 BACKEND_PID=$!
