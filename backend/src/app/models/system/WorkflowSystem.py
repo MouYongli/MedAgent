@@ -10,8 +10,8 @@ class WorkflowSystem:
     A modular, pluggable RAG workflow built from components defined in a node-based config structure.
     """
 
-    def __init__(self, config: Dict[str, Any]):
-        self.id = str(uuid.uuid4())
+    def __init__(self, wf_id: str, config: Dict[str, Any]):
+        self.id = wf_id
         self.components: Dict[str, AbstractComponent] = {}
         self.edges: Dict[str, str] = {}
 

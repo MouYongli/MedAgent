@@ -27,7 +27,10 @@ class AskResponse(BaseModel):
 
 @router.post("/init", response_model=InitChatResponse)
 async def init_chat(request: InitChatRequest):
+    # This will raise an HTTPException 404 if the workflow ID does not exist
     workflow = get_workflow(request.workflow_id)
+    if not workflow:
+        raise HTTPException(status_code=404, detail=f"Workflow ID {request.workflow_id} not found")
     chat = Chat(system=workflow)
     chat_sessions[chat.id] = chat
 
