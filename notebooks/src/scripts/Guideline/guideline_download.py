@@ -160,8 +160,8 @@ def run_guideline_downloader(pdf_output_folder, text_output_folder, file, guidel
     if not os.path.exists(file):
         raise FileNotFoundError(f"File {file} does not exist.")
 
-    with open(file, 'r', encoding='utf-8') as file:
-        metadata_entries = json.load(file)
+    with open(file, 'r', encoding='utf-8') as json_file:
+        metadata_entries = json.load(json_file)
         metadata_objects = [GuidelineMetadata.from_dict(entry) for entry in metadata_entries]
 
     updated_metadata = []

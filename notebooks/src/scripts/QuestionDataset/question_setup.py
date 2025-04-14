@@ -52,9 +52,6 @@ def insert_csv_entry_to_db(dbi, entry):
     - Overwrites answer for an existing question if needed.
     - Updates question metadata (e.g., classification) if inconsistent.
     """
-    print(repr(entry.get("Question")))
-    print(repr(entry.get("Answer")))
-
     # --- Step 1: get all values, check if they are valid
     question_text = str(entry.get("Question")).strip()
     if not question_text:
@@ -64,8 +61,7 @@ def insert_csv_entry_to_db(dbi, entry):
     supercategory_str = str(entry.get("Question supercategory")).strip()
     subcategory_str = str(entry.get("Question subcategory")).strip()
     answer_text = str(entry.get("Answer")).strip() if pd.notna(entry.get("Answer")) else None
-    guideline_awmf_number = str(entry.get("Answer Guideline")).strip() if pd.notna(
-        entry.get("Answer Guideline")) else None
+    guideline_awmf_number = str(entry.get("Answer Guideline")).strip() if pd.notna(entry.get("Answer Guideline")) else None
     raw_page = entry.get("Answer Gpage")
     guideline_page = int(str(raw_page).strip()) if (pd.notna(raw_page) and str(raw_page).strip().isdigit()) else None
 
@@ -107,11 +103,8 @@ def insert_csv_entry_to_db(dbi, entry):
     if not answer_text:
         return  # No answer to process
 
-    print(answer_text)
     new_answer = ExpectedAnswer(text=answer_text, guideline_page=guideline_page)
-    print(new_answer.text)
     new_answer_dict = new_answer.as_dict()
-    print(new_answer_dict["text"])
     new_answer_dict["guideline"] = guideline_id
 
     # Check if an identical answer already exists
@@ -120,7 +113,6 @@ def insert_csv_entry_to_db(dbi, entry):
 
     if matched_answer:
         # Update existing answer
-        print(matched_answer["text"])
         dbi.get_collection(CollectionName.CORRECT_ANSWERS).update_one(
             {"_id": matched_answer["_id"]},
             {"$set": new_answer_dict}
