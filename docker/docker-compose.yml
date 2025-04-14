@@ -27,8 +27,9 @@ services:
       - DATABASE_URL=postgres://user:password@postgres-db:5432/mydatabase
       - GRAPH_DB_URL=neo4j://neo4j:7687
       - KEYCLOAK_URL=http://keycloak:8080
-      - MONGO_URL=mongodb://mongo:mongo@mongodb:27017
-#    depends_on:
+      - MONGO_URL=mongodb://mongo:mongo@medagent:27017
+    depends_on:
+      - mongodb
 #      - postgres-db
 #      - neo4j
 #      - keycloak
@@ -46,8 +47,18 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=mongo
     volumes:
       - mongodb-data:/data/db
+      - ./certs:/etc/mongo/certs:ro
+    command: >
+      --tlsMode requireTLS
+      --tlsCertificateKeyFile /etc/mongo/certs/mongo.pem
+    healthcheck:
+      test: [ "CMD", "mongo", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - backend
+
 
 #  # Postgres Database
 #  postgres-db:

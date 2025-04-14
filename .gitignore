@@ -215,3 +215,5 @@ jspm_packages
 .next
 
 *copy*
+/notebooks/nbs/output/
+/notebooks/nbs/input/

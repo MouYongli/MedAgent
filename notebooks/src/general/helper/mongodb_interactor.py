@@ -24,7 +24,7 @@ class CollectionName(str, Enum):
 
 class MongoDBInterface:
     def __init__(self, uri: str, db_name: str = "nb_document_store"):
-        self.client = MongoClient(uri)
+        self.client = MongoClient(uri, serverSelectionTimeoutMS=5000)
         self.db = self.client[db_name]
         self.collections = {}
 

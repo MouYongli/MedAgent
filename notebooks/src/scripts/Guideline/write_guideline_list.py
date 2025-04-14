@@ -91,7 +91,8 @@ def extract_guideline_metadata(driver, url) -> Optional[GuidelineMetadata]:
         try:
             keywords += find_keywords()
         except Exception as e:
-            logger.warning(f"Could not extract keywords: {e}")
+            logger.warning(f"Could not extract keywords")
+            # logger.warning(e)
         # logger.note("Extracted the following keywords: %s", keywords)
 
         return GuidelineMetadata(
