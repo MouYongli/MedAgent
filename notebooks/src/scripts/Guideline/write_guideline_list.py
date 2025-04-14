@@ -1,4 +1,7 @@
 import json
+import re
+import shutil
+import subprocess
 import time
 from typing import Optional
 
@@ -23,7 +26,7 @@ def extract_guideline_metadata(driver, url) -> Optional[GuidelineMetadata]:
             EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Download')]"))
         )
         pdf_link = download_element.get_attribute('href')
-        # logger.note("Extracted link: %s", pdf_link)
+        logger.note("Extracted link: %s", pdf_link)
 
         # find the contributing organization (primary / leading and other)
         def find_contained_organization_labels(col_label_text):
@@ -108,11 +111,23 @@ def find_guideline_sides(driver, url):
         driver.get(url)
         wait = WebDriverWait(driver, 30)
 
-        # Get the expected number of guidelines from the "Treffer" text
-        expected_text = wait.until(
-            EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Treffer')]"))
-        ).text
-        expected_number_guidelines = int(expected_text.split(" ")[0])
+        try:
+            expected_text = WebDriverWait(driver, 10).until(
+                lambda d: (t := d.find_element(By.XPATH, "//*[contains(text(), 'Treffer')]")).text.strip() or None
+            )
+            logger.info(f"Found Treffer text: '{expected_text}'")
+
+            # Use regex to extract the first number in the text
+            match = re.search(r"\d+", expected_text)
+            if match:
+                expected_number_guidelines = int(match.group())
+            else:
+                logger.error("Could not extract number of guidelines from Treffer text.")
+                raise ValueError("Need to find guidelines")
+
+        except Exception as e:
+            logger.error("An error occurred in find_guideline_sides")
+            raise e
 
         guideline_links = set()  # Use a set to avoid duplicates
 
@@ -160,9 +175,14 @@ def setup():
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
 
-    # Path to your ChromeDriver
-    # Download from here: https://googlechromelabs.github.io/chrome-for-testing/#stable
-    webdriver_service = Service("C:/Users/m/Documents/chromedriver-win64/chromedriver.exe")  # Update this path
+    def ensure_chromedriver_installed():
+        if shutil.which("chromedriver") is None:
+            print("Installing chromedriver...")
+            subprocess.run(["apt", "update"], check=True)
+            subprocess.run(["apt", "install", "-y", "chromium-driver"], check=True)
+
+    ensure_chromedriver_installed()
+    webdriver_service = Service("/usr/bin/chromedriver")
 
     # Initialize the WebDriver
     driver = webdriver.Chrome(service=webdriver_service, options=chrome_options)
