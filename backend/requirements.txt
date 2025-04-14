@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+sqlalchemy
+pydantic
+python-multipart
+pydantic[email]
+passlib[bcrypt]
+python-jose[cryptography]
+openai~=1.70.0

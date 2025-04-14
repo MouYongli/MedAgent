@@ -37,13 +37,14 @@ const DashboardSidebar: React.FC = () => {
       {items.map((item) => (
         <ListItem
           key={item.key}
-          button
+          component="div"
+          {...({ button: true } as any)}
           selected={selectedKey === item.key}
           onClick={() => handleItemClick(item.key)}
           sx={{
             '&.Mui-selected': {
               backgroundColor: 'action.selected',
-            }
+            },
           }}
         >
           <ListItemIcon>{item.icon}</ListItemIcon>
