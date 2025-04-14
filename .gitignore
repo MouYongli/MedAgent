@@ -1,5 +1,3 @@
-../master-thesis-meret-unbehaun/Code/.local-env
-
 ############################################# Python #############################################
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -217,3 +215,5 @@ jspm_packages
 *copy*
 /notebooks/nbs/output/
 /notebooks/nbs/input/
+
+/notebooks/.local-env
