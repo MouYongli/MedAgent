@@ -24,7 +24,22 @@ What you'll find in this README
 
 
 ## How to Run
+You can run the notebooks inside a Docker container using the provided Conda environment:
 
+0. Ensure the docker compose from the main project is running. We require access to both the MongoDB this starts AND the Backend API.
+
+1. Build the container:
+   ```bash
+   cd docker
+   docker build -t jupyter-medagent .
+   ```
+
+2. Run it
+   ```bash
+   docker run -d -p 8888:8888 -v ${PWD}/../:/workspace --name jupyter-medagent-container jupyter-medagent
+   ``` 
+
+3. Access notebooks under http://localhost:8888/lab/tree/nbs
 
 
 ## Transform to frontend

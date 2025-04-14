@@ -27,59 +27,77 @@ services:
       - DATABASE_URL=postgres://user:password@postgres-db:5432/mydatabase
       - GRAPH_DB_URL=neo4j://neo4j:7687
       - KEYCLOAK_URL=http://keycloak:8080
-    depends_on:
-      - postgres-db
-      - neo4j
-      - keycloak
+      - MONGO_URL=mongodb://mongo:mongo@mongodb:27017
+#    depends_on:
+#      - postgres-db
+#      - neo4j
+#      - keycloak
     networks:
       - backend
 
-  # Postgres Database
-  postgres-db:
-    image: postgres:13
-    container_name: medagent-postgres-db
-    environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=mydatabase
+  # MongoDB Database
+  mongodb:
+    image: mongo:6.0
+    container_name: medagent-mongodb
     ports:
-      - "5432:5432"
-    networks:
-      - backend
-
-  # Vector Database (example: Faiss)
-  #vector-db:
-  #  image: some-vector-db-image
-  #  container_name: vector-db
-  #  ports:
-  #    - "5001:5001"
-  #  networks:
-  #    - backend
-
-  # Neo4j Graph Database
-  neo4j:
-    image: neo4j:4.3
-    container_name: medagent-neo4j
+      - "27017:27017"
     environment:
-      - NEO4J_AUTH=neo4j/password
-    ports:
-      - "7687:7687"
-      - "7474:7474"
+      - MONGO_INITDB_ROOT_USERNAME=mongo
+      - MONGO_INITDB_ROOT_PASSWORD=mongo
+    volumes:
+      - mongodb-data:/data/db
     networks:
       - backend
 
-  # Keycloak (Authenticator)
-  keycloak:
-    image: quay.io/keycloak/keycloak:latest
-    container_name: medagent-keycloak
-    environment:
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=admin
-    ports:
-      - "8080:8080"
-    networks:
-      - backend
+#  # Postgres Database
+#  postgres-db:
+#    image: postgres:13
+#    container_name: medagent-postgres-db
+#    environment:
+#      - POSTGRES_USER=user
+#      - POSTGRES_PASSWORD=password
+#      - POSTGRES_DB=mydatabase
+#    ports:
+#      - "5432:5432"
+#    networks:
+#      - backend
+#
+#  # Vector Database (example: Faiss)
+#  vector-db:
+#    image: some-vector-db-image
+#    container_name: vector-db
+#    ports:
+#      - "5001:5001"
+#    networks:
+#      - backend
+#
+#  # Neo4j Graph Database
+#  neo4j:
+#    image: neo4j:4.3
+#    container_name: medagent-neo4j
+#    environment:
+#      - NEO4J_AUTH=neo4j/password
+#    ports:
+#      - "7687:7687"
+#      - "7474:7474"
+#    networks:
+#      - backend
+#
+#  # Keycloak (Authenticator)
+#  keycloak:
+#    image: quay.io/keycloak/keycloak:latest
+#    container_name: medagent-keycloak
+#    environment:
+#      - KEYCLOAK_USER=admin
+#      - KEYCLOAK_PASSWORD=admin
+#    ports:
+#      - "8080:8080"
+#    networks:
+#      - backend
 
 networks:
   backend:
     driver: bridge
+
+volumes:
+  mongodb-data:
