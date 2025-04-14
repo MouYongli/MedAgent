@@ -1,5 +1,3 @@
-
-
 ############################################# Python #############################################
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -215,3 +213,7 @@ jspm_packages
 .next
 
 *copy*
+/notebooks/nbs/output/
+/notebooks/nbs/input/
+
+/notebooks/.local-env

@@ -51,17 +51,18 @@ Role-based Interactions: The system is designed to serve two primary user roles:
 
 ## Components
 
-- Frontend (Next.js): The user interface is built with Next.js, providing a modern, responsive, and fast application where doctors can input queries, review recommendations, and interact with the AI-powered assistant. The frontend communicates with the backend (Flask) to handle the logic and AI operations.
+- Frontend (Next.js): The user interface is built with Next.js, providing a modern, responsive, and fast application where doctors can input queries, review recommendations, and interact with the AI-powered assistant. The frontend communicates with the backend to handle the logic and AI operations.
 
-- Backend (Flask): The backend is built with Flask, handling API requests, interacting with databases, running AI models, and serving the AI-generated guidelines and recommendations to the frontend.
+- Backend (FastAPI): The backend is built with FastAPI, handling API requests, interacting with databases, running AI models, and serving the AI-generated guidelines and recommendations to the frontend.
   
 - Databases:
-  - Postgres is used to store and manage structured medical data.
+  - MongoDB and Postgres is used to store and manage study data, user interactions, and structured medical data.
   - Neo4j (Graph Database) is used for knowledge representation, allowing the system to model medical relationships, such as drug interactions or disease pathways.
   - Vector Database (e.g., FAISS or similar) is employed to store and query embeddings of medical guidelines and knowledge for efficient retrieval.
 
 - Authentication & Security: The system uses Keycloak for secure authentication and user management. This ensures that only authorized personnel (e.g., doctors and developers) can access the system and modify sensitive data.
 
+- **Notebooks** is temporarily added as a start for trying out the backend API and demonstrating the intended study performed during the interactive development proces
 
 
 ## Installation

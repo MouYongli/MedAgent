@@ -1,0 +1,24 @@
+# update conda with conda activate manual-medagent
+# conda env update --file environment.yml --prune
+
+name: manual-medagent
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.10
+  - jupyterlab
+  - notebook
+  - selenium
+  - pandas
+  - plotly
+  - pymongo
+  - pypdf2
+  - requests
+  - pip
+  - pip:
+    - kaleido
+    - ipywidgets
+    - python-dotenv
+    - openai
+    - markdown
