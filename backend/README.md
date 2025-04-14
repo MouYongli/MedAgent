@@ -40,43 +40,37 @@ python -m uvicorn app.main:app --reload
 ## API Documentation
 
 ### Overview
-- Base URL: `http://127.0.0.1:8000/api/knowledge/pdf/`
 
-### API Endpoints Description
+- **Base URL**: `http://127.0.0.1:8000/api`
 
-#### 1. List all PDF files
+|        Category | Method | Endpoint                       | Description                                 |
+|----------------:|--------|---------------------------------|---------------------------------------------|
+|  Knowledge Base | `GET`  | `/knowledge/pdf/`           | List all available PDF files                |
+|        Workflow | `POST` | `/workflow/init`               | Initialize a new workflow from config       |
+|        Workflow | `GET`  | `/workflow/list`               | List all active workflow instances          |
+|            Chat | `POST` | `/chat/init`                   | Create a new chat session                   |
+|            Chat | `GET`  | `/chat/list`                   | List all active chat sessions               |
+|            Chat | `POST` | `/chat/{chat_id}/ask`          | Ask a question in a specific chat session   |
+
+### Details
+
+#### List all PDFs: `GET /api/knowledge/pdf/`
+##### Example Request
 ```http
 GET /api/knowledge/pdf/
 ```
 
-**Example Response:**
+##### Example Response
 ```json
 ["file1.pdf", "file2.pdf"]
 ```
 
-**Curl Example:**
+##### Curl Example
 ```bash
 curl http://127.0.0.1:8000/api/knowledge/pdf/
 ```
 
-### Notes
-1. File Storage
-   - All PDF files are stored in the backend `data` directory
-   - The directory is automatically created when the service starts
-
-2. File Restrictions
-   - Only `.pdf` files are supported
-   - Filenames should not contain special characters
-   - English filenames are recommended
-
----
-
-## Overview API
-
-| Core Category | Method | Endpoint              | Description                                |
-|:--------------|--------|-----------------------|--------------------------------------------|
-| Workflow      | POST   | `/workflow/init`      | Initialize a new workflow from JSON config |
-| Workflow      | GET    | `/workflow/list`      | List all active workflow instances         |
-| Chat          | POST   | `/chat/init`          | Create a new chat for a given workflow     |
-| Chat          | GET    | `/chat/list`          | List all active chat sessions              |
-| Chat          | POST   | `/chat/{chat_id}/ask` | Pose a question to a specific chat         |
+##### Notes
+- Only `.pdf` files are supported.
+- Filenames should be in English and not contain special characters.
+- The `data/` directory is automatically created at startup.
