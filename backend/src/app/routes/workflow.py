@@ -23,6 +23,7 @@ async def init_workflow(request: InitWorkflowRequest):
     workflow_id = request.workflow_id or str(uuid4())
 
     if workflow_id in workflow_instances:
+        print(f"Workflow id {workflow_id} already exists")
         raise HTTPException(status_code=400, detail=f"Workflow ID '{workflow_id}' already exists")
 
     system = WorkflowSystem(wf_id=workflow_id, config=request.config)

@@ -1,20 +1,17 @@
+import re
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Dict, Any, Type, Optional
+from typing import Dict, Any, Type, Optional
 from app.models.components.AbstractComponent import AbstractComponent
-
-if TYPE_CHECKING:
-    from app.models.chat import Chat
 
 
 class Generator(AbstractComponent, variant_name="generator"):
     variants: Dict[str, Type['Generator']] = {}
     default_parameters: Dict[str, Any] = {
-        "max_tokens": 256,
-        "temperature": 0.7
+        "prompt": "{start.current_user_input}"
     }
 
-    def __init__(self, name: str, inputs: Dict[str, Any], outputs: Dict[str, Any], parameters: Dict[str, Any], variant: str = None):
-        super().__init__(name, inputs, outputs, parameters, variant)
+    def __init__(self, id: str, name: str, parameters: Dict[str, Any], variant: str = None):
+        super().__init__(id, name, parameters, variant)
 
     def __init_subclass__(cls, variant_name: Optional[str] = None, **kwargs):
         super().__init_subclass__(**kwargs)
@@ -22,18 +19,53 @@ class Generator(AbstractComponent, variant_name="generator"):
             Generator.variants[variant_name] = cls
 
     @classmethod
-    @abstractmethod
     def get_init_parameters(cls) -> Dict[str, Dict[str, Any]]:
-        pass
+        return {
+            "prompt": {
+                "type": "string",
+                "description": "Prompt template with placeholders resolved before generation"
+            }
+        }
+
+    @classmethod
+    def get_input_spec(cls) -> Dict[str, Dict[str, Any]]:
+        return {
+            "start.chat.current_user_input": {
+                "type": "string",
+                "description": "Latest user message content from the chat context under the 'start' namespace (or whatever the name of the respective component is)"
+            }
+        }
+
+    @classmethod
+    def get_output_spec(cls) -> Dict[str, Dict[str, Any]]:
+        return {
+            "generator.response": {
+                "type": "string",
+                "description": "Generated response string based on the resolved prompt under the 'generator' namespace (or whatever the name of the component is)"
+            }
+        }
 
     @abstractmethod
-    def generate_response(self, conversation: "Chat") -> str:
+    def generate_response(self, prompt: str) -> str:
         pass
 
     @abstractmethod
     def get_model_info(self) -> Dict[str, Any]:
         pass
 
+    @staticmethod
+    def resolve_prompt(template: str, context: Dict[str, Any]) -> str:
+        def replacer(match):
+            key_path = match.group(1)
+            try:
+                return str(AbstractComponent.resolve_data_path(key_path, context))
+            except Exception as e:
+                return f"<Error resolving {key_path}: {e}>"
+
+        return re.sub(r"\{(.*?)\}", replacer, template)
+
     def execute(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        chat: "Chat" = data["chat"]
-        return {"response": self.generate_response(chat)}
+        prompt_template = self.parameters.get("prompt", self.default_parameters.get("prompt"))
+        prompt = self.resolve_prompt(prompt_template, data)
+        data[self.id] = {"response": self.generate_response(prompt)}
+        return data

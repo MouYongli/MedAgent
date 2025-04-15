@@ -47,10 +47,6 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=mongo
     volumes:
       - mongodb-data:/data/db
-      - ./certs:/etc/mongo/certs:ro
-    command: >
-      --tlsMode requireTLS
-      --tlsCertificateKeyFile /etc/mongo/certs/mongo.pem
     healthcheck:
       test: [ "CMD", "mongo", "--eval", "db.adminCommand('ping')" ]
       interval: 10s

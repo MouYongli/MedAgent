@@ -27,9 +27,8 @@ class WorkflowSystem:
             variant_cls = self._resolve_component_path(path)
 
             component = variant_cls(
+                id=node_id,
                 name=node_config["name"],
-                inputs=node_config.get("inputs", {}),
-                outputs=node_config.get("outputs", {}),
                 parameters=node_config.get("parameters", {}),
                 variant=path[-1]
             )
@@ -45,8 +44,11 @@ class WorkflowSystem:
 
             self.edges[source] = target
 
+        print(edges)
         if "start" not in self.edges:
             raise ValueError("No 'start' node defined in edges.")
+        if "end" not in self.edges.values():
+            raise ValueError("No 'end' node defined in edges.")
 
         self.start_node, self.end_node = "start", "end"
 
@@ -60,20 +62,26 @@ class WorkflowSystem:
         }
 
         start_time = time.time()
-        while current_node in self.edges:
+        while True:
             component = self.components.get(current_node)
             if component is None:
                 raise ValueError(f"Component '{current_node}' not found in workflow definition")
             data.update(component.execute(data))
+
             if current_node == self.end_node:
                 break
+            if current_node not in self.edges:
+                raise ValueError(f"No outgoing edge found for node '{current_node}', and it's not the end node.")
+
             current_node = self.edges[current_node]
+
         end_time = time.time()
 
         if current_node != self.end_node:
             raise ValueError(f"Reached end component '{current_node}' which is not defined end '{self.end_node}'")
         else:
-            return data.get("response"), float(end_time - start_time) # TODO: see how to make this presentable in a useful way
+            response = AbstractComponent.resolve_data_path("end.response", data)
+            return response, float(end_time - start_time) # TODO: see how to make this presentable in a useful way
 
     def _resolve_component_path(self, path: list[str]) -> Type[AbstractComponent]:
         """
