@@ -1,8 +1,10 @@
+import logging
 import re
 from abc import abstractmethod
 from typing import Dict, Any, Type, Optional
 from app.models.components.AbstractComponent import AbstractComponent
 
+logging.basicConfig(level=logging.INFO)
 
 class Generator(AbstractComponent, variant_name="generator"):
     variants: Dict[str, Type['Generator']] = {}
@@ -55,14 +57,21 @@ class Generator(AbstractComponent, variant_name="generator"):
 
     @staticmethod
     def resolve_prompt(template: str, context: Dict[str, Any]) -> str:
+        logging.info(f"[PromptResolver] Resolving prompt template:\n{template}")
+
         def replacer(match):
             key_path = match.group(1)
             try:
-                return str(AbstractComponent.resolve_data_path(key_path, context))
+                value = AbstractComponent.resolve_data_path(key_path, context)
+                logging.debug(f"[PromptResolver] Resolved {key_path} -> {value}")
+                return str(value)
             except Exception as e:
+                logging.error(f"[PromptResolver] Error resolving '{key_path}': {e}")
                 return f"<Error resolving {key_path}: {e}>"
 
-        return re.sub(r"\{(.*?)\}", replacer, template)
+        resolved = re.sub(r"\{(.*?)\}", replacer, template)
+        logging.info(f"[PromptResolver] Resolved prompt:\n{resolved}")
+        return resolved
 
     def execute(self, data: Dict[str, Any]) -> Dict[str, Any]:
         prompt_template = self.parameters.get("prompt", self.default_parameters.get("prompt"))

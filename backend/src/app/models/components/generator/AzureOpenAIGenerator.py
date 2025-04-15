@@ -1,13 +1,12 @@
+import logging
+
 from openai import AzureOpenAI
 import os
-from typing import Dict, Any, TYPE_CHECKING
-
-from openai.types.chat import ChatCompletionMessageParam
+from typing import Dict, Any
 
 from app.models.components.generator.Generator import Generator
 
-if TYPE_CHECKING:
-    from app.models.chat import Chat
+logging.basicConfig(level=logging.INFO)
 
 class AzureOpenAIGenerator(Generator, variant_name="azure_openai"):
     default_parameters: Dict[str, Any] = {
@@ -31,21 +30,34 @@ class AzureOpenAIGenerator(Generator, variant_name="azure_openai"):
         self.chat_history = []
 
     def generate_response(self, prompt: str) -> str:
+        logging.info(f"[AzureOpenAIGenerator] Prompt:\n{prompt}")
+
         self.chat_history.append({
             "role": "user",
             "content": prompt
         })
-        response = self.client.chat.completions.create(
-            model=self.parameters["deployment_name"],
-            messages=self.chat_history,
-            temperature=self.parameters["temperature"],
-            max_tokens=self.parameters["max_tokens"]
-        )
-        response_text = response.choices[0].message.content
+
+        try:
+            response = self.client.chat.completions.create(
+                model=self.parameters["deployment_name"],
+                messages=self.chat_history,
+                temperature=self.parameters["temperature"],
+                max_tokens=self.parameters["max_tokens"]
+            )
+            response_text = response.choices[0].message.content
+        except Exception as e:
+            logging.error(f"[AzureOpenAIGenerator] API call failed: {e}")
+            raise
+
+        logging.info(f"[AzureOpenAIGenerator] Response:\n{response_text}")
+
         self.chat_history.append({
             "role": "assistant",
             "content": response_text
         })
+
+        logging.debug(f"[AzureOpenAIGenerator] Full Chat History:\n{self.chat_history}")
+
         return response_text
 
     def get_model_info(self) -> Dict[str, Any]:

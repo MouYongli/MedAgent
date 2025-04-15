@@ -1,0 +1,41 @@
+{
+    "name": "Generator Only Azure GPT",
+    "nodes": [
+        {
+            "id": "start",
+            "type": "start",
+            "name": "Start node",
+            "parameters": {}
+        }, {
+            "id": "generator",
+            "type": "generator/azure_openai",
+            "name": "Azure Generator",
+            "parameters": {
+                "api_key": "${AZURE_OPENAI_API_KEY}",
+                "api_base": "${AZURE_OPENAI_API_BASE}",
+                "api_type": "${AZURE_OPENAI_API_TYPE}",
+                "api_version": "${AZURE_OPENAI_API_VERSION}",
+                "deployment_name": "${AZURE_OPENAI_DEPLOYMENT_NAME}",
+                "temperature": 0.7,
+                "max_tokens": 1024
+            }
+        }, {
+            "id": "end",
+            "type": "end",
+            "name": "End node",
+            "parameters": {
+                "return_key": "generator.response"
+            }
+        }
+    ],
+    "edges": [
+        {
+            "source": "start",
+            "target": "generator"
+        },
+        {
+            "source": "generator",
+            "target": "end"
+        }
+    ]
+}

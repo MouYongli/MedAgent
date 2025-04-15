@@ -214,6 +214,5 @@ jspm_packages
 
 *copy*
 /notebooks/nbs/output/
-/notebooks/nbs/input/
 
 /notebooks/.local-env

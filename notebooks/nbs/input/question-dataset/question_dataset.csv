@@ -1,0 +1,217 @@
+Question supercategory,Question subcategory,Question,Answer ID,Answer Guideline,Answer Gpage,Answer,Comment
+Simple,Text,Wann ist die dreidimensionale Bildgebung bei der Entfernung von Weisheitszähnen indiziert?,0.1,007-003,16,"Eine dreidimensionale Bildgebung (beispielsweise DVT/CT) kann indiziert sein, wenn in der konventionellen zweidimensionalen Bildgebung Hinweise auf eine unmittelbare Lagebeziehung zu Risikostrukturen oder pathologischen Vera?nderungen vorhanden sind und gleichzeitig aus Sicht des Behandlers weitere ra?umliche Informationen entweder fu?r die Risikoaufkla?rung des Patienten, Eingriffsplanung oder auch fu?r die intraoperative Orientierung erforderlich sind.",Beispielfrage
+Simple,Text,Welche Untersuchungen sind Notwenig für eine angemessene Therapienentscheidung?  ,1.1,007-003,9,"Allgemeine und spezielle Anamnese 
+Inspektion ggf. Palpation 
+Ro?ntgenuntersuchung unter vollsta?ndiger Darstellung des Zahnes und Darstellung der 
+relevanten umgebenden anatomischen Strukturen ",Diagnostik
+Simple,Text,Welche Symptome können im Zusammenhang mit Weisheitszähne vorkommen? ,2.1,007-003,8,"Perikoronare Infektion 
+Erweiterung des radiologischen Perikoronarraumes 
+Perikoronare Auftreibung (beispielsweise durch Zystenbildung) 
+Schmerzen/Spannungsgefu?hl im Kiefer-Gesichtsbereich 
+Parodontale Scha?den, insbesondere distal an 12-Jahr Molaren 
+Resorptionen an Nachbarza?hnen (siehe Hintergrundtext unter 9.2) 
+Elongation/Kippung 
+kario?se Zersto?rung/Pulpitis ",Diagnostik
+Complex,Multiple sections,Welche Chirurgischen Therapien werden zur Weisheitszahnentfernung angewendet?,3.1,007-003,10,"Operative Therapie:
+-Inzision und Drainage 
+-Chirurgische Freilegung 
+-Chirurgische Entfernung 
+-Intentionelle chirurgische Teilentfernung (Koronektomie) in Ausnahmefa?llen bei hohem 
+Risiko von Nervscha?den  
+-Transplantation",Multiple sections 
+Complex,Multiple sections,Welche Chirurgischen Therapien werden zur Weisheitszahnentfernung angewendet?,3.2,007-003,19,"Weitere Maßnahmen: 
+-Koronektomie:  bei hohem Risiko einer Verletzung des N. alveolaris inferior auf die vollsta?ndige Wurzelentfernung zu verzichten und allein die Krone und das Follikelgewebe des Weisheitszahnes als Ursache der Perikoronitis zu beseitigen. 
+-Piezo-Osteotomie: Vorteile der Piezochirurgie bei Schmerzbelastung, Mundo?ffnung, Schwellung, aber auch signifikant längere Operationszeiten gegenüber konventionellen Osteotomie- Techniken  ",Multiple sections 
+Simple,Text,Welche konservativen Therapien werden zur Weisheitszahnentfernung angewendet? ,4.1,007-003,10,"Konservative Therapie: 
+-lokale antiseptische Maßnahmen bei akuten Entzündungen 
+-Antibiotikatherapie bei akuten Infektionen mit Ausbreitungstendenz ",Therapie
+Simple,Text,Was sind mögliche Komplikationen aus dem Belassen der Weisheitszähne? ,5.1,007-003,12,"Mögliche Komplikationen beim Belassen von Weisheitszähnen sind Infektionen aufgrund von Perikoronitis, Resorptionen an benachbarten Zähnen, parodontale Schädigungen des benachbarten zweiten Molaren sowie kariöse Defekte am Weisheitszahn oder den Nachbarzähnen.   ",Komplikationen
+Simple,Text,Welche Röntgenuntersuchungen können im Einzellfall hilfreich für die vollständigen Darstellung des Weisheitszahnes und den umgebenden Strukturen sein? ,6.1,007-003,9,"Digitale Volumentomographie oder Computertomographie bei kritischer Lagebeziehung des 
+Zahnes zur umgebenden Struktur, insbesondere zum N. alveolaris inferior (siehe 
+Hintergrundtext unter 9.1) ",Differentialdiagnostik
+Simple,Text,Welche Bildgebende Diagnostik kann für den Nachweis einer odontogenen Infektion verwendet werden und welche weitere Methode kann bei einer odontogenen Infektion mit Ausbreitungstendens trotz angemessener Therapie durchgeführt werden?,7.1,007-006,17,"Ultraschalluntersuchung stellt eine einfache und effiziente Methode dar, um eine Einschmelzung einer odontogenen Infektion nachzuweisen und eine mo?gliche Ausbreitungstendenz der odontogenen Infektion einzuscha?tzen.
+Bei weiterem Fortschreiten der Infektion und/oder wenn keine Verbesserungen der klinischen Symptome und/oder der Entzu?ndungsparameter nachzuweisen sind, stellt die Schichtbildgebung eine Mo?glichkeit zur weiterfu?hrenden Diagnostik und eventuell zur Verlaufskontrolle der odontogenen Infektion dar. Die Computertomographie, aber auch die digitale Volumentomographie, die Magnetresonanztomographie, und die Szintigrahphie sind in der Literatur zur weiterfu?hrenden Diagnostik beschrieben ",Diagnostik
+Simple,Text,Bei welchen klinischen Zeichen ist eine Ausbreitungstendenz der odontogene Infektion wahrscheinlich? ,8.1,007-006,16,"Treten bei Patienten mit einer odontogenen Infektion z.B. eine extraorale Schwellung, Schluckbeschwerden, eine Kieferklemme, eine kloßige Sprache oder Fieber auf, ist eine Ausbreitungstendenz der odontogenen Infektion wahrscheinlich. Die Mundo?ffnung ist gegebenenfalls eingeschra?nkt, der Mundboden angehoben und/ oder der Unterkiefer nicht mehr durchtastbar. Es kann bereits eine kloßige Sprache und/oder Atemnot bestehen. Druckpunkte retromolar, im Bereich der Vena angularis, retromaxilla?r oder temporal weisen zusa?tzlich auf eine Ausbreitung der odontogenen Infektion hin",Diagnostik
+Simple,Text,Wann könnte bei einer odontogenen Infektion eine Wurzelspitzenresektion indiziert sein? ,9.1,007-006,16,"Sollte der verursachende Zahn bereits endodontisch und stiftprothetisch versorgt sein und, unter Beru?cksichtigung der allgemeinen medizinischen Situation eine Revision nicht mo?glich/sinnvoll sein, so kann nach Inzision und Drainage eine Wurzelspitzenresektion indiziert sein. ",Therapie
+Simple,Text,Wann sollte eine Wurzelkanalbehandlung als Kausaltherapie bei einer odontogenen Infektion durchgeführt werden? ,10.1,007-006,19,"Handelt es sich um einen noch nicht wurzelkanaltherapierten Zahn, kann durch die Trepanation des gangra?no?sen Zahnes mit apikaler Ostitis und/oder Infiltrat und/oder Einschmelzung der Entzu?ndung, sowie die Entfernung des nekrotischen Gewebes die odontogene Infektion zusa?tzlich therapiert werden. 
+-Im Initialstadium der odontogenen Infektion, der apikalen Parodontitis, ist bei mo?glichem Zahnerhalt die Wurzelkanalbehandlung im Sinne einer Kausaltherapie das Mittel der Wahl ",Therapie
+Simple,Text,Welche Risikofaktoren können den Verlauf einer  odontogenen Infektion im Vergleich zu gesunden Patienten beeinflussen? ,11.1,007-006,15,"Bei Patienten mit Diabetes mellitus, mit einer Immunsuppression (z.B. nach Stammzelltransplantation, nach Radiatio, wa?hrend oder nach einer Chemotherapie, mit HIV Infektion oder mit chronischem Alkoholabusus, Drogenabusus, Asthma bronchiale oder bei starken Rauchern (Tabelle 3) kann der Verlauf der odontogenen Infektion von ansonsten gesunden Patienten abweichen. ",Risikofaktoren
+Simple,Text,Welches Antibiotikum hat sich bei einer odontogenen Infektion mit Ausbreitungstendenz als Wirksam erwiesen? ,12.1,007-006,21,"Bei der Verwendung einer kalkulierten Antibiotikatherapie steht die Verwendung des effektivsten und am wenigsten toxischen Antibiotikums im Vordergrund der Therapie 
+•	Penicilline Penicillin G/V und die Aminopenicilline Amoxicillin/Ampicillin zeigen in Studien eine gute Wirksamkeit gegen die odontogenen Infektionen verursachenden Bakterien 
+•	Zur Erfassung der Betalaktamase bildenden Bakterien eignet sich, wenn keine Allergie besteht, Amoxicillin/Clavulansa?ure als das Mittel der Wahl
+•	Clindamycin steht bei Patienten mit einer Penicillinallergie als Alternative zur Verfu?gung 
+•	Moxifloxacin zeigt ebenfalls in Studien eine gute Wirkung in der Therapie der odontogenen Infektionen 
+•	Bei dem vermehrten Einsatz von Fluorchinolonen besteht die Gefahr einer Resistenzentwicklung durch den erho?hten Selektionsdruck und auch die Nebenwirkungsrate ist ho?her als bei den Penicillinen, so dass Moxifloxacin nur als Reserveantibiotikum in Ausnahmefa?llen zur Therapie von odontogenen Infektionen zur Verfu?gung steht. 
+•	Als weitere Option steht bei einer Penicillinallergie Metronidazol und Ciprofloxacin in Kombination zur Verfu?gung 
+•	Bei kritischem Verlauf ko?nnen Carbapeneme eingesetzt werden ",Therapie
+Simple,Recommendation,Wann besteht eine Indikation zur Entfernung von Weisheitszähnen?,13.1,007-003,17,"1.bei akuten oder chronischen Infektionen (Dentitio difficilis) 
+2.bei nicht restaurierfa?higen, kario?s zersto?rten Za?hnen oder nicht behandelbarer Pulpitis 
+3.wenn sich bei Patienten mit unklarem Gesichtsschmerz Hinweise ergeben, dass der 
+Weisheitszahn eine relevante Schmerzursache darstellt 
+4.bei nicht behandelbaren periapikalen Vera?nderungen 
+5.bei manifesten pathologischen Strukturen in Zusammenhang mit Zahnfollikeln (z. B. Zyste, 
+Tumor) oder dem Verdacht auf derartige Vera?nderungen 
+6.im Zusammenhang mit der Behandlung von/und Begrenzung des Fortschreitens von 
+parodontalen Erkrankungen (Siehe Hintergrundtext 9.2) 
+7.bei Za?hnen, die bei der kieferorthopa?dischen und/oder rekonstruktiven Chirurgie sto?ren 
+8.bei Za?hnen im Bruchspalt, die eine Frakturbehandlung erschweren 
+9.bei der Verwendung des Zahnes zur Transplantation ",Empfehlung
+Simple,Recommendation,"Welche möglichen Indikationen können zur Entfernung von Weisheitszähnen bestehen?
+",14.1,007-003,17,"Eine Indikation kann bestehen: 
+1.zur Vereinfachung der kieferorthopa?dischen Zahnbewegungen und/oder zur Erleichterung 
+der kieferorthopa?dischen Retention oder Sicherung einer abgeschlossenen KFO- 
+Behandlung. 
+2.zur prophylaktische Zahnentfernung aus u?bergeordneten, der Lebensfu?hrung 
+zuzuordnenden Gesichtspunkten (z.B. fehlende Verfu?gbarkeit medizinischer Versorgung 
+etc.) 
+3.bei Resorptionen an benachbarten Za?hnen (Siehe Hintergrundtext 9.2) 
+4.bei Pulpaexposition durch Zahnkaries 
+5.Bei Zähnen, die bei einer geplanten prothetischen Versorgung stören, wenn beispielsweise 
+ein sekundärer Durchbruch aufgrund der weiteren Atrophie des Alveolarkammes bzw. 
+aufgrund der Druckbelastung durch herausnehmbaren Zahnersatz zu erwarten steht 
+6.wenn andere Maßnahmen unter Narkose vorgenommen werden und eine erneute Narkose 
+zur Entfernung eines Weisheitszahnes durchgeführt werden müsste 
+7.wenn der elongierte/gekippte Weisheitszahn eine Störung der dynamischen Okklusion 
+darstellt 
+Starker Konsens (6/6) 
+8.Wenn der Weisheitszahn die Ursache einer behandlungsbedürftigen Halitosis darstellt und andere, zahnerhaltende Therapiemaßnahmen nicht erfolgreich waren”  ",Empfehlung
+Simple,Recommendation,Wann sollen Weisheitszähne nicht entfernt werden?  ,15.1,007-003,18,"Eine Indikation zum Belassen von Weisheitsza?hnen besteht, wenn: 
+1.eine kieferorthopa?dische Einordnung des Zahnes geplant ist 
+2.sie fu?r eine prothetische Versorgung genutzt werden sollen
+
+Eine Indikation zum Belassen von Weisheitsza?hnen besteht, wenn: 
+1.eine kieferorthopa?dische Einordnung des Zahnes geplant ist 
+2.sie fu?r eine prothetische Versorgung genutzt werden sollen",Empfehlung
+Simple,Recommendation,Zu welchem Zeitpunkt ist die Weisheitszahnentfernung empfohlen?,16.1,007-003,21,"Wenn eine Indikation zur Entfernung des Weisheitszahnes besteht oder absehbar ist und der Zeitpunkt der Zahnentfernung geplant werden kann, dann sollte diese Weisheitszahnentfernung im Laufe der Entwicklung der Zahnwurzel, möglichst aber vor dem 25. Lebensjahr empfohlen werden",Empfehlung
+Simple,Recommendation,"Welche Ursachen sollten ausgeschlossen werden, wenn keine odontogene Infektion nachgewiesen werden kann? ",17.1,007-006,14,"Kann keine odontogene Ursache nachgewiesen werden, insbesondere wenn nach Inzision kein Eiter fließt oder verla?uft die Therapie nicht ada?quat, sollte eine bakterielle/nicht bakterielle Entzu?ndung oder ein gut oder bo?sartiger Tumor ausgeschlossen werden. ",Empfehlung
+Simple,Recommendation,Was klinischen Untersuchungen sollten vor der klinischen Therapie bei einer odonotogenen Infektion ohne Ausbreitungstendenz durchgeführt werden?,18.1,007-006,15,Was klinischen Untersuchungen sollten vor der klinischen Therapie bei einer odonotogenen Infektion ohne Ausbreitungstendenz durchgeführt werden?,Empfehlung
+Simple,Recommendation,Wann wird eine Antibiotikatherapie bei einer odontogenen Infektion ohne Ausbreitungstungstendenz empfohlen? ,19.1,007-006,18,Wann wird eine Antibiotikatherapie bei einer odontogenen Infektion ohne Ausbreitungstungstendenz empfohlen? ,Empfehlung
+Simple,Text,Ist eine dreidimensionale Bildgebung vor der Entfernung des Weisheitszahns erforderlich?,20.1,007-003,15,"Eine dreidimensionale Bildgebung ist vor einer Weisheitszahnentfernung nicht erforderlich, wenn in der konventionell zweidimensionalen Bildgebung keine Hinweise auf eine besondere Risikosituation vorliegen",Statement
+Complex,Multiple sections,"Wird zu einer antibiotischen Prophylaxe im Rahmen der Weisheitszahnentfernung geraten, wenn ja zu welchem Zeitpunkt ist diese empfohlen?",21.1,007-003,20,"Der Nutzen der antibiotischen Therapie ist umstritten. Es lassen sich sowohl die Befürwortung als auch die Ablehnung einer antibiotischen Prophylaxe wissenschaftlich begründen.   
+-Eine Mehrzahl an Reviews betonen den Nutzen in: der perioperativen antibiotischen Therapie (Reduktion der Häufigkeit alveolärer Ostitiden und Reduktion von Wundinfektionen) 
+-Trotz signifikanter Reduktion infektiöser Komplikationen raten zahlreiche Autoren, wegen der potentieller Resistenzbildungen und Veränderungen im Mikrobiom auch bei kurzzeitiger Gabe nicht zu einer antibiotischen Prophylaxe  ",gleiche Leitlinie
+Complex,Multiple sections,"Wird zu einer antibiotischen Prophylaxe im Rahmen der Weisheitszahnentfernung geraten, wenn ja zu welchem Zeitpunkt ist diese empfohlen",21.2,007-003,21,"1. Eine perioperative antibiotische Prophylaxe kann bei der Weisheitszahnentfernung erfolgen. 
+2. Eine antiphlogistische Prophylaxe kann zur Reduktion der postoperativen Schwellung angewendet werden. ",gleiche Leitlinie (Empfehlung)
+Complex,Multiple sections,"Welche spezifischen klinischen Situationen, die mit manifesten pathologischen Veränderungen oder besonderen anatomischen Gegebenheiten abgesehen von Weisheitszähnen können noch auftreten? ",22.1,007-003,6,"Sonderfälle: Weisheitsza?hne mit manifesten, assoziierten pathologischen Vera?nderungen (Zysten, Tumoren) 
+Za?hne im Bruchspalt 
+Za?hne im Osteotomiegebiet bei geplanter Umstellung des Unterkiefers ",gleiche Leitlinie
+Complex,Multiple sections,"Welche spezifischen klinischen Situationen, die mit manifesten pathologischen Veränderungen oder besonderen anatomischen Gegebenheiten abgesehen von Weisheitszähnen können noch auftreten? ",22.2,007-003,17,"Empfehlung: bei manifesten pathologischen Strukturen in Zusammenhang mit Zahnfollikeln (z. B. Zyste, 
+bei Za?hnen im Bruchspalt, die eine Frakturbehandlung erschweren ",gleiche Leitlinie
+Complex,Substeps,In welchen Kompartimenten werden odontogene Infektionen mit Ausbreitungstendenz am häufigsten beschrieben und was sind mögliche Komplikationen bei der Ausbreitung in weitere Kompartimente? ,23.1,007-006,14,"Ausbreitungen nach submandibula?r, perimandibula?r, pterygomandibula?r und in die Wangen werden am ha?ufigsten beschrieben, allerdings sind oft auch mehrere Logen betroffen 
+- Reduktion des allgemeinen Zustandes, Kopfschmerzen, U?belkeit, Erbrechen, visuellen und sprachlichen Einschra?nkungen und bleibenden Scha?den (z.B.: Ausbreitung u?ber eine dentogene Sinusitis zum Gehirnabszesse) oder zu einer Mediastinitis bis hin zum Tod ",gleiche Leitlinie
+Complex,Multiple sections,Was ist die Therapie der Wahl bei einer odontogenne Infektion mit und ohne Ausbreitungstendenz? ,24.1,007-006,19,"Ohne Ausbreitungstendenz: Inzision und Drainage 
+die chirurgische Intervention durch Inzision einer odontogenen Infektion die Therapie der Wahl dar. Die Einlage eines Drains (z.B.: Gummilasche, Rohr oder Gaze) in die Inzisionswunde ermo?glicht einen Abfluss des Eiters, und durch die Ero?ffnung wird das Gewebe mit Sauerstoff versorgt.  ",gleiche Leitlinie
+Complex,Multiple sections,Was ist die Therapie der Wahl bei einer odontogenne Infektion mit und ohne Ausbreitungstendenz? ,24.2,007-006,21,"Mit Ausbreitungstendenz:
+-Eine mo?glichst schnelle chirurgische Therapie ist Mittel der Wahl, um eine Entlastung und Drainage zu ermo?glichen und einer weiteren Ausbreitung entgegenzuwirken
+- Die Ero?ffnung einer odontogenen Infektion mit Ausbreitungstendenz in Allgemeinana?sthesie ermo?glicht es, eine schmerzfreie Therapie durchzufu?hren
+- Hierbei werden Drains in die betroffenen Logen eingelegt
+-Bei der Ero?ffnung einer odontogenen Infektion: Abstrichnahme, zur mikrobiologischen Erregerdiagnostik und Erstellung eines Antibiograms, eine Anpassung der Antibiotikatherapie bei Bedarf mo?glich. ",gleiche Leitlinie
+Complex,Substeps,Welche Art von Pathologien werden bei rund 20-25% der Zähne festgestellt und welche Diagnostischen Verfahren werden zur Feststellung verwendet? ,25.1,007-003,4,Die Perikoronare Pathologien. Sie werden radiologisch oder histopathologisch bei rund 20-25% der Zähne festgestellt  ,gleiche Leitlinie
+Simple,Table,Welche möglichen Ursachen können zu einer odontogenen Infektion führen? ,26.1,007-006,25,"Karies profunda 
+Asymtomatische / symptomatische Pulpitis, Pulpanekrose nicht kario?sen Ursprungs z.B. Trauma, „cracked tooth Syndrom“ etc. 
+Apikale Parodontitis 
+Paro-Endo-La?sion
+Parodontitis/ Periimplantitis  
+Verlagerte und retinierte Za?hne Infiziertes Augmentationsmaterial  ",Tabelle
+Simple,Image,Wie sollte man odontogenen Infektionen unterteilen? ,27.1,007-006,25,"Abbildung 1: unterscheidung in Infiltrat und lokaler odontogenen Infektionen (z.B. apikale Parodontitis, parodontaler Abszess, submuko?ser Abszess, Fossa canina Abszess). Sowie
+dontogene Infektion mit Ausbreitungstendenz 
+(z.B. submandibula?rer, buccaler, retromaxilla?rer, paramandibula?rer, perimandibula?rer, pterygomandibula?rer, submentaler, pharyngealer, temporaler Logenabszess, Phlegmone) unterteilt in 1. 
+lokalen Komplikationen (Lokale Komplikationen z.B. Osteomyelitis, Sinusitis, Orbitaphlegmone, Abszess der Orbita, Hirnabszess, Luftnot) 
+ 2.systemischen Komplikationen 
+(systemische Komplikationen z.B. Sepsis, Endokarditis, Spondylitis, Mediasteinitis, nekrotisierende Fasciitis, Perikarditis, hypertensive Krise, respiratorische Insuffizienz, Pneumonie, Thrombose der Vena jugularis, disseminierte intravasale Koagulation, Pleuraerguss, caverno?se Sinusthrombose, renale Insuffizienz, Pleuritis, Multiorganversagen, Adult Respiratory Distress Syndrome (ARDS)) ",Abbildung
+Complex,Synonym,Odontogene Infektionen (Keine Einheitliche Nomenklatur),28.1,007-006,13,"Eine einheitliche Nomenklatur besteht nicht. Es werden z.B. die Begriffe Infiltrat, parodontaler Abszess, submuko?ser Abszess, Logenabszess, Logenabszess, der mehrere Logen betrifft, Abszess mit Ausbreitungstendenz, odontogene Infektion und progredient verlaufende Abszesse benutzt. ",Synonym
+Negative ,Outside guidelines,Was ist bei Patienten mit Bestrahlungstherapie bei einer Weisheitszahnentfernung zu tun?  ,29.1,007-003,6,"Zahnentfernungen aus u?bergeordneten medizinischen Gesichtspunkten, (z.B. Patienten mit Bestrahlungsbehandlung (…)) Bei diesen Problemfa?llen kann eine generelle Empfehlung wegen der Variabilita?t und Komplexita?t der medizinischen Gesichtspunkte nicht ausgesprochen werden. ",Außerhalb Leitlinie
+Negative ,False assumption,Inflammatorische Komplikationen steigen besonders ab dem alter von 35 Jahren an,30.1,007-003,16,"
+Wa?hrend die Ha?ufigkeit von inflammatorischen Komplikationen in der Altersgruppe zwischen 18 und 35 Jahren ein Maximum hat und danach mit zunehmendem Lebensalter abnimmt (Fernandes et al. 2009), ergeben sich gleichzeitig mit zunehmendem Alter vermehrt Komplikationen bei der operativen Entfernung (Chuang et al., 2007, Baensch et al. 2017). ",Falsche Annahme
+Negative ,False assumption,Die vollständige Weisheitszahnentfernung erfolgt auch wenn es ein minimales Risiko für eine Nervschädigung gibt,31.1,007-003,10,"Intentionelle chirurgische Teilentfernung (Koronektomie) in Ausnahmefa?llen bei hohem 
+Risiko von Nervscha?den (siehe Hintergrundtext unter 9.3.1) ",Falsche Annahme
+Negative ,False assumption,Es bleibt bei bis zu 60% junger Erwachsener mindestens ein Weisheitszahn im Kiefer verlagert ,32.1,007-003,4,Es bleibt bei bis zu 80% junger Erwachsener mindestens ein Weisheitszahn im Kiefer retiniert ,Falsche Annahme
+Simple,Table,"Zu welchen Ergebnissen sind Arx et al., 2007  zur Wurzelspitzenresektion, bei retrograden Kavität Präparation mit Ultraschallspitzen, gefüllt mit EBA-Zement oder hydraulischer Silikatzement gekommen?",33.1,007-003,13,"Beurteilung pra?diktiver Faktoren, darunter die pra?operativ radiografisch bestimmte Gro?ße der periapikalen La?sion: Erfolgsrate von 87% bei periapikaler La?sion ? 5 mm (n=104) und von 77% bei La?sion > 5 mm (n=70) ",Tabelle
+Complex,Multiple guidelines,"Welche klinischen Symptome und diagnostischen Kriterien kennzeichnen akute und chronische apikale Parodontitis sowie odontogene Infektionen, und welche evidenzbasierten Therapieempfehlungen lassen sich unter Berücksichtigung der relevanten AWMF-Leitlinien ableiten? ",34.1,007-003,10,Antibiotikatherapie bei akuten Infektionen mit Ausbreitungstendenz ,Multiple Guidelines
+Complex,Multiple guidelines,"Welche klinischen Symptome und diagnostischen Kriterien kennzeichnen akute und chronische apikale Parodontitis sowie odontogene Infektionen, und welche evidenzbasierten Therapieempfehlungen lassen sich unter Berücksichtigung der relevanten AWMF-Leitlinien ableiten? ",34.2,007-006,14,"Klinisch steht bei der akuten apikalen Parodontitis die Aufbissempfindlichkeit, bei in der Regel negativen Sensibilita?tstest des betreffenden Zahnes im Vordergrund wa?hrend die chronische apikale Parodontitis durch das Fehlen der klinischen Symptomatik nur radiologisch verifiziert werden kann. Bei fortschreitender Infektion und Weichgewebsbeteiligung treten bei einer odontogenen Infektion die typischen Entzu?ndungszeichen Rubor, Calor, Tumor, Dolor und Functio laesa auf. Abha?ngig von der odontogenen Ursache (Ober-, Unterkiefer, Inzisivi, Canini, Pra?molar oder Molar) zeigen die odontogenen Infektionen lokal unterschiedliche klinische Symptome und unterschiedliche Ausbreitungstendenzen. Bei einem Infiltrat oder einer lokalen odontogenen Infektion kommt es zu einer enoralen Schwellung. Diese entwickelt sich je nach ursa?chlichem Zahn vestibula?r, lingual oder palatinal, imponiert als parodontaler Abszess im krestalen Bereich des Kieferkammes oder breitet sich als Paro-Endo-La?sion oder ausgehend von einer apikalen Parodontitis apikal des ursa?chlichen Zahnes aus. Nicht abgeschlossene endodontische Therapien und Karies profunda steigern hierbei das Risiko der Entwicklung einer odontogenen Infektion.  ",Multiple Guidelines
+Complex,Multiple guidelines,"Welche klinischen Symptome und diagnostischen Kriterien kennzeichnen akute und chronische apikale Parodontitis sowie odontogene Infektionen, und welche evidenzbasierten Therapieempfehlungen lassen sich unter Berücksichtigung der relevanten AWMF-Leitlinien ableiten? ",34.3,007-007,9,"Bei nicht korrelierendem klinischem und radiografischem Befund bzw. bei apikalen La?sionen, die nicht allein aus der Infektion der Wurzelkana?le erkla?rbar sind, sollte nach vertiefender Anamnese eine weitere diagnostische Abkla?rung erfolgen. ",Multiple Guidelines
+Negative ,Outside guidelines,Was umfasst die Anamnese und klinische Untersuchung Diagnostik bei Lumbosakrale infantile Ha?mangiome?,35.1,006-100,8,Sonographie* der Lumbosakralregion und des Urogenitaltraktes; ggf. MRT spinal/Becken,Tabelle-Outsdie OMFS GL
+Simple,Text,Womit kann eine erleichterte Blutstillung gelingen? ,36.1,007-007,24,Eine ausreichende Lokalana?sthesie kann durch das enthaltene Vasokonstringens zu einer erleichterten Blutstillung fu?hren.  ,Technik
+Simple,Recommendation,Wann sollte im Rahmen einer Wurzelspitzenresektion eine weitere diagnostische Abklärung erfolgen? ,37.1,007-007,9,"Bei nicht korrelierendem klinischem und radiografischem Befund bzw. bei apikalen La?sionen, die nicht allein aus der Infektion der Wurzelkana?le erkla?rbar sind, sollte nach vertiefender Anamnese eine weitere diagnostische Abkla?rung erfolgen.  ",Empfehlung
+Complex,Multiple sections,In welchen Fälllen stellt die Antibiotikatherapie eine Substitution für eine WSR dar?,38.1,007-007,16,Die alleinige Antibiotikatherapie stellt keine Substitution fu?r eine WSR dar (siehe auch Empfehlung 6). Als zusa?tzliche Maßnahme kann bei Patienten mit erho?htem lokalem oder allgemeinem Risiko die Behandlung mit einer Antibiotikatherapie begleitet werden.  ,Empfehlung
+Complex,Multiple sections,In welchen Fälllen stellt die Antibiotikatherapie eine Substitution für eine WSR dar?,38.2,007-007,17,"Eine kurzzeitige Antibiotikatherapie kann bei inoperablen Patienten, z. B. mit onkologischer Therapie, Strahlentherapie, Herzklappenersatz oder multimorbiden Patienten vor einer definitiven Therapie erwogen werden. ",Empfehlung
+Simple,Recommendation,Wann kann eine stationäre Behandlung einer Wurzelspitzenresktion indiziert sein?,39.1,007-007,24,"
+Eine stationäre Behandlung kann beispielsweise bei schwerwiegenden Allgemeinerkrankungen oder besonderen OP-Verläufen indiziert sein.",Empfehlung
+Complex,Multiple sections,Unter welchen Indikationen ist eine WSR angezeigt?,40.1,007-007,18,"bei persistierender apikaler Parodontitis, wenn bei der prima?ren endodontischen Aufbereitung die Wurzelkanalmorphologie in Apexna?he so vera?ndert bzw. verletzt wurde, dass eine orthograde Revisionsbehandlung nicht mehr erfolgversprechend erscheint. Dazu geho?ren insbesondere Perforationen, die auf orthogradem Wege nicht verschlossen werden ko?nnen, ausgepra?gte Begradigungen der Wurzelkana?le, nicht auflo?sbare Blockaden des Wurzelkanals mit Debris oder Fu?llmaterialien oder nicht mehr u?berwindbare Stufen. ",gleiche Leitlinie (Empfehlung)
+Complex,Multiple sections,Unter welchen Indikationen ist eine WSR angezeigt?,40.2,007-007,19,"nach Wurzelkanalfu?llung mit u?berpresstem Wurzelkanalfu?llmaterial und klinischer Symptomatik oder Beteiligung von Nachbarstrukturen (Kieferho?hle, Mandibularkanal). Es kann neben der Entfernung des Materials aus operativen Gru?nden auch eine Wurzelspitzenresektion notwendig sein.",gleiche Leitlinie (Empfehlung)
+Complex ,Multiple sections,Unter welchen Indikationen ist eine WSR angezeigt?,40.3,007-007,21,"Bei Wurzelquerfrakturen im apikalen Wurzeldrittel, wenn es zur Infektion 
+des apikalen Fragmentes gekommen ist. Bei Verletzung von Wurzelspitzen im Rahmen chirurgischer Eingriffe in Verbindung mit Wurzelkanalbehandlung (z.B. Zystenentfernung, Probeexzision).",gleiche Leitlinie (Empfehlung)
+Simple ,Text,In welchem Winkel soll die Wurzelspitzenresketion erfolgen?,41.1,007-007,26,Die Resektion der Wurzelspitze soll nahezu rechtwinklig zur Zahnachse erfolgen.,Sondervotum
+Simple,Text,Welche zusätzlichen Hilfsmittel ermöglichen ein mikrochirurgisches Vorgehen?,42.2,007-007,29,"Der Einsatz von Vergro?ßerungshilfen (Endoskop, Lupenbrille, Dentalmikroskop) ermo?glicht ein mikrochirurgisches Vorgehen unter der Konservierung von Knochensubstanz, pra?ziserer intraoperativer Diagnostik der Wurzelspitze und ihrer retrograden Pra?paration und Obturation.",Statement
+Simple,Recommendation,Welches Material ist für die retrograde Füllung empfehlenswert und welches soll nicht verwendet werden?,43.1,007-007,35,"Insbesondere die Verwendung von hydraulischen Silikatzementen oder Zinkoxid- Eugenol-basierten Zementen scheinen für die retrograde Füllung empfehlenswert zu sein. Die retrograde Füllung mit Glasionomerzement ergibt signifikant schlechtere Erfolgsraten, dieses Material soll nicht für eine retrograde Füllung verwendet werden.",Empfehlung
+Simple,Text,"Welche perioperativen, postoperativen und eingriffstypischen Komplikationen können im Rahmen einer Wurzelspitzenresektion auftreten?",44.1,007-007,39,"Neben den allgemeinen perioperativen Begleitfolgen wie Blutung, Schwellung und Schmerzen sind insbesondere die folgenden eingriffstypischen Komplikationen mo?glich: 
+•	Persistierende Infektion mit klinischer und/oder radiografischer Symptomatik, 
+•	Postoperative Infektionen, 
+•	Kontinuita?t zwischen marginaler und apikaler Parodontitis (Paro-Endo-La?sion), 
+•	Fraktur der Wurzel, 
+•	Scha?digung sensibler A?ste des N. trigeminus, 
+•	Scha?digung benachbarter Za?hne, 
+•	Luxation der Wurzelspitze in die Kieferho?hle/Nasenho?hle/den Mundboden/Nervkanal, 
+•	Knochennekrosen,  
+•	Belassener Wurzelrest, 
+•	Sinusitis maxillaris,
+•	Transport von Fremdmaterial in den Sinus maxillaris mit nachfolgender entzu?ndlicher Reaktion ",Komplikationen
+Complex,Multiple sections,Wie ist der Arbeitsablauf zur: prima?ren endodontischen Behandlung und zur Revisionsbehandlung?,45.1,007-007,23,"Arbeitsablauf zur primären endodontischen Behandlung:  
+1.	Bei Verdacht auf apikale Parodontitis: Ausschluss einer Neubildung durch weitere Diagnostik.
+2.	Prüfung der Erhaltungswürdigkeit des Zahns: Ausschluss eine Extraktion ggf. einer Ersätzung des Zahnes 
+3.	Falls erhaltungswürdig: Differenzierung ob eine Orthograde endodontische Behandlung möglich ist -Wenn möglich: endodontische Therapie mit orthograder Wurzelkanalfüllung
+4.	Wenn orthograde endodontische Behandlung nicht möglich: Wurzelspitzenresektion mit retrograder Wurzelkanalfüllung.
+5.	Nachkontrolle für mindestens 1 Jahr.
+6.	Falls keine anhaltende radiologische Auffälligkeit oder klinische Symptomatik vorliegt, ist die Behandlung abgeschlossen.Bei persistierender Radioluzenz oder klinischer Symptomatik: Überprüfung der Erhaltungswürdigkeit und ggf. Revisionsbehandlung. ",Abbildung 
+Complex,Multiple sections,Wie ist der Arbeitsablauf zur: prima?ren endodontischen Behandlung und zur Revisionsbehandlung?,45.2,007-007,24,"Arbeitsablauf zur Revisionsbehandlung 
+1.Ausgangssituation: Ein wurzelkanalgefüllter Zahn mit einer der folgenden Probleme:
+Indikationen: persistierende apikale Parodontitis, persistierende klinische Symptomatik, insuffiziente Wurzelkanalfüllung bei geplanter restaurativer Neuversorgung.
+2.Erste Schritte:
+•	Ist die Neubildung ausgeschlossen ? Wenn nicht weitere Diagnostik und gegebenenfalls Therapie
+•	Prüfung, ob die Qualität der Wurzelkanalfüllung durch die Revision verbessert werden kann
+3.Behandlungsoptionen:  
+a) Falls die Wurzelkanalfüllung verbessert werden kann und eine orthograde Aufbereitung möglich ist: endodontische Revision mit orthograden Wurzelkanalfüllung
+ b) Falls die Wurzelkanalfüllung nicht verbessert werden kann oder eine orthograde Aufbereitung nicht möglich ist: Wurzelspitzenresektion mit retrograder Wurzelkanalfüllung
+4.Nachbehandlung:
+•	Nachkontrolle für mindestens 1 Jahr
+5.Bei Persistenz der Radioluzenz oder klinischer Symptomatik:
+•	Überprüfung der Erhaltungswürdigkeit des Zahns 
+•	Bei nicht erhaltungswürdigem Zahn: Extraktion und gegebenenfalls Ersatz des Zahnes
+•	Bei erhaltungswürdigem Zahn: Individualentscheidung über das weitere Vorgehen
+Arbeitsablauf zur Revisionsbehandlung 
+1.Ausgangssituation: Ein wurzelkanalgefüllter Zahn mit einer der folgenden Probleme:
+Indikationen: persistierende apikale Parodontitis, persistierende klinische Symptomatik, insuffiziente Wurzelkanalfüllung bei geplanter restaurativer Neuversorgung.
+2.Erste Schritte:
+•	Ist die Neubildung ausgeschlossen ? Wenn nicht weitere Diagnostik und gegebenenfalls Therapie
+•	Prüfung, ob die Qualität der Wurzelkanalfüllung durch die Revision verbessert werden kann
+3.Behandlungsoptionen:  
+a) Falls die Wurzelkanalfüllung verbessert werden kann und eine orthograde Aufbereitung möglich ist: endodontische Revision mit orthograden Wurzelkanalfüllung
+ b) Falls die Wurzelkanalfüllung nicht verbessert werden kann oder eine orthograde Aufbereitung nicht möglich ist: Wurzelspitzenresektion mit retrograder Wurzelkanalfüllung
+4.Nachbehandlung:
+•	Nachkontrolle für mindestens 1 Jahr
+5.Bei Persistenz der Radioluzenz oder klinischer Symptomatik:
+•	Überprüfung der Erhaltungswürdigkeit des Zahns 
+•	Bei nicht erhaltungswürdigem Zahn: Extraktion und gegebenenfalls Ersatz des Zahnes
+•	Bei erhaltungswürdigem Zahn: Individualentscheidung über das weitere Vorgehen
+",Abbildung 
+Simple,Text,Welche chirurgischen Therapieoptionen bestehen bei fortgeschrittener IORN?,46.1,007-046,29,"Bei ausgedehnten IORN-Fällen ist eine chirurgische Resektion notwendig. Je nach Schweregrad erfolgt eine Kasten- oder Spangenresektion zur Entfernung von nekrotischem Knochen und Sequestern, wobei die anschließende Nachsorge intensiviert wird ",
+Simple ,Text,Welche Rolle spielt die hyperbare Sauerstofftherapie (HBO) in der Behandlung und Prävention der IORN?,47.1,007-046,25,"HBO kann in bestimmten Fällen prophylaktisch bei Risikopatienten eingesetzt werden, jedoch ist die Evidenzlage uneinheitlich, und potenzielle Nebenwirkungen wie Ohr-Barotrauma und Myopie sollten beachtet werden. Die Anwendung sollte daher individuell bewertet werden ",
+Simple,Text,Wann ist der Einsatz von Antibiotika bei der Behandlung von IORN indiziert?,48.1,007-046,25,"Antibiotika werden bei einer akuten bakteriellen Superinfektion indiziert. Empfohlen werden Amoxicillin oder, bei Penicillinallergie, Clindamycin. In bestimmten Fällen, z. B. bei immungeschwächten Patienten, kann eine prophylaktische Antibiotikagabe erfolgen",
+Negative ,False assumption,Über die Hälfte aller LKGF können pränatal festgestellt werden ,49.1,007-038,15,Es wird nur etwa die Hälfte aller LKGF pränatal festgestellt,Falsche Annahme
+Complex,Multiple sections,Wann sollte bei Patienten mit LKGF eine zusätzliche genetische Untersuchung durchgeführt werden?,50.1,007-038,19,"Wenn im pränatalen Ultraschall neben einer orofazialen Spaltbildung weitere Fehlbildungen auffallen, sollte den Eltern eine pränatale Beratung durch ei- nen klinischen Humangenetiker angeboten werden.",Empfehlung
+Complex,Multiple sections,Wann sollte bei Patienten mit LKGF eine zusätzliche genetische Untersuchung durchgeführt werden?,50.2,007-038,20,"Wenn im pränatalen Ultraschall neben einer orofazialen Spaltbildung weitere Fehlbildungen auffallen, sollte eine pränatale genetische Diagnostik angebo- ten werden.",Empfehlung
+Complex,Multiple sections,Wann sollte bei Patienten mit LKGF eine zusätzliche genetische Untersuchung durchgeführt werden?,50.3,007-038,20,Bei isolierter orofazialer Spaltfehlbildung und positiver Familienanamnese sollte eine prä- oder postnatale Beratung durch einen klinischen Humangene- tiker angeboten werden.,Empfehlung
+Complex,Multiple sections,"Welche Ernährungsform hilft, Wunddehiszenzen und postoperative Komplikationen nach einem Lippen- oder Gaumenspaltverschluss bei LKGF-Patienten zu minimieren?",51.1,007-038,28,"Postoperatives Stillen oder Flaschenfütterung scheint die Inzidenz von Wunddehiszenzen oder postoperativen Komplikationen nach Lippenspalt- verschluss nicht zu erhöhen und zeigt Vorteile gegenüber alternativen Fütte- rungsmethoden.
+Bei Patienten mit LKGF nach Lippenspaltverschluss sollte unmittelbar posto- perativ das Stillen oder die Flaschenernährung wieder begonnen werden.",Empfehlung
+Complex,Multiple sections,"Welche Ernährungsform hilft, Wunddehiszenzen und postoperative Komplikationen nach einem Lippen- oder Gaumenspaltverschluss bei LKGF-Patienten zu minimieren?",51.2,007-038,29,Eine frühzeitige orale Fütterung nach Gaumenspaltverschluss scheint keinen negativen Effekt auf das operative Endergebnis zu haben. Es werden längere Fütterungszeiten und ein erhöhter Analgesiebedarf bei oralen Fütterungsmethoden verglichen mit naso- gastraler Sondenernährung beschrieben.,Empfehlung
+Complex ,Multiple sections,"Welche Ernährungsform hilft, Wunddehiszenzen und postoperative Komplikationen nach einem Lippen- oder Gaumenspaltverschluss bei LKGF-Patienten zu minimieren?",51.3,007-038,29,Nach Gaumenspaltverschluss kann eine unmittelbar postoperative orale Nahrungsaufnahme unter angepasster Analgesie ohne negativen Einfluss auf das operative Ergebnis angestrebt werden.,Empfehlung
+Complex,Substeps,Zu welchem Zeitpunkt wird häufig mit der kieferorthopädischen Therapie bei Patienten mit LKGF begonnen und in welchen Fällen ist eine Therapie nach Wachstumsabschluss erforderlich?,52.1,007-038,30,Zumeist beginnt die kieferorthopädische Therapie jedoch in der Wechselgebissperiode und begleitet besonders die perioperative Periode der sekundären Kie- ferspaltosteoplastik.,Therapie
+Complex,Substeps,Zu welchem Zeitpunkt wird häufig mit der kieferorthopädischen Therapie bei Patienten mit LKGF begonnen und in welchen Fällen ist eine Therapie nach Wachstumsabschluss erforderlich?,52.2,007-038,30,bei ausgeprägten Dysgnathien wird gegebenenfalls eine kombiniert kieferorthopädisch- kieferchirurgische Therapie nach Wachstumsabschluss erforderlich.,Therapie
+Complex,Multiple sections,Welche Therapie kann zu einer posttherapeutischen Verbesserung der nasolabialen Morphologie führen?,53.1,007-038,32,Die prächirurgische Therapie mit NAM (Nasoalveolar molding) - Apparaturen bei voll- ständigen ein- oder beidseitigen Lippen-Kiefer-Gaumenspalten scheint im Vergleich zu keiner Therapie zu einer posttherapeutischen Verbesserung der nasolabialen Morpho- logie zu führen. Eine Überlegenheit gegenüber anderen Methoden der passiven prächi- rurgischen kieferorthopädischen Therapie ist bislang nicht belegt.,Empfehlung
+Complex,Multiple sections,Welche Therapie kann zu einer posttherapeutischen Verbesserung der nasolabialen Morphologie führen?,53.2,007-038,33,die NAM-Therapie schien ein Einfluss auf die nasale Symmetrie zu bestehen,Text
+Simple,Text,Was möchte man mit passiven Gaumenplatten erreichen?,54.1,007-038,33,"Die passiven Gaumenplatten zielen zudem wie eingangs erwähnt darauf ab, die Zungenruhelage zu korrigieren und erleichtern die Nahrungsaufnahme. ",Therapie
+Simple,Recommendation,Welche Therapie sollte bei Patienten mit transversaler Enge und maxillärer Retrognathie?,55.1,007-038,34,"Bei Patienten mit LKGF, transversaler Enge und maxillärer Retrognathie sollte bevorzugt eine Therapie nach Alternate Rapid Maxillary Expansion and Con- striction (Alt-RAMEC)-Protokoll gefolgt von maxillärer Protraktion eingesetzt werden.",Empfehlung
+Complex,Multiple sections,Welche Behandlung sollte bei Patienten mit LKGF mit Beteiligung des Kieferkammes vor einer Kieferspaltosteoplastik erfolgen und wann sollte sie durchgeführt werden?,56.1,007-038,35,Bei Patienten mit LKGF mit Beteiligung des Kieferkammes sollte vor einer geplanten Kieferspaltosteoplastik die kieferorthopädische Ausformung und transversale Weitung des Oberkiefers erfolgen.,Empfehlung
+Complex,Multiple sections,Welche Behandlung sollte bei Patienten mit LKGF mit Beteiligung des Kieferkammes vor einer Kieferspaltosteoplastik erfolgen und wann sollte sie durchgeführt werden?,56.2,007-038,35,Die transversale Weitung sollte mindestens sechs Monate vor der geplanten Kieferspaltosteoplastik begonnen werden.,Empfehlung
+Simple,Text,Welcher Zeitpunkt ist für die Transplantation von Knochen in den Bereich der Kieferspalte vorgesehen?,57.1,007-038,37,Die sekundäre Kieferspaltosteoplastik im Wechselgebiss gilt gemeinhin als der Goldstandard,Text
+Simple,Recommendation,Welches Knochenmaterial gilt als Goldstandard für die Augmentation im Kieferspaltbereich?,58.1,007-038,38,Die Transplantation von autologem Knochen in den Kieferspaltbereich gilt gegenüber anderen möglichen Materialien zur Augmentation weiterhin als Goldstandard und sollte bis zum Vorliegen aussagekräftiger Ergebnisse von Studien hoher methodischer Qualität bevorzugt eingesetzt werden.,Empfehlung
