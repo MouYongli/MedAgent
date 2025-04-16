@@ -1,0 +1,11 @@
+{
+  "class_name": "GuidelineChunksCustomVector",
+  "description": "Text chunks from medical guidelines with customized embedding (will use text-embedding-ada-002)",
+  "vectorizer": "text2vec-transformers",
+  "vectorizer_properties": [ "text" ],
+  "properties": [
+    { "name": "text", "data_type": "text" },
+    { "name": "guideline_id", "data_type": "text" },
+    { "name": "chunk_index", "data_type": "int" }
+  ]
+}

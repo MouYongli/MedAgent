@@ -1,6 +1,5 @@
-import os
 from enum import Enum
-from typing import Union, Dict, Any
+from typing import Dict, Any
 
 from bson import ObjectId
 from pymongo import MongoClient
@@ -37,10 +36,6 @@ class MongoDBInterface:
 
     def get_collection(self, name: CollectionName):
         return self.collections.get(name, self.db[name.value])
-
-    def ensure_output_dirs(self, *dirs):
-        for path in dirs:
-            os.makedirs(path, exist_ok=True)
 
     def get_entry(self, collection_name: CollectionName, key_name: str, key_value):
         """

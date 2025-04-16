@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-import app.models.components.component_registry
+import app.models.components.component_registry ## MUST BE KEPT HERE!!
 
-from app.api.routes import pdf_files
+from app.api.routes import pdf_files, vector_database
 from app.routes import chat, workflow
 
 fast_app = FastAPI(
@@ -23,6 +23,7 @@ fast_app.add_middleware(
 
 # Register file management routes
 fast_app.include_router(pdf_files.router, prefix="/api/knowledge/pdf", tags=["files"])
+fast_app.include_router(vector_database.router, prefix="/api/knowledge/vector")
 fast_app.include_router(chat.router, prefix="/api/chat")
 fast_app.include_router(workflow.router, prefix="/api/workflow")
 
