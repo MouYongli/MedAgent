@@ -7,11 +7,11 @@ from app.models.chat import Chat, MessageType, ConversationMessage
 
 class StartComponent(AbstractComponent, variant_name="start"):
     def execute(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        chat = AbstractComponent.resolve_data_path("chat", data)
+        chat = AbstractComponent.resolve_template("f'{chat}'", data)
         if not isinstance(chat, Chat):
             raise TypeError(f"Chat object must be of type 'Chat', but is {type(chat)}")
 
-        data[self.id] = {"chat": chat}
+        data[f"{self.id}.chat"] = chat
 
         if not chat.messages:
             raise ValueError("Chat history is empty, expected at least one message")
@@ -19,18 +19,9 @@ class StartComponent(AbstractComponent, variant_name="start"):
         if last_message.messageType != MessageType.QUESTION:
             raise ValueError("Last message must be of type QUESTION")
 
-        data[self.id]["current_user_input"] = last_message.content
+        data[f"{self.id}.current_user_input"] = last_message.content
 
         return data
-
-    @classmethod
-    def get_input_spec(cls) -> Dict[str, Dict[str, Any]]:
-        return {
-            "chat": {
-                "type": "Chat",
-                "description": "Chat instance holding message history and system reference"
-            }
-        }
 
     @classmethod
     def get_output_spec(cls) -> Dict[str, Dict[str, Any]]:

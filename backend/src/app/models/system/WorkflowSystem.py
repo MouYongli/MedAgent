@@ -80,7 +80,7 @@ class WorkflowSystem:
         if current_node != self.end_node:
             raise ValueError(f"Reached end component '{current_node}' which is not defined end '{self.end_node}'")
         else:
-            response = AbstractComponent.resolve_data_path("end.response", data)
+            response = AbstractComponent.resolve_template("f'{end.response}'", data)
             return response, float(end_time - start_time) # TODO: see how to make this presentable in a useful way
 
     def _resolve_component_path(self, path: list[str]) -> Type[AbstractComponent]:

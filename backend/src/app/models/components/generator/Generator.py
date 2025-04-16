@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.INFO)
 class Generator(AbstractComponent, variant_name="generator"):
     variants: Dict[str, Type['Generator']] = {}
     default_parameters: Dict[str, Any] = {
-        "prompt": "{start.current_user_input}"
+        "prompt": "f'{start.current_user_input}'"
     }
 
     def __init__(self, id: str, name: str, parameters: Dict[str, Any], variant: str = None):
@@ -30,15 +30,6 @@ class Generator(AbstractComponent, variant_name="generator"):
         }
 
     @classmethod
-    def get_input_spec(cls) -> Dict[str, Dict[str, Any]]:
-        return {
-            "start.chat.current_user_input": {
-                "type": "string",
-                "description": "Latest user message content from the chat context under the 'start' namespace (or whatever the name of the respective component is)"
-            }
-        }
-
-    @classmethod
     def get_output_spec(cls) -> Dict[str, Dict[str, Any]]:
         return {
             "generator.response": {
@@ -55,26 +46,9 @@ class Generator(AbstractComponent, variant_name="generator"):
     def get_model_info(self) -> Dict[str, Any]:
         pass
 
-    @staticmethod
-    def resolve_prompt(template: str, context: Dict[str, Any]) -> str:
-        logging.info(f"[PromptResolver] Resolving prompt template:\n{template}")
-
-        def replacer(match):
-            key_path = match.group(1)
-            try:
-                value = AbstractComponent.resolve_data_path(key_path, context)
-                logging.debug(f"[PromptResolver] Resolved {key_path} -> {value}")
-                return str(value)
-            except Exception as e:
-                logging.error(f"[PromptResolver] Error resolving '{key_path}': {e}")
-                return f"<Error resolving {key_path}: {e}>"
-
-        resolved = re.sub(r"\{(.*?)\}", replacer, template)
-        logging.info(f"[PromptResolver] Resolved prompt:\n{resolved}")
-        return resolved
-
     def execute(self, data: Dict[str, Any]) -> Dict[str, Any]:
         prompt_template = self.parameters.get("prompt", self.default_parameters.get("prompt"))
-        prompt = self.resolve_prompt(prompt_template, data)
-        data[self.id] = {"response": self.generate_response(prompt)}
+        prompt = AbstractComponent.resolve_template(prompt_template, data)
+        logging.info(f"Resolved prompt template \n{prompt_template} \n\nto {prompt}")
+        data[f"{self.id}.response"] = self.generate_response(prompt)
         return data

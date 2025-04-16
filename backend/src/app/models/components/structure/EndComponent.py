@@ -1,6 +1,9 @@
+import logging
+import re
 from typing import Dict, Any
 from app.models.components.AbstractComponent import AbstractComponent
 
+logging.basicConfig(level=logging.INFO)
 
 class EndComponent(AbstractComponent, variant_name="end"):
     def execute(self, data: Dict[str, Any]) -> Dict[str, Any]:
@@ -8,10 +11,9 @@ class EndComponent(AbstractComponent, variant_name="end"):
         if not return_key:
             raise ValueError("EndComponent requires a 'return_key' parameter to know what to return.")
 
-        # Resolve the final output using dot-path resolution
-        final_value = self.resolve_data_path(return_key, data)
+        final_value = AbstractComponent.resolve_template(return_key, data)
 
-        data[self.id] = {"response": final_value}
+        data[f"{self.id}.response"] = final_value
         return data
 
     @classmethod
@@ -21,12 +23,6 @@ class EndComponent(AbstractComponent, variant_name="end"):
                 "type": "string",
                 "description": "Path in the data dict to return as the final result (e.g., 'default_gen.response')"
             }
-        }
-
-    @classmethod
-    def get_input_spec(cls) -> Dict[str, Dict[str, Any]]:
-        return {
-            # Can’t predict exact input — it depends on return_key
         }
 
     @classmethod

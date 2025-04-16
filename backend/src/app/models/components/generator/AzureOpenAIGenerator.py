@@ -82,10 +82,6 @@ class AzureOpenAIGenerator(Generator, variant_name="azure_openai"):
         return {**base_params, **azure_openai_params}
 
     @classmethod
-    def get_input_spec(cls) -> Dict[str, Dict[str, Any]]:
-        return super().get_input_spec()
-
-    @classmethod
     def get_output_spec(cls) -> Dict[str, Dict[str, Any]]:
         return super().get_output_spec()
 

@@ -7,11 +7,20 @@
             "name": "Start node",
             "parameters": {}
         }, {
+            "id": "retriever",
+            "type": "retriever/vector",
+            "name": "Weaviate Guidelines Retriever",
+            "parameters": {
+                "database_name": "GuidelineChunksCustomVector",
+                "query": "{start.current_user_input}",
+                "top_k": 5
+            }
+        }, {
             "id": "generator",
             "type": "generator/azure_openai",
             "name": "Azure Generator",
             "parameters": {
-                "prompt": "Answer the question provided inside the <question></question> section\n\n<question>{start.current_user_input}</question>",
+                "prompt": "Answer the question provided inside the <question></question> section. Base your answers in the citations from medical guidelines given in the <context></context> section.\n\n<question>{start.current_user_input}</question>\n\n<context>{retriever.results}</context>",
                 "api_key": "${AZURE_OPENAI_API_KEY}",
                 "api_base": "${AZURE_OPENAI_API_BASE}",
                 "api_type": "${AZURE_OPENAI_API_TYPE}",
@@ -25,16 +34,18 @@
             "type": "end",
             "name": "End node",
             "parameters": {
-                "return_key": "generator.response"
+                "return_key": "{generator.response}"
             }
         }
     ],
     "edges": [
         {
             "source": "start",
+            "target": "retriever"
+        }, {
+            "source": "retriever",
             "target": "generator"
-        },
-        {
+        }, {
             "source": "generator",
             "target": "end"
         }

@@ -1,4 +1,5 @@
 import os
+from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
@@ -61,6 +62,10 @@ class ChunkInsert(BaseModel):
     metadata: Optional[Dict[str, Any]] = None
     vector: Optional[List[float]] = None # only used if vectorizer is none
     class_name: str
+
+class ChunkBatchInsert(BaseModel):
+    class_name: str
+    entries: List[ChunkInsert]
 
 class ChunkQuery(BaseModel):
     query: str
@@ -141,7 +146,6 @@ def insert_chunk(chunk: ChunkInsert):
             return True
 
     auto_vectorized = is_auto_vectorized(collection)
-    logger.info(f"Auto-vectorized: {auto_vectorized}")
 
     try:
         data_obj = {
@@ -166,6 +170,66 @@ def insert_chunk(chunk: ChunkInsert):
     except Exception as e:
         logger.exception(f"Failed to insert chunk into class '{chunk.class_name}': {e}")
         raise HTTPException(status_code=500, detail=f"Failed to insert: {str(e)}")
+
+@router.post("/retriever/insertBatch")
+def insert_chunk_batch(batch: ChunkBatchInsert):
+    logger.info(f"Batch insert request received for class: {batch.class_name}")
+    validate_class_exists(batch.class_name)
+
+    collection = weaviate_client.collections.get(batch.class_name)
+
+    def is_auto_vectorized(collection) -> bool:
+        vector_config = collection.config.get().vector_config
+        return bool(vector_config)
+
+    auto_vectorized = is_auto_vectorized(collection)
+    failed = []
+    total = len(batch.entries)
+
+    with collection.batch.fixed_size(batch_size=25, concurrent_requests=4)  as batcher:
+        for entry in batch.entries:
+            data_obj = {
+                "text": entry.text,
+                **(entry.metadata or {})
+            }
+
+            try:
+                if not auto_vectorized:
+                    if entry.vector is None:
+                        logger.warning("Manual vector required but not provided. Skipping entry.")
+                        failed.append(entry.metadata["chunk_index"])
+                        continue
+                    batcher.add_object(
+                        properties=data_obj,
+                        uuid=str(uuid4()),
+                        vector=entry.vector
+                    )
+                else:
+                    if entry.vector is not None:
+                        logger.warning(f"Ignoring vector for auto-vectorized class '{batch.class_name}'")
+                    batcher.add_object(
+                        properties=data_obj,
+                        uuid=str(uuid4())
+                    )
+            except Exception as e:
+                logger.exception(f"Failed to queue entry in batch: {e}")
+                failed.append(entry.metadata["chunk_index"])
+
+    # Handle any post-batch failures
+    if collection.batch.failed_objects:
+        logger.error(f"Failed batch objects: {len(collection.batch.failed_objects)}")
+        for obj in collection.batch.failed_objects:
+            chunk_id = obj.get("properties", {}).get("chunk_index", "<unknown>")
+            failed.append(chunk_id)
+
+    logger.info(f"Batch insert complete: {total - len(failed)} succeeded, {len(failed)} failed.")
+    return {
+        "class": batch.class_name,
+        "status": "completed",
+        "success": total - len(failed),
+        "failed": failed
+    }
+
 
 @router.post("/retriever/search")
 def search_chunk(query: ChunkQuery):

@@ -1,3 +1,4 @@
+import re
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional, Type
 import copy
@@ -7,23 +8,32 @@ class AbstractComponent(ABC):
     default_parameters: Dict[str, Any] = {}
 
     @staticmethod
-    def resolve_data_path(name: str, data: Dict[str, Any]) -> Any:
-        """
-        Resolves a dot-separated name like 'start.chat.current_user_input' from the given nested data dict.
-        Works with dicts and object attributes.
-        """
-        parts = name.split(".")
-        current = data
-        for part in parts:
-            if isinstance(current, dict):
-                if part not in current:
-                    raise KeyError(f"Key '{part}' not found in dict at path: {'.'.join(parts)}")
-                current = current[part]
-            else:
-                if not hasattr(current, part):
-                    raise AttributeError(f"Attribute '{part}' not found in object at path: {'.'.join(parts)}")
-                current = getattr(current, part)
-        return current
+    def resolve_template(template: str, context: dict):
+        # TODO: UTILIZE IN COMPONENTS!!!
+        template = template.strip()
+
+        # Auto-detect f-string mode
+        is_f_string = (
+                (template.startswith("f'") and template.endswith("'")) or
+                (template.startswith('f"') and template.endswith('"'))
+        )
+
+        if is_f_string:
+            try:
+                return eval(template, {}, context)
+            except Exception as e:
+                return f"<f-string error: {e}>"
+
+        # Single expression inside {...}
+        match = re.fullmatch(r"\{(.+?)\}", template)
+        if match:
+            expr = match.group(1)
+            try:
+                return eval(expr, {"__builtins__": __builtins__, "context": context}, context)
+            except Exception as e:
+                return f"<expression error: {e}>"
+
+        return template  # Not an expression or f-string
 
     def __new__(cls, id: str, name: str, parameters: Optional[Dict[str, Any]] = None, variant: Optional[str] = None) -> 'AbstractComponent':
         if variant:
@@ -48,14 +58,6 @@ class AbstractComponent(ABC):
         if parameters:
             merged_params.update(parameters)
         self.parameters = merged_params
-
-    @classmethod
-    def get_input_spec(cls) -> Dict[str, Dict[str, Any]]:
-        """
-        Return a dictionary describing the expected inputs for the component.
-        Each key is the input name, with metadata such as type and description.
-        """
-        return {}
 
     @classmethod
     def get_output_spec(cls) -> Dict[str, Dict[str, Any]]:
