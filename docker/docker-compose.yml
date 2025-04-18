@@ -16,25 +16,30 @@ services:
   backend:
     build:
       context: ../
-      dockerfile: docker/backend/Dockerfile  # Name of the Dockerfile
+      dockerfile: docker/backend/Dockerfile
     container_name: medagent-backend
     working_dir: /src
     volumes:
-    - ../backend/src:/src  # Ensure `app/` is inside `/src/`
+      - ../backend/src:/src
     ports:
       - "5000:5000"
     environment:
+      - MONGO_URL=mongodb://mongo:mongo@medagent:27017
+      - WEAVIATE_URL=http://weaviate:8080
       - DATABASE_URL=postgres://user:password@postgres-db:5432/mydatabase
       - GRAPH_DB_URL=neo4j://neo4j:7687
       - KEYCLOAK_URL=http://keycloak:8080
-      - MONGO_URL=mongodb://mongo:mongo@medagent:27017
-      - WEAVIATE_URL=http://weaviate:8080
     depends_on:
-      - mongodb
-      - weaviate
-#      - postgres-db
-#      - neo4j
-#      - keycloak
+      mongodb:
+        condition: service_healthy
+      weaviate:
+        condition: service_healthy
+#      postgres-db:
+#        condition: service_healthy
+#      neo4j:
+#        condition: service_healthy
+#      keycloak:
+#        condition: service_healthy
     networks:
       - backend
 
@@ -50,7 +55,7 @@ services:
     volumes:
       - mongodb-data:/data/db
     healthcheck:
-      test: [ "CMD", "mongo", "--eval", "db.adminCommand('ping')" ]
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -79,6 +84,11 @@ services:
       - t2v-transformers
     networks:
       - backend
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/v1/.well-known/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   t2v-transformers: # required to enable vectorizer
     image: cr.weaviate.io/semitechnologies/transformers-inference:sentence-transformers-multi-qa-MiniLM-L6-cos-v1
     environment:

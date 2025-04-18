@@ -8,3 +8,4 @@ passlib[bcrypt]
 python-jose[cryptography]
 openai~=1.70.0
 weaviate-client>=3.25.0
+requests
