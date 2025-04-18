@@ -1,4 +1,3 @@
-import re
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional, Type
 import copy
@@ -6,34 +5,6 @@ import copy
 class AbstractComponent(ABC):
     variants: Dict[str, Type['AbstractComponent']] = {}
     default_parameters: Dict[str, Any] = {}
-
-    @staticmethod
-    def resolve_template(template: str, context: dict):
-        # TODO: UTILIZE IN COMPONENTS!!!
-        template = template.strip()
-
-        # Auto-detect f-string mode
-        is_f_string = (
-                (template.startswith("f'") and template.endswith("'")) or
-                (template.startswith('f"') and template.endswith('"'))
-        )
-
-        if is_f_string:
-            try:
-                return eval(template, {}, context)
-            except Exception as e:
-                return f"<f-string error: {e}>"
-
-        # Single expression inside {...}
-        match = re.fullmatch(r"\{(.+?)\}", template)
-        if match:
-            expr = match.group(1)
-            try:
-                return eval(expr, {"__builtins__": __builtins__, "context": context}, context)
-            except Exception as e:
-                return f"<expression error: {e}>"
-
-        return template  # Not an expression or f-string
 
     def __new__(cls, id: str, name: str, parameters: Optional[Dict[str, Any]] = None, variant: Optional[str] = None) -> 'AbstractComponent':
         if variant:

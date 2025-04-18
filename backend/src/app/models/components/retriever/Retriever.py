@@ -3,6 +3,8 @@ from abc import abstractmethod
 from typing import Dict, Any, Type, Optional
 from app.models.components.AbstractComponent import AbstractComponent
 
+from app.utils.helper import resolve_template
+
 logger = logging.getLogger(__name__)
 
 class Retriever(AbstractComponent, variant_name="retriever"):
@@ -45,7 +47,7 @@ class Retriever(AbstractComponent, variant_name="retriever"):
     def execute(self, data: Dict[str, Any]) -> Dict[str, Any]:
         try:
             query_template = self.parameters["query"]
-            query = AbstractComponent.resolve_template(query_template, data)
+            query = resolve_template(query_template, data)
             top_k = int(self.parameters.get("top_k", 5))
 
             logger.info(f"[Retriever] Query: {query} | TopK: {top_k}")

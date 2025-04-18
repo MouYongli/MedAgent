@@ -1,9 +1,10 @@
 import requests
 from typing import Dict, Any
-
-from app.models.components.AbstractComponent import AbstractComponent
-from app.models.components.retriever.Retriever import Retriever
 import logging
+
+from app.models.components.retriever.Retriever import Retriever
+
+from app.utils.helper import resolve_template
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +36,7 @@ class VectorRetriever(Retriever, variant_name="vector_weaviate"):
         class_name = self.parameters.get("class_name")
         endpoint = self.parameters.get("endpoint", self.DEFAULT_ENDPOINT)
         vector = self.parameters.get("vector", None)
-        vector = AbstractComponent.resolve_template(vector, data) if vector else None
+        vector = resolve_template(vector, data) if vector else None
 
         logger.info(f"[VectorRetriever] Endpoint: {endpoint}, Class: {class_name}, Query: {query}, TopK: {top_k}, Using vector: {bool(vector)}")
 

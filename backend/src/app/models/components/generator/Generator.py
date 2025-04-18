@@ -3,6 +3,7 @@ import re
 from abc import abstractmethod
 from typing import Dict, Any, Type, Optional
 from app.models.components.AbstractComponent import AbstractComponent
+from app.utils.helper import resolve_template
 
 logging.basicConfig(level=logging.INFO)
 
@@ -48,7 +49,7 @@ class Generator(AbstractComponent, variant_name="generator"):
 
     def execute(self, data: Dict[str, Any]) -> Dict[str, Any]:
         prompt_template = self.parameters.get("prompt", self.default_parameters.get("prompt"))
-        prompt = AbstractComponent.resolve_template(prompt_template, data)
+        prompt = resolve_template(prompt_template, data)
         logging.info(f"Resolved prompt template \n{prompt_template} \n\nto {prompt}")
         data[f"{self.id}.response"] = self.generate_response(prompt)
         return data

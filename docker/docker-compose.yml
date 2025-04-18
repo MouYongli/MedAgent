@@ -24,8 +24,8 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - MONGO_URL=mongodb://mongo:mongo@medagent:27017
-      - WEAVIATE_URL=http://weaviate:8080
+      - MONGO_URL=mongodb://mongo:mongo@medagent-mongodb:27017
+      - WEAVIATE_URL=http://medagent-weaviate:8080
       - DATABASE_URL=postgres://user:password@postgres-db:5432/mydatabase
       - GRAPH_DB_URL=neo4j://neo4j:7687
       - KEYCLOAK_URL=http://keycloak:8080
