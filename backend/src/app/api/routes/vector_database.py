@@ -1,4 +1,5 @@
 import os
+import time
 from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException
@@ -34,6 +35,11 @@ def get_vectorizer_config(vectorizer: str, source_properties: List[str]):
 
 
 def validate_class_exists(class_name: str):
+    if class_name is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"You did not specify a weaviate class"
+        )
     if not weaviate_client.collections.exists(class_name):
         raise HTTPException(
             status_code=404,
@@ -140,10 +146,7 @@ def insert_chunk(chunk: ChunkInsert):
 
     def is_auto_vectorized(collection) -> bool:
         vector_config = collection.config.get().vector_config
-        if not vector_config:
-            return False
-        else:
-            return True
+        return bool(vector_config)
 
     auto_vectorized = is_auto_vectorized(collection)
 
@@ -230,23 +233,43 @@ def insert_chunk_batch(batch: ChunkBatchInsert):
         "failed": failed
     }
 
-
 @router.post("/retriever/search")
 def search_chunk(query: ChunkQuery):
+    logger.debug(f"[Retriever] Query: {query.query}, Class: {query.class_name}, TopK: {query.top_k}, Vector Provided: {query.vector is not None}")
+
+    start_time = time.time()
+
     validate_class_exists(query.class_name)
-
     collection = weaviate_client.collections.get(query.class_name)
-    vectorizer = collection.config.vectorizer_config.name
 
-    if vectorizer == "none":
-        if query.vector is None:
-            raise HTTPException(status_code=400, detail=f"Class '{query.class_name}' uses manual vectorization — you must provide a vector.")
-        query_result = collection.query.near_vector(query.vector, limit=query.top_k).fetch_objects()
-    else:
-        if query.vector is not None:
-            logger.warning(
-                f"Ignoring provided vector for class '{query.class_name}' with built-in vectorizer '{vectorizer}'")
-        query_result = collection.query.near_text(query.query, limit=query.top_k).fetch_objects()
+    def is_auto_vectorized(collection) -> bool:
+        vector_config = collection.config.get().vector_config
+        return bool(vector_config)
 
-    return {"results": [obj.properties for obj in query_result.objects]}
+    auto_vectorized = is_auto_vectorized(collection)
+    logger.debug(f"[Retriever] Auto-vectorized: {auto_vectorized}")
+
+    try:
+        if auto_vectorized:
+            if query.vector is not None:
+                logger.warning(f"[Retriever] Ignoring provided vector for class '{query.class_name}' (auto-vectorized)")
+            logger.info(f"[Retriever] Performing near-text search...")
+            query_result = collection.query.near_text(query.query, limit=query.top_k)
+        else:
+            if query.vector is None:
+                logger.error(f"[Retriever] Vector is required but missing for manual-vectorized class '{query.class_name}'")
+                raise HTTPException(status_code=400, detail="Class requires manual vector, but none was provided.")
+            logger.info(f"[Retriever] Performing near-vector search...")
+            query_result = collection.query.near_vector(query.vector, limit=query.top_k)
+
+        duration = time.time() - start_time
+        logger.info(f"[Retriever] Search completed in {duration:.3f}s, Results: {len(query_result.objects)}")
+
+        return {
+            "results": [obj.properties for obj in query_result.objects],
+        }
+
+    except Exception as e:
+        logger.exception(f"[Retriever] Search failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Search failed: {e}")
 

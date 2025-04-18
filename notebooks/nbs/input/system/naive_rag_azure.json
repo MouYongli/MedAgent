@@ -11,7 +11,7 @@
             "type": "retriever/vector_weaviate",
             "name": "Weaviate Guidelines Retriever",
             "parameters": {
-                "database_name": "GuidelineChunksCustomVector",
+                "class_name": "GuidelineChunksCustomVector",
                 "query": "{start.current_user_input}",
                 "top_k": 5
             }
@@ -20,7 +20,7 @@
             "type": "generator/azure_openai",
             "name": "Azure Generator",
             "parameters": {
-                "prompt": "f'Answer the question provided inside the <question></question> section. Base your answers in the citations from medical guidelines given in the <context></context> section.\n\n<question>{start.current_user_input}</question>\n\n<context>{retriever.results}</context>'",
+                "prompt": "f'''Answer the question provided inside the <question></question> section. Base your answers in the citations from medical guidelines given in the <context></context> section.\n\n<question>{start.current_user_input}</question>\n\n<context>{ \"\".join(f\"<context_item>{r['text']}</context_item>\" for r in retriever.results) }</context>'''",
                 "api_key": "${AZURE_OPENAI_API_KEY}",
                 "api_base": "${AZURE_OPENAI_API_BASE}",
                 "api_type": "${AZURE_OPENAI_API_TYPE}",

@@ -1,9 +1,8 @@
-import uuid
 import time
 from typing import Dict, Any, Type, Tuple
 from app.models.components.AbstractComponent import AbstractComponent
 from app.models.chat import Chat
-from app.utils.helper import resolve_template
+from app.utils.helper import render_template
 
 
 class WorkflowSystem:
@@ -81,7 +80,7 @@ class WorkflowSystem:
         if current_node != self.end_node:
             raise ValueError(f"Reached end component '{current_node}' which is not defined end '{self.end_node}'")
         else:
-            response = resolve_template("f'{end.response}'", data)
+            response = render_template("f'{end.response}'", data)
             return response, float(end_time - start_time) # TODO: see how to make this presentable in a useful way
 
     def _resolve_component_path(self, path: list[str]) -> Type[AbstractComponent]:

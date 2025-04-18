@@ -4,12 +4,12 @@ from app.models.components.AbstractComponent import AbstractComponent
 
 from app.models.chat import Chat, MessageType, ConversationMessage
 
-from app.utils.helper import resolve_template
+from app.utils.helper import render_template
 
 
 class StartComponent(AbstractComponent, variant_name="start"):
     def execute(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        chat = resolve_template("{chat}", data)
+        chat = render_template("{chat}", data)
         if not isinstance(chat, Chat):
             raise TypeError(f"Chat object must be of type 'Chat', but is {type(chat)}")
 

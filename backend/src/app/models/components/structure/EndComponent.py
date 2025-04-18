@@ -3,7 +3,7 @@ import re
 from typing import Dict, Any
 from app.models.components.AbstractComponent import AbstractComponent
 
-from app.utils.helper import resolve_template
+from app.utils.helper import render_template
 logging.basicConfig(level=logging.INFO)
 
 class EndComponent(AbstractComponent, variant_name="end"):
@@ -12,7 +12,7 @@ class EndComponent(AbstractComponent, variant_name="end"):
         if not return_key:
             raise ValueError("EndComponent requires a 'return_key' parameter to know what to return.")
 
-        final_value = resolve_template(return_key, data)
+        final_value = render_template(return_key, data)
 
         data[f"{self.id}.response"] = final_value
         return data
