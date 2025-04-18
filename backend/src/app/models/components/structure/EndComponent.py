@@ -1,10 +1,11 @@
 import logging
-import re
 from typing import Dict, Any
-from app.models.components.AbstractComponent import AbstractComponent
 
+from app.models.components.AbstractComponent import AbstractComponent
 from app.utils.helper import render_template
+
 logging.basicConfig(level=logging.INFO)
+
 
 class EndComponent(AbstractComponent, variant_name="end"):
     def execute(self, data: Dict[str, Any]) -> Dict[str, Any]:

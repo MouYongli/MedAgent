@@ -1,14 +1,14 @@
+import logging
 import os
 import time
-from uuid import uuid4
-
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
 from typing import Optional, Dict, List, Any
 from urllib.parse import urlparse
+from uuid import uuid4
+
 import weaviate
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
 from weaviate.classes.config import Configure, Property, DataType
-import logging
 
 router = APIRouter()
 
@@ -25,6 +25,8 @@ weaviate_client = weaviate.connect_to_custom(
 weaviate_client.connect()
 
 AVAILABLE_VECTORIZERS = ["none", "text2vec-transformers"]
+
+
 def get_vectorizer_config(vectorizer: str, source_properties: List[str]):
     if vectorizer == "none":
         return Configure.Vectorizer.none()
@@ -46,7 +48,9 @@ def validate_class_exists(class_name: str):
             detail=f"Weaviate class '{class_name}' does not exist."
         )
 
+
 logger = logging.getLogger(__name__)
+
 
 # Pydantic models for API
 class SchemaProperty(BaseModel):
@@ -54,6 +58,7 @@ class SchemaProperty(BaseModel):
     data_type: str  # single string like "text", "int", "number", "bool", "date", or "uuid"
     description: Optional[str] = None
     moduleConfig: Optional[dict] = None
+
 
 class InitRequest(BaseModel):
     class_name: str
@@ -63,26 +68,31 @@ class InitRequest(BaseModel):
     properties: List[SchemaProperty]
     moduleConfig: Optional[dict] = None
 
+
 class ChunkInsert(BaseModel):
     text: str
     metadata: Optional[Dict[str, Any]] = None
-    vector: Optional[List[float]] = None # only used if vectorizer is none
+    vector: Optional[List[float]] = None  # only used if vectorizer is none
     class_name: str
+
 
 class ChunkBatchInsert(BaseModel):
     class_name: str
     entries: List[ChunkInsert]
 
+
 class ChunkQuery(BaseModel):
     query: str
     top_k: int = 5
     class_name: str
-    vector: Optional[List[float]] = None # only used if vectorizer is none
+    vector: Optional[List[float]] = None  # only used if vectorizer is none
+
 
 # --- ROUTES ---
 @router.get("/retriever/vectorizers")
 def list_vectorizers():
     return {"available_vectorizers": AVAILABLE_VECTORIZERS}
+
 
 @router.delete("/retriever/delete/{class_name}")
 def delete_weaviate_collection(class_name):
@@ -92,6 +102,7 @@ def delete_weaviate_collection(class_name):
     weaviate_client.collections.delete(class_name)
     logger.info(f"Deleted Weaviate class: {class_name}")
     return {"status": "deleted", "class": class_name}
+
 
 @router.post("/retriever/init")
 def init_weaviate_collection(req: InitRequest):
@@ -107,6 +118,7 @@ def init_weaviate_collection(req: InitRequest):
 
     # Set vectorizer config to "none" as a plain string
     vectorizer = req.vectorizer or "none"
+
     def validate_vectorizer_properties(vec_props, vec, props):
         if vec_props:
             property_map = {p.name: p.data_type for p in props}
@@ -118,6 +130,7 @@ def init_weaviate_collection(req: InitRequest):
         else:
             if vec != "none":
                 raise HTTPException(status_code=400, detail=f"To configure a vectorizer ({vec}), a list of vectorizer properties needs to be provided specifying what to use as index")
+
     validate_vectorizer_properties(req.vectorizer_properties, vectorizer, req.properties)
     source_props = req.vectorizer_properties or []
     vectorizer_config = get_vectorizer_config(vectorizer, source_props)
@@ -174,6 +187,7 @@ def insert_chunk(chunk: ChunkInsert):
         logger.exception(f"Failed to insert chunk into class '{chunk.class_name}': {e}")
         raise HTTPException(status_code=500, detail=f"Failed to insert: {str(e)}")
 
+
 @router.post("/retriever/insertBatch")
 def insert_chunk_batch(batch: ChunkBatchInsert):
     logger.info(f"Batch insert request received for class: {batch.class_name}")
@@ -189,7 +203,7 @@ def insert_chunk_batch(batch: ChunkBatchInsert):
     failed = []
     total = len(batch.entries)
 
-    with collection.batch.fixed_size(batch_size=25, concurrent_requests=4)  as batcher:
+    with collection.batch.fixed_size(batch_size=25, concurrent_requests=4) as batcher:
         for entry in batch.entries:
             data_obj = {
                 "text": entry.text,
@@ -233,9 +247,11 @@ def insert_chunk_batch(batch: ChunkBatchInsert):
         "failed": failed
     }
 
+
 @router.post("/retriever/search")
 def search_chunk(query: ChunkQuery):
-    logger.debug(f"[Retriever] Query: {query.query}, Class: {query.class_name}, TopK: {query.top_k}, Vector Provided: {query.vector is not None}")
+    logger.debug(
+        f"[Retriever] Query: {query.query}, Class: {query.class_name}, TopK: {query.top_k}, Vector Provided: {query.vector is not None}")
 
     start_time = time.time()
 
@@ -257,7 +273,8 @@ def search_chunk(query: ChunkQuery):
             query_result = collection.query.near_text(query.query, limit=query.top_k)
         else:
             if query.vector is None:
-                logger.error(f"[Retriever] Vector is required but missing for manual-vectorized class '{query.class_name}'")
+                logger.error(
+                    f"[Retriever] Vector is required but missing for manual-vectorized class '{query.class_name}'")
                 raise HTTPException(status_code=400, detail="Class requires manual vector, but none was provided.")
             logger.info(f"[Retriever] Performing near-vector search...")
             query_result = collection.query.near_vector(query.vector, limit=query.top_k)
@@ -272,4 +289,3 @@ def search_chunk(query: ChunkQuery):
     except Exception as e:
         logger.exception(f"[Retriever] Search failed: {e}")
         raise HTTPException(status_code=500, detail=f"Search failed: {e}")
-

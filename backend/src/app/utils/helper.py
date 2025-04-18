@@ -1,5 +1,6 @@
 from typing import Dict, Any
 
+
 def render_template(template: str, context: Dict[str, Any]) -> str:
     # Helper class to allow dot-access and deep lookup
     class DotDict(dict):
@@ -8,6 +9,7 @@ def render_template(template: str, context: Dict[str, Any]) -> str:
             if isinstance(value, dict):
                 return DotDict(value)
             return value
+
         def __getitem__(self, item):
             if '.' in item:
                 parts = item.split('.')
@@ -62,17 +64,16 @@ def render_template(template: str, context: Dict[str, Any]) -> str:
         return template
 
 
-
 def _run_examples():
     examples = [
         # 1 - Direct dict output
-        ("{test}", { "test": {"test_obj": 1} }),
+        ("{test}", {"test": {"test_obj": 1}}),
 
         # 2 - Simple f-string with dict access
-        ("f'Test: {test[\"test_obj\"]}'", { "test": {"test_obj": 1} }),
+        ("f'Test: {test[\"test_obj\"]}'", {"test": {"test_obj": 1}}),
 
         # 3 - Expression evaluation
-        ("{a + b}", { "a": 4, "b": 3 }),
+        ("{a + b}", {"a": 4, "b": 3}),
 
         # 4 - Attribute access using dot notation in f-string
         ("f'Test layer: {test.inner}'", {"test.inner": 3, "test": 1}),
@@ -85,7 +86,7 @@ def _run_examples():
             "{''.join(f\"<context_item>{r['text']}</context_item>\" for r in retriever.results)}",
             {
                 "start.current_user_input": "Hello?",
-                "retriever.results":[
+                "retriever.results": [
                     {"text": "The answer is 42.", "gl": 0},
                     {"text": "The answer is 43.", "gl": 1},
                     {"text": "The answer is 44.", "gl": 2}
@@ -125,7 +126,8 @@ def _run_examples():
             print(result)
         except Exception as e:
             print("❌ Error:", str(e))
-        print("\n" + "-"*40 + "\n")
+        print("\n" + "-" * 40 + "\n")
+
 
 # This will only run the tests when you execute the file directly
 if __name__ == "__main__":

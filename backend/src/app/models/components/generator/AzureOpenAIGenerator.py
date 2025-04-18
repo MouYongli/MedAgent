@@ -1,12 +1,13 @@
 import logging
-
-from openai import AzureOpenAI
 import os
 from typing import Dict, Any
+
+from openai import AzureOpenAI
 
 from app.models.components.generator.Generator import Generator
 
 logging.basicConfig(level=logging.INFO)
+
 
 class AzureOpenAIGenerator(Generator, variant_name="azure_openai"):
     default_parameters: Dict[str, Any] = {
@@ -84,4 +85,3 @@ class AzureOpenAIGenerator(Generator, variant_name="azure_openai"):
     @classmethod
     def get_output_spec(cls) -> Dict[str, Dict[str, Any]]:
         return super().get_output_spec()
-

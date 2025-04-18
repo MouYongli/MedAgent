@@ -1,6 +1,7 @@
+import copy
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional, Type
-import copy
+
 
 class AbstractComponent(ABC):
     variants: Dict[str, Type['AbstractComponent']] = {}

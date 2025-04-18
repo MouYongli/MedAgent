@@ -1,13 +1,15 @@
 import asyncio
 import logging
 from typing import Dict, Any
+
 import httpx
+import nest_asyncio
 
 from app.models.components.retriever.Retriever import Retriever
 from app.utils.helper import render_template
-import nest_asyncio
 
 logger = logging.getLogger(__name__)
+
 
 class VectorRetriever(Retriever, variant_name="vector_weaviate"):
     DEFAULT_ENDPOINT = "http://host.docker.internal:5000/api/knowledge/vector/retriever/search"

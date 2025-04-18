@@ -8,8 +8,9 @@ if TYPE_CHECKING:
 
 
 class MessageType(Enum):
-    QUESTION = "user question", # posed by user
-    ANSWER = "system answer" # created by system
+    QUESTION = "user question",  # posed by user
+    ANSWER = "system answer"  # created by system
+
 
 class ConversationMessage:
     def __init__(self, message_type: MessageType, content: str):
@@ -19,6 +20,7 @@ class ConversationMessage:
 
     def __repr__(self):
         return f"[{self.timestamp}] {self.messageType.value}: {self.content}"
+
 
 class Chat:
     def __init__(self, system: "WorkflowSystem", user: str = "no user"):

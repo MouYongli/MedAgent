@@ -15,8 +15,10 @@ BASE_DIR = osp.join(HERE, "..", "..", "..", "..")
 FILE_DIR = osp.join(BASE_DIR, "data")
 os.makedirs(FILE_DIR, exist_ok=True)
 
+
 def get_file_path(filename: str) -> str:
     return osp.join(FILE_DIR, filename)
+
 
 @router.get("/", response_model=List[str])
 async def list_files():
@@ -25,6 +27,7 @@ async def list_files():
     """
     files = [f for f in os.listdir(FILE_DIR) if f.endswith(('.pdf'))]
     return files
+
 
 @router.post("/", status_code=HTTP_201_CREATED)
 async def upload_file(file: UploadFile = File(...)):
@@ -39,6 +42,7 @@ async def upload_file(file: UploadFile = File(...)):
         f.write(content)
     return {"filename": file.filename, "message": "Upload successful"}
 
+
 @router.get("/{filename}")
 async def get_file(filename: str):
     """
@@ -48,6 +52,7 @@ async def get_file(filename: str):
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail="File not found")
     return FileResponse(file_path, media_type="application/octet-stream", filename=filename)
+
 
 @router.put("/{filename}")
 async def update_file(filename: str, content: str = None):
@@ -60,6 +65,7 @@ async def update_file(filename: str, content: str = None):
     with open(file_path, "w", encoding="utf-8") as f:
         f.write(content or "")
     return {"message": "Update successful", "filename": filename}
+
 
 @router.delete("/{filename}")
 async def delete_file(filename: str):

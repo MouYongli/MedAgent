@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-import app.models.components.component_registry ## MUST BE KEPT HERE!!
+# noinspection PyUnresolvedReferences
+import app.models.components.component_registry  ## MUST BE KEPT HERE!!
 
 from app.api.routes import pdf_files, vector_database
 from app.routes import chat, workflow
@@ -30,4 +31,5 @@ fast_app.include_router(workflow.router, prefix="/api/workflow")
 # Start the service: Run with `python app/main.py` or `uvicorn app.main:app --reload`
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run("app.main:fast_app", host="0.0.0.0", port=8000, reload=True)

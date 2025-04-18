@@ -1,9 +1,7 @@
 from typing import Dict, Any
 
-from app.models.components.AbstractComponent import AbstractComponent
-
 from app.models.chat import Chat, MessageType, ConversationMessage
-
+from app.models.components.AbstractComponent import AbstractComponent
 from app.utils.helper import render_template
 
 

@@ -1,6 +1,7 @@
+from typing import Dict
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from typing import Dict
 
 from app.models.chat import Chat, MessageType
 from app.routes.workflow import get_workflow
@@ -8,22 +9,27 @@ from app.routes.workflow import get_workflow
 router = APIRouter()
 chat_sessions: Dict[str, Chat] = {}
 
+
 # Pydantic models
 class InitChatRequest(BaseModel):
     workflow_id: str
+
 
 class InitChatResponse(BaseModel):
     chat_id: str
     workflow_id: str
     message: str
 
+
 class AskRequest(BaseModel):
     question: str
+
 
 class AskResponse(BaseModel):
     chat_id: str
     response: str
-    response_latency: float # measured in seconds
+    response_latency: float  # measured in seconds
+
 
 @router.post("/init", response_model=InitChatResponse)
 async def init_chat(request: InitChatRequest):
@@ -43,6 +49,7 @@ async def init_chat(request: InitChatRequest):
         message=welcome
     )
 
+
 @router.post("/{chat_id}/ask", response_model=AskResponse)
 async def ask_chat(chat_id: str, request: AskRequest):
     chat = chat_sessions.get(chat_id)
@@ -51,6 +58,7 @@ async def ask_chat(chat_id: str, request: AskRequest):
 
     response, response_latency = chat.pose_question(request.question)
     return AskResponse(chat_id=chat.id, response=response, response_latency=response_latency)
+
 
 @router.get("/list")
 async def list_chats() -> Dict[str, str]:

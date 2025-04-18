@@ -1,11 +1,12 @@
 import logging
-import re
 from abc import abstractmethod
 from typing import Dict, Any, Type, Optional
+
 from app.models.components.AbstractComponent import AbstractComponent
 from app.utils.helper import render_template
 
 logging.basicConfig(level=logging.INFO)
+
 
 class Generator(AbstractComponent, variant_name="generator"):
     variants: Dict[str, Type['Generator']] = {}

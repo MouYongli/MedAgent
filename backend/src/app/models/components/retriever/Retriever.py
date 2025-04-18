@@ -1,12 +1,12 @@
-import inspect
 import logging
 from abc import abstractmethod
 from typing import Dict, Any, Type, Optional
-from app.models.components.AbstractComponent import AbstractComponent
 
+from app.models.components.AbstractComponent import AbstractComponent
 from app.utils.helper import render_template
 
 logger = logging.getLogger(__name__)
+
 
 class Retriever(AbstractComponent, variant_name="retriever"):
     variants: Dict[str, Type['Retriever']] = {}
