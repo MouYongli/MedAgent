@@ -1,7 +1,7 @@
 import time
-from typing import Dict, Any, Type, Tuple
+from typing import Dict, Any, Type
 
-from app.models.chat import Chat
+from app.models.chat import Chat, ChatResponse
 from app.models.components.AbstractComponent import AbstractComponent
 from app.utils.helper import render_template
 
@@ -53,7 +53,7 @@ class WorkflowSystem:
 
         self.start_node, self.end_node = "start", "end"
 
-    def generate_response(self, chat: Chat) -> Tuple[str, float]:
+    def generate_response(self, chat: Chat) -> ChatResponse:
         """
         Generate a response from the generator component using the provided Chat object.
         """
@@ -81,8 +81,9 @@ class WorkflowSystem:
         if current_node != self.end_node:
             raise ValueError(f"Reached end component '{current_node}' which is not defined end '{self.end_node}'")
         else:
-            response = render_template("f'{end.response}'", data)
-            return response, float(end_time - start_time)  # TODO: see how to make this presentable in a useful way
+            response = render_template("{end.response}", data)
+            retrieval = render_template("{end.retrieval}", data)
+            return ChatResponse(response, retrieval, float(end_time - start_time))
 
     def _resolve_component_path(self, path: list[str]) -> Type[AbstractComponent]:
         """

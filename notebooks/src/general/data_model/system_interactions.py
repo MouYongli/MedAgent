@@ -7,6 +7,8 @@ from uuid import UUID
 from general.data_model.guideline_metadata import serialize_datetime, deserialize_datetime
 from general.data_model.question_dataset import QuestionEntry, SuperCategory, SubCategory
 
+from general.data_model.guideline_metadata import GuidelineMetadata
+
 
 @dataclass
 class WorkflowSystem:
@@ -76,6 +78,7 @@ class ChatInteraction:
 class GenerationResultEntry:
     question: Optional[QuestionEntry]
     answer: str
+    retrieval_result: List["RetrievalEntry"]
     feedback: List["Feedback"] = field(default_factory=list)
 
     @staticmethod
@@ -83,6 +86,9 @@ class GenerationResultEntry:
         return GenerationResultEntry(
             question=QuestionEntry.from_dict(data["question"]) if data.get("question") else None,
             answer=data["answer"],
+            retrieval_result=[
+                RetrievalEntry.from_dict(rr) for rr in data.get("retrieval_result", [])
+            ],
             feedback=[
                 Feedback.from_dict(fb) for fb in data.get("feedback", [])
             ]
@@ -92,6 +98,9 @@ class GenerationResultEntry:
         return {
             "question": self.question.as_dict(),
             "answer": self.answer,
+            "retrieval_result": [
+                rr.as_dict() for rr in self.retrieval_result
+            ],
             "feedback": [
                 fb.as_dict() for fb in self.feedback
             ]
@@ -114,6 +123,24 @@ class GenerationResultEntry:
             if feedback.type == FeedbackType.HALLUCINATION:
                 return feedback.value
         return None
+
+@dataclass
+class RetrievalEntry:
+    text: str
+    guideline: Optional[GuidelineMetadata]
+
+    @staticmethod
+    def from_dict(data: Dict[str, Any]) -> "RetrievalEntry":
+        return RetrievalEntry(
+            text=data["text"],
+            guideline=GuidelineMetadata(data["guideline"]) if data["guideline"] else None
+        )
+
+    def as_dict(self) -> Dict[str, Any]:
+        return {
+            "text": self.text,
+            "guideline": self.guideline.as_dict() if self.guideline else None,
+        }
 
 class FeedbackTarget(Enum):
     SYSTEM = "System"

@@ -34,7 +34,8 @@
             "type": "end",
             "name": "End node",
             "parameters": {
-                "return_key": "{generator.response}"
+                "generation_key": "{generator.response}",
+                "retrieval_key": "{retriever.results}"
             }
         }
     ],

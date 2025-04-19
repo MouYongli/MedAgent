@@ -24,7 +24,7 @@
             "type": "end",
             "name": "End node",
             "parameters": {
-                "return_key": "f'{generator.response}'"
+                "generation_key": "f'{generator.response}'"
             }
         }
     ],

@@ -1,7 +1,7 @@
 from typing import Dict, Any
 
 
-def render_template(template: str, context: Dict[str, Any]) -> str:
+def render_template(template: str, context: Dict[str, Any]) -> Any:
     # Helper class to allow dot-access and deep lookup
     class DotDict(dict):
         def __getattr__(self, item):

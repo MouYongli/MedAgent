@@ -50,7 +50,6 @@ class Generator(AbstractComponent, variant_name="generator"):
 
     def execute(self, data: Dict[str, Any]) -> Dict[str, Any]:
         prompt_template = self.parameters.get("prompt", self.default_parameters.get("prompt"))
-        print(data)
         prompt = render_template(prompt_template, data)
         logging.info(f"Resolved prompt template \n{prompt_template} \n\nto {prompt}")
         data[f"{self.id}.response"] = self.generate_response(prompt)

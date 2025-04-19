@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional, Any
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
@@ -28,6 +28,7 @@ class AskRequest(BaseModel):
 class AskResponse(BaseModel):
     chat_id: str
     response: str
+    retrieval: Optional[Any]
     response_latency: float  # measured in seconds
 
 
@@ -56,8 +57,8 @@ async def ask_chat(chat_id: str, request: AskRequest):
     if not chat:
         raise HTTPException(status_code=404, detail="Chat ID not found")
 
-    response, response_latency = chat.pose_question(request.question)
-    return AskResponse(chat_id=chat.id, response=response, response_latency=response_latency)
+    result = chat.pose_question(request.question)
+    return AskResponse(chat_id=chat.id, response=result.response, retrieval=result.retrieval, response_latency=result.execution_time)
 
 
 @router.get("/list")

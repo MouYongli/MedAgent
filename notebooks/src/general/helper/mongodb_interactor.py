@@ -9,6 +9,8 @@ from general.data_model.question_dataset import QuestionEntry, QuestionClass, Ex
 from general.data_model.system_interactions import WorkflowSystem, GenerationResultEntry, ChatInteraction
 from general.helper.logging import logger
 
+from general.data_model.system_interactions import RetrievalEntry
+
 
 class CollectionName(str, Enum):
     GUIDELINES = "guidelines"
@@ -94,7 +96,7 @@ class MongoDBInterface:
         return entry
 
     def document_to_generation_result_entry(self, doc: Dict[str, Any]) -> GenerationResultEntry:
-        gen_res = GenerationResultEntry.from_dict({k: v for k, v in doc.items() if k not in {"question"}})
+        gen_res = GenerationResultEntry.from_dict({k: v for k, v in doc.items() if k not in {"question", "retrieval_result"}})
 
         # Resolve QuestionEntry
         question_doc = self.get_entry(CollectionName.QUESTIONS, "_id", doc["question"])
@@ -103,6 +105,21 @@ class MongoDBInterface:
         else:
             logger.error(f"Failed to load QuestionEntry with ID: {doc['question']}")
             raise ValueError(f"Missing QuestionEntry: {doc['question']}")
+
+        # Resolve RetrievalResults
+        for rr in doc.get("retrieval_result", []):
+            gl_awmf_nr = rr.get("guideline")
+            if gl_awmf_nr:
+                gl_doc = self.get_entry(CollectionName.GUIDELINES, "awmf_register_number", gl_awmf_nr)
+                if gl_doc:
+                    gl = self.document_to_guideline_metadata(gl_doc)
+                    rr_obj = RetrievalEntry(text=rr.get("text"), guideline=gl)
+                    gen_res.retrieval_result.append(rr_obj)
+                else:
+                    logger.error(f"Failed to load GuidelineMetadata with awmf_register_number: {gl_awmf_nr}")
+                    raise ValueError(f"Missing GuidelineMetadata: {gl_awmf_nr}")
+            else:
+                logger.error(f"RetrievalResult entry missing guideline: {rr}")
 
         return gen_res
 
