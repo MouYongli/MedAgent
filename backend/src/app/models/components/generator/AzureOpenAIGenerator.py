@@ -50,7 +50,7 @@ class AzureOpenAIGenerator(Generator, variant_name="azure_openai"):
             logging.error(f"[AzureOpenAIGenerator] API call failed: {e}")
             raise
 
-        logging.info(f"[AzureOpenAIGenerator] Response:\n{response_text}")
+        logging.debug(f"[AzureOpenAIGenerator] Response:\n{response_text}")
 
         self.chat_history.append({
             "role": "assistant",
