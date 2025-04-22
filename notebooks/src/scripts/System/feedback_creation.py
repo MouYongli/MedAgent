@@ -1,4 +1,4 @@
-from typing import Optional, Dict
+from typing import Optional, Dict, Tuple
 
 from general.data_model.system_interactions import Feedback, FeedbackTarget, FeedbackType, ChatInteraction, GenerationResultEntry
 from general.helper.logging import logger
@@ -30,6 +30,24 @@ def create_feedback_hallucination_classification(counts: Dict[str, int], notes: 
         manual=True,
         notes=notes
     )
+
+def create_feedback_retrieval_scores(precision: float, recall: float, f1: float) -> Tuple[Feedback, Feedback, Feedback]:
+    precision_feedback = Feedback(
+        target=FeedbackTarget.RETRIEVER,
+        type=FeedbackType.RETRIEVAL_PRECISION,
+        value=precision,
+    )
+    recall_feedback = Feedback(
+        target=FeedbackTarget.RETRIEVER,
+        type=FeedbackType.RETRIEVAL_RECALL,
+        value=recall,
+    )
+    f1_feedback = Feedback(
+        target=FeedbackTarget.RETRIEVER,
+        type=FeedbackType.RETRIEVAL_F1,
+        value=f1,
+    )
+    return precision_feedback, recall_feedback, f1_feedback
 
 def insert_feedback(dbi: MongoDBInterface, chat: ChatInteraction, entry: GenerationResultEntry, feedback: Feedback):
     chat_doc = dbi.get_entry(CollectionName.CHAT_INTERACTIONS, "chat_id", chat.chat_id)
