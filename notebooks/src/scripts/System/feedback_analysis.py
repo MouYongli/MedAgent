@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 import numpy as np
 import pandas as pd
@@ -77,10 +77,7 @@ def analyze_and_visualize_response_time_per_category(wf_system: WorkflowSystem):
       template="seaborn"
     )
 
-    fig.update_traces(
-      line_width=1,
-      marker=dict(size=3)
-    )
+    fig.update_traces(line_width=1, marker=dict(size=3), boxmean='sd')
     fig.update_layout(
       boxmode='overlay',
       xaxis=dict(
@@ -95,7 +92,6 @@ def analyze_and_visualize_response_time_per_category(wf_system: WorkflowSystem):
     return fig
 
   return response_times_df, visualize_box_plots_response_time_per_category()
-
 
 def get_average_correctness(wf_system: WorkflowSystem) -> float:
   scores = [
@@ -158,10 +154,7 @@ def analyze_and_visualize_correctness_per_category(wf_system: WorkflowSystem):
       template="seaborn"
     )
 
-    fig.update_traces(
-      line_width=1,
-      marker=dict(size=3)
-    )
+    fig.update_traces(line_width=1, marker=dict(size=3), boxmean='sd')
     fig.update_layout(
       boxmode='overlay',
       xaxis=dict(
@@ -419,4 +412,176 @@ def analyze_and_visualize_hallucinations(wf_system: WorkflowSystem):
     return fig
 
   return hallucinations_df, generate_subplot_heatmap_grid(simple_fig, complex_fig, negative_fig, "Hallucination Types Count")
+
+
+def get_average_retrieval_scores(wf_system: WorkflowSystem) -> Tuple[float, float, float]:
+  scores = [
+    {"precision": p, "recall": r, "f1": f}
+    for chat in wf_system.generation_results
+    for entry in chat.entries
+    if (res := entry.get_retrieval_scores())  and (p := res[0]) is not None and (r := res[1]) is not None and (f := res[2]) is not None
+  ]
+
+  if not scores:
+    return 0.0, 0.0, 0.0
+
+  return (
+    sum(score["precision"] for score in scores) / len(scores),
+    sum(score["recall"] for score in scores) / len(scores),
+    sum(score["f1"] for score in scores) / len(scores),
+  )
+
+
+def analyze_and_visualize_retrieval_scores_per_category(wf_system: WorkflowSystem):
+  """Assumption: only one time interaction per question
+  """
+  def get_avg_retrieval_score(entries):
+    retrieval_scores = np.array([
+      {"precision": p, "recall": r, "f1": f}
+      for entry in entries
+      if (res := entry.get_retrieval_scores()) and (p := res[0]) is not None and (r := res[1]) is not None and (
+        f := res[2]) is not None
+    ])
+    if len(retrieval_scores) == 0:
+      return retrieval_scores, None, retrieval_scores, None, retrieval_scores, None,
+
+    precision_scores = [score["precision"] for score in retrieval_scores]
+    recall_scores = [score["recall"] for score in retrieval_scores]
+    f1_scores = [score["f1"] for score in retrieval_scores]
+    return precision_scores, np.mean(precision_scores), recall_scores, np.mean(recall_scores), f1_scores, np.mean(f1_scores)
+
+  rows = [{
+    "supercategory": sc.value,
+    "subcategory": None,
+    "retrieval_precision_scores": (scores := get_avg_retrieval_score(wf_system.get_all_questions_for_super_category(sc)))[0],
+    "avg_retrieval_precision_score": scores[1],
+    "retrieval_recall_scores": scores[2],
+    "avg_retrieval_recall_score": scores[3],
+    "retrieval_f1_scores": scores[4],
+    "avg_retrieval_f1_score": scores[5],
+  } for sc in all_supercategories] + [{
+    "supercategory": qt.supercategory.value,
+    "subcategory": qt.subcategory.value,
+    "retrieval_precision_scores": (scores := get_avg_retrieval_score(wf_system.get_all_questions_for_sub_category(super_cat=qt.supercategory, sub_cat=qt.subcategory)))[0],
+    "avg_retrieval_precision_score": scores[1],
+    "retrieval_recall_scores": scores[2],
+    "avg_retrieval_recall_score": scores[3],
+    "retrieval_f1_scores": scores[4],
+    "avg_retrieval_f1_score": scores[5],
+  } for qt in all_question_classes]
+
+  retrieval_scores_df = pd.DataFrame(rows)
+
+  def visualize_box_plot(scores_df: pd.DataFrame, score_col: str, y_label: str, title: str):
+    """Reusable visualization function for box plots."""
+    exploded_df = scores_df[scores_df["subcategory"].notna()].explode(score_col)
+    exploded_df[score_col] = exploded_df[score_col].astype(float)
+
+    supercat_base_colors = {
+      SuperCategory.SIMPLE.value: "#33691E",  # Green
+      SuperCategory.COMPLEX.value: "#0D47A1",  # Blue
+      SuperCategory.NEGATIVE.value: "#EF6C00"  # Orange
+    }
+
+    fig = px.box(
+      exploded_df,
+      x="subcategory",
+      y=score_col,
+      color="supercategory",
+      color_discrete_map=supercat_base_colors,
+      title=title,
+      labels={"subcategory": "Subcategory", "supercategory": "Supercategory", score_col: y_label},
+      template="seaborn"
+    )
+    fig.update_traces(line_width=1, marker=dict(size=3), boxmean='sd')
+    fig.update_layout(
+      boxmode="overlay",
+      xaxis=dict(autorange=True, tickangle=-90, showgrid=False),
+      yaxis=dict(range=[0, 1]),
+      showlegend=True,
+    )
+    return fig
+
+  precision_fig = visualize_box_plot(retrieval_scores_df, "retrieval_precision_scores", "Precision Scores", "Precision by Question Type")
+  recall_fig = visualize_box_plot(retrieval_scores_df, "retrieval_recall_scores", "Recall Scores", "Recall by Question Type")
+  f1_fig = visualize_box_plot(retrieval_scores_df, "retrieval_f1_scores", "F1 Scores", "F1 Score by Question Type")
+
+  return retrieval_scores_df, precision_fig, recall_fig, f1_fig
+
+
+def get_average_factuality(wf_system: WorkflowSystem) -> float:
+  scores = [
+    score
+    for chat in wf_system.generation_results
+    for entry in chat.entries
+    if (score := entry.get_correctness_score()) is not None
+  ]
+  return sum(scores) / len(scores)
+
+def analyze_and_visualize_factuality_per_category(wf_system: WorkflowSystem):
+  """Assumption: only one time interaction per question
+  """
+  def get_avg_factuality_score(entries):
+    factuality_scores = np.array([
+      entry.get_factuality_score() for entry in entries
+      if entry.get_factuality_score() is not None
+    ])
+    if len(factuality_scores) == 0:
+      return factuality_scores, None
+
+    return factuality_scores, np.mean(factuality_scores)
+
+  rows = [{
+    "supercategory": sc.value,
+    "subcategory": None,
+    "factuality_scores": (factuality_scores := get_avg_factuality_score(wf_system.get_all_questions_for_super_category(sc)))[0],
+    "avg_factuality_score": factuality_scores[1],
+  } for sc in all_supercategories] + [{
+    "supercategory": qt.supercategory.value,
+    "subcategory": qt.subcategory.value,
+    "factuality_scores": (factuality_scores := get_avg_factuality_score(wf_system.get_all_questions_for_sub_category(super_cat=qt.supercategory, sub_cat=qt.subcategory)))[0],
+    "avg_correctness_score": factuality_scores[1],
+  } for qt in all_question_classes]
+
+  factuality_scores_df = pd.DataFrame(rows)
+
+  def visualize_box_plots_factuality_score_per_category():
+    supercat_base_colors = {
+      SuperCategory.SIMPLE.value: "#33691E",  # Green
+      SuperCategory.COMPLEX.value: "#0D47A1",  # Blue
+      SuperCategory.NEGATIVE.value: "#EF6C00"  # Orange
+    }
+
+    exploded_df = factuality_scores_df[factuality_scores_df["subcategory"].notna()].explode("factuality_scores")
+    exploded_df["factuality_scores"] = exploded_df["factuality_scores"].astype(float)
+
+    fig = px.box(
+      exploded_df,
+      x="subcategory",
+      y="factuality_scores",
+      color="supercategory",
+      color_discrete_map=supercat_base_colors,
+      title="Factuality score per Question Type",
+      labels={
+        "factuality_scores": "Factuality Score",
+        "subcategory": "Subcategory",
+        "supercategory": "Supercategory",
+      },
+      template="seaborn"
+    )
+    fig.update_traces(line_width=1, marker=dict(size=3), boxmean='sd')
+    fig.update_layout(
+      boxmode='overlay',
+      xaxis=dict(
+        autorange=True,
+        title=None,
+        tickangle=-90,
+        showgrid=False
+      ),
+      showlegend=True,
+    )
+    fig.update_yaxes(range=[0, 1])
+    return fig
+
+  return factuality_scores_df, visualize_box_plots_factuality_score_per_category()
 

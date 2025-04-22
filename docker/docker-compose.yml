@@ -15,12 +15,10 @@ services:
   # Backend (FastAPI)
   backend:
     build:
-      context: ../
-      dockerfile: docker/backend/Dockerfile
+      context: ../backend
+      dockerfile: ../docker/backend/Dockerfile
     container_name: medagent-backend
     working_dir: /src
-    volumes:
-      - ../backend/src:/src
     ports:
       - "5000:5000"
     environment:

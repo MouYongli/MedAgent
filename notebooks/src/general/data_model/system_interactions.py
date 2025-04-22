@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import List, Dict, Any, Union, Optional, Literal
+from typing import List, Dict, Any, Union, Optional, Literal, Tuple
 from uuid import UUID
 
 from general.data_model.guideline_metadata import serialize_datetime, deserialize_datetime
@@ -118,11 +118,28 @@ class GenerationResultEntry:
                 return feedback.value
         return None
 
+    def get_factuality_score(self) -> Optional[float]:
+        for feedback in self.feedback:
+            if feedback.type == FeedbackType.FACTUALITY:
+                return feedback.value
+        return None
+
     def get_hallucination_classification(self) -> Optional[Dict[str, int]]:
         for feedback in self.feedback:
             if feedback.type == FeedbackType.HALLUCINATION:
                 return feedback.value
         return None
+
+    def get_retrieval_scores(self) -> Tuple[Optional[float], Optional[float], Optional[float]]:
+        precision, recall, f1 = None, None, None
+        for feedback in self.feedback:
+            if feedback.type == FeedbackType.RETRIEVAL_PRECISION:
+                precision = feedback.value
+            elif feedback.type == FeedbackType.RETRIEVAL_RECALL:
+                recall = feedback.value
+            elif feedback.type == FeedbackType.RETRIEVAL_F1:
+                f1 = feedback.value
+        return precision, recall, f1
 
 @dataclass
 class RetrievalEntry:
