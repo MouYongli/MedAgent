@@ -1,10 +1,9 @@
-version: '3.8'
-
 services:
   # Frontend (Next.js)
   frontend:
     build:
       context: ../frontend
+      dockerfile: ../docker/frontend/Dockerfile
     container_name: medagent-frontend
     ports:
       - "3000:3000"
@@ -13,73 +12,103 @@ services:
     depends_on:
       - backend
 
-  # Backend (Flask)
+  # Backend (FastAPI)
   backend:
     build:
-      context: ../backend
+      context: ../
+      dockerfile: docker/backend/Dockerfile  # Name of the Dockerfile
     container_name: medagent-backend
+    working_dir: /src
+    volumes:
+    - ../backend/src:/src  # Ensure `app/` is inside `/src/`
     ports:
       - "5000:5000"
     environment:
-      - FLASK_APP=app.py
-      - DATABASE_URL=postgres://user:password@db:5432/mydatabase
-      - VECTOR_DB_URL=http://vector-db:5001
+      - DATABASE_URL=postgres://user:password@postgres-db:5432/mydatabase
       - GRAPH_DB_URL=neo4j://neo4j:7687
       - KEYCLOAK_URL=http://keycloak:8080
+      - MONGO_URL=mongodb://mongo:mongo@medagent:27017
     depends_on:
-      - db
-      - vector-db
-      - neo4j
-      - keycloak
+      - mongodb
+#      - postgres-db
+#      - neo4j
+#      - keycloak
     networks:
       - backend
 
-  # Postgres Database
-  postgres-db:
-    image: postgres:13
-    container_name: medagent-postgres-db
+  # MongoDB Database
+  mongodb:
+    image: mongo:6.0
+    container_name: medagent-mongodb
+    ports:
+      - "27017:27017"
     environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=mydatabase
-    ports:
-      - "5432:5432"
+      - MONGO_INITDB_ROOT_USERNAME=mongo
+      - MONGO_INITDB_ROOT_PASSWORD=mongo
+    volumes:
+      - mongodb-data:/data/db
+      - ./certs:/etc/mongo/certs:ro
+    command: >
+      --tlsMode requireTLS
+      --tlsCertificateKeyFile /etc/mongo/certs/mongo.pem
+    healthcheck:
+      test: [ "CMD", "mongo", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - backend
 
-  # Vector Database (example: Faiss)
-  vector-db:
-    image: some-vector-db-image
-    container_name: vector-db
-    ports:
-      - "5001:5001"
-    networks:
-      - backend
 
-  # Neo4j Graph Database
-  neo4j:
-    image: neo4j:4.3
-    container_name: medagent-neo4j
-    environment:
-      - NEO4J_AUTH=neo4j/password
-    ports:
-      - "7687:7687"
-      - "7474:7474"
-    networks:
-      - backend
-
-  # Keycloak (Authenticator)
-  keycloak:
-    image: jboss/keycloak:latest
-    container_name: medagent-neo4j
-    environment:
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=admin
-    ports:
-      - "8080:8080"
-    networks:
-      - backend
+#  # Postgres Database
+#  postgres-db:
+#    image: postgres:13
+#    container_name: medagent-postgres-db
+#    environment:
+#      - POSTGRES_USER=user
+#      - POSTGRES_PASSWORD=password
+#      - POSTGRES_DB=mydatabase
+#    ports:
+#      - "5432:5432"
+#    networks:
+#      - backend
+#
+#  # Vector Database (example: Faiss)
+#  vector-db:
+#    image: some-vector-db-image
+#    container_name: vector-db
+#    ports:
+#      - "5001:5001"
+#    networks:
+#      - backend
+#
+#  # Neo4j Graph Database
+#  neo4j:
+#    image: neo4j:4.3
+#    container_name: medagent-neo4j
+#    environment:
+#      - NEO4J_AUTH=neo4j/password
+#    ports:
+#      - "7687:7687"
+#      - "7474:7474"
+#    networks:
+#      - backend
+#
+#  # Keycloak (Authenticator)
+#  keycloak:
+#    image: quay.io/keycloak/keycloak:latest
+#    container_name: medagent-keycloak
+#    environment:
+#      - KEYCLOAK_USER=admin
+#      - KEYCLOAK_PASSWORD=admin
+#    ports:
+#      - "8080:8080"
+#    networks:
+#      - backend
 
 networks:
   backend:
     driver: bridge
+
+volumes:
+  mongodb-data:
