@@ -108,16 +108,16 @@ class MongoDBInterface:
 
         # Resolve RetrievalResults
         for rr in doc.get("retrieval_result", []):
-            gl_awmf_nr = rr.get("guideline")
-            if gl_awmf_nr:
-                gl_doc = self.get_entry(CollectionName.GUIDELINES, "awmf_register_number", gl_awmf_nr)
+            gl_object_id = rr.get("guideline")
+            if gl_object_id:
+                gl_doc = self.get_entry(CollectionName.GUIDELINES, "_id", gl_object_id)
                 if gl_doc:
                     gl = self.document_to_guideline_metadata(gl_doc)
                     rr_obj = RetrievalEntry(text=rr.get("text"), guideline=gl)
                     gen_res.retrieval_result.append(rr_obj)
                 else:
-                    logger.error(f"Failed to load GuidelineMetadata with awmf_register_number: {gl_awmf_nr}")
-                    raise ValueError(f"Missing GuidelineMetadata: {gl_awmf_nr}")
+                    logger.error(f"Failed to load GuidelineMetadata with ObjectId: {gl_object_id}")
+                    raise ValueError(f"Missing GuidelineMetadata: {gl_object_id}")
             else:
                 logger.error(f"RetrievalResult entry missing guideline: {rr}")
 

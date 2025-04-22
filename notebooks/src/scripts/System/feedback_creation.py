@@ -49,6 +49,18 @@ def create_feedback_retrieval_scores(precision: float, recall: float, f1: float)
     )
     return precision_feedback, recall_feedback, f1_feedback
 
+def create_feedback_factuality_score(fs: int, fo: int, notes: Optional[str] = None) -> Feedback:
+    if notes is None:
+        notes = ""
+    notes += f"\nOriginal values: FS [{fs}], FO [{fo}]"
+    return Feedback(
+        target=FeedbackTarget.GENERATOR,
+        type=FeedbackType.FACTUALITY,
+        value=float(fs) / float(fo) if fo != 0 else 0.0,
+        manual=True,
+        notes=notes
+    )
+
 def insert_feedback(dbi: MongoDBInterface, chat: ChatInteraction, entry: GenerationResultEntry, feedback: Feedback):
     chat_doc = dbi.get_entry(CollectionName.CHAT_INTERACTIONS, "chat_id", chat.chat_id)
     if chat_doc is None:
