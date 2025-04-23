@@ -4,8 +4,10 @@ from typing import Optional, Tuple, Any
 
 import requests
 
+from general.helper.accuracy_scores_calculation import create_accuracy_scores
 from general.helper.retrieval_score_calculation import create_retrieval_scores
-from scripts.System.feedback_creation import create_feedback_response_latency, create_feedback_retrieval_scores
+from scripts.System.feedback_creation import create_feedback_response_latency, create_feedback_retrieval_scores, \
+    create_feedback_accuracy
 from general.data_model.question_dataset import QuestionEntry
 from general.data_model.system_interactions import WorkflowSystem, ChatInteraction, GenerationResultEntry, RetrievalEntry
 from general.helper.logging import logger
@@ -18,10 +20,11 @@ def init_workflow(backend_api_url, config):
     response.raise_for_status()
     existing_workflows = response.json()
 
-    # Check if any workflow exists already
+    # Check if the workflow already exists
     for workflow_id in existing_workflows:
-        if existing_workflows[workflow_id] == "WorkflowSystem instance":
-            logger.info(f"Workflow already exists with ID: {workflow_id}")
+        wf_name = existing_workflows[workflow_id]
+        if wf_name == config["name"]:
+            logger.info(f"Workflow {wf_name} already exists with ID: {workflow_id}")
             return workflow_id  # Return the existing workflow ID
 
     # If no pre-existing system, initialize a new workflow
@@ -56,7 +59,7 @@ def init_chat(backend_api_url, workflow_id):
 def pose_question(backend_api_url, chat_id, question) -> Tuple[str, Optional[Any], float]:
     response = requests.post(f"{backend_api_url}/chat/{chat_id}/ask", json={"question": question})
     response.raise_for_status()
-    system_answer, retrieval_result, response_latency = response.json()["response"], response.json().get("retrieval", []), response.json()["response_latency"]
+    system_answer, retrieval_result, response_latency = response.json()["response"], retrieval if (retrieval := response.json().get("retrieval", [])) is not None else [], response.json()["response_latency"]
     return system_answer, retrieval_result, response_latency
 
 
@@ -123,6 +126,7 @@ def generate_stored_response(
     entry.feedback.append(create_feedback_response_latency(response_latency))
     retrieval_precision, retrieval_recall, retrieval_f1 = create_retrieval_scores(entry.question.expected_answers, entry.retrieval_result)
     entry.feedback.extend(create_feedback_retrieval_scores(retrieval_precision, retrieval_recall, retrieval_f1))
+    entry.feedback.append(create_feedback_accuracy(create_accuracy_scores(expected_retrieval=entry.question.expected_answers, provided_answer=entry.answer)))
 
     entry_dict = entry.as_dict()
 

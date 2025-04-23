@@ -13,6 +13,7 @@ class WorkflowSystem:
 
     def __init__(self, wf_id: str, config: Dict[str, Any]):
         self.id = wf_id
+        self.name = config.get("name", "Unnamed Workflow")
         self.components: Dict[str, AbstractComponent] = {}
         self.edges: Dict[str, str] = {}
 

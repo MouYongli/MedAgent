@@ -132,6 +132,12 @@ class GenerationResultEntry:
                 return feedback.value
         return None
 
+    def get_accuracy_to_expected_retrieval(self) -> Optional[Dict[str, int]]:
+        for feedback in self.feedback:
+            if feedback.type == FeedbackType.ACCURACY_TO_EXPECTED_RETRIEVAL:
+                return feedback.value
+        return None
+
     def get_retrieval_scores(self) -> Tuple[Optional[float], Optional[float], Optional[float]]:
         precision, recall, f1 = None, None, None
         for feedback in self.feedback:
@@ -171,6 +177,7 @@ class FeedbackTarget(Enum):
 class FeedbackType(Enum):
     CORRECTNESS = "Correctness"
     HALLUCINATION = "Hallucination classification"
+    ACCURACY_TO_EXPECTED_RETRIEVAL = "Accuracy to expected retrieval"
     RESPONSE_LATENCY = "Response latency"
     RETRIEVAL_RECALL = "Retrieval Recall"
     RETRIEVAL_PRECISION = "Retrieval Precision"

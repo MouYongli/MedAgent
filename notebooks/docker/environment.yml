@@ -17,9 +17,13 @@ dependencies:
   - requests
   - pip
   - pip:
-    - kaleido
-    - ipywidgets
-    - python-dotenv
-    - openai
-    - markdown
-    - tiktoken
+      - kaleido
+      - ipywidgets
+      - python-dotenv
+      - openai
+      - markdown
+      - tiktoken
+      - evaluate
+      - nltk
+      - absl-py
+      - rouge_score

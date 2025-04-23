@@ -40,7 +40,7 @@ async def init_workflow(request: InitWorkflowRequest):
 
 @router.get("/list")
 async def list_workflows() -> Dict[str, str]:
-    return {wid: "WorkflowSystem instance" for wid in workflow_instances}
+    return {wid: f"{workflow_instances[wid].name}" for wid in workflow_instances}
 
 
 @router.get("/{workflow_id}")

@@ -10,6 +10,7 @@ from plotly.subplots import make_subplots
 
 from general.data_model.question_dataset import SuperCategory, all_supercategories, all_question_classes
 from general.data_model.system_interactions import WorkflowSystem
+from general.helper.color import generate_color_variants
 
 
 def get_average_response_time(wf_system: WorkflowSystem) -> float:
@@ -586,4 +587,254 @@ def analyze_and_visualize_factuality_per_category(wf_system: WorkflowSystem):
     return fig
 
   return factuality_scores_df, visualize_box_plots_factuality_score_per_category()
+
+def get_average_accuracy_scores(wf_system: WorkflowSystem) -> Tuple[float, float, float, float, float]:
+  scores = [
+    {"rouge_1": r1, "rouge_l": rl, "bleu": b, "meteor": m, "embedding_sim": s}
+    for chat in wf_system.generation_results
+    for entry in chat.entries
+    if (res := entry.get_accuracy_to_expected_retrieval())
+       and (r1 := res["ROUGE-1"]) is not None and (rl := res["ROUGE-L"]) is not None
+       and (b := res["BLEU"]) is not None and (m := res["METEOR"]) is not None and (s := res["Embedding similarity"]) is not None
+  ]
+
+  if not scores:
+    return 0.0, 0.0, 0.0, 0.0, 0.0
+
+  return (
+    sum(score["rouge_1"] for score in scores) / len(scores),
+    sum(score["rouge_l"] for score in scores) / len(scores),
+    sum(score["bleu"] for score in scores) / len(scores),
+    sum(score["meteor"] for score in scores) / len(scores),
+    sum(score["embedding_sim"] for score in scores) / len(scores),
+  )
+
+
+def analyze_and_visualize_accuracy_per_category(wf_system: WorkflowSystem):
+  """Assumption: only one time interaction per question
+  """
+  def get_avg_accuracy_scores(entries):
+    accuracy_scores = np.array([
+      {"rouge_1": r1, "rouge_l": rl, "bleu": b, "meteor": m, "embedding_sim": s}
+      for entry in entries
+      if (res := entry.get_accuracy_to_expected_retrieval())
+         and (r1 := res["ROUGE-1"]) is not None and (rl := res["ROUGE-L"]) is not None
+         and (b := res["BLEU"]) is not None and (m := res["METEOR"]) is not None and (s := res["Embedding similarity"]) is not None
+    ])
+    if len(accuracy_scores) == 0:
+      return accuracy_scores, None, accuracy_scores, None, accuracy_scores, None, accuracy_scores, None, accuracy_scores, None
+
+    rouge_1_scores = [score["rouge_1"] for score in accuracy_scores]
+    rouge_l_scores = [score["rouge_l"] for score in accuracy_scores]
+    bleu_scores = [score["bleu"] for score in accuracy_scores]
+    meteor_scores = [score["meteor"] for score in accuracy_scores]
+    embedding_sim_scores = [score["embedding_sim"] for score in accuracy_scores]
+
+    return rouge_1_scores, np.mean(rouge_1_scores), rouge_l_scores, np.mean(rouge_l_scores), bleu_scores, np.mean(bleu_scores), meteor_scores, np.mean(meteor_scores), embedding_sim_scores, np.mean(embedding_sim_scores)
+
+  rows = [{
+    "supercategory": sc.value,
+    "subcategory": None,
+    "rouge_1_scores": (accuracy_scores := get_avg_accuracy_scores(wf_system.get_all_questions_for_super_category(sc)))[0],
+    "avg_rouge_1_score": accuracy_scores[1],
+    "rouge_l_scores": accuracy_scores[2],
+    "avg_rouge_l_score": accuracy_scores[3],
+    "bleu_scores": accuracy_scores[4],
+    "avg_bleu_score": accuracy_scores[5],
+    "meteor_scores": accuracy_scores[6],
+    "avg_meteor_score": accuracy_scores[7],
+    "embedding_sim_scores": accuracy_scores[8],
+    "avg_embedding_sim_score": accuracy_scores[9],
+  } for sc in all_supercategories] + [{
+    "supercategory": qt.supercategory.value,
+    "subcategory": qt.subcategory.value,
+    "rouge_1_scores": (accuracy_scores := get_avg_accuracy_scores(wf_system.get_all_questions_for_sub_category(super_cat=qt.supercategory, sub_cat=qt.subcategory)))[0],
+    "avg_rouge_1_score": accuracy_scores[1],
+    "rouge_l_scores": accuracy_scores[2],
+    "avg_rouge_l_score": accuracy_scores[3],
+    "bleu_scores": accuracy_scores[4],
+    "avg_bleu_score": accuracy_scores[5],
+    "meteor_scores": accuracy_scores[6],
+    "avg_meteor_score": accuracy_scores[7],
+    "embedding_sim_scores": accuracy_scores[8],
+    "avg_embedding_sim_score": accuracy_scores[9],
+  } for qt in all_question_classes]
+
+  accuracy_scores_df = pd.DataFrame(rows)
+
+  def visualize_radar_scatter_average_per_super_category():
+    supercat_base_colors = {
+      SuperCategory.SIMPLE.value: "#33691E",  # Green
+      SuperCategory.COMPLEX.value: "#0D47A1",  # Blue
+      SuperCategory.NEGATIVE.value: "#EF6C00"  # Orange
+    }
+
+    filtered_df = accuracy_scores_df[accuracy_scores_df["subcategory"].isna()]
+    metrics = [ 'rouge_1', 'rouge_l', 'bleu', 'meteor', 'embedding_sim' ]
+    labels = [ 'ROUGE-1', 'ROUGE-L', 'BLEU', 'METEOR', 'Embedding similarity' ]
+
+    fig = go.Figure()
+
+    for _, row in filtered_df.iterrows():
+      avg_values = [row[f"avg_{metric}_score"] for metric in metrics]
+
+      theta = labels + [labels[0]]
+      avg_values += [avg_values[0]]
+
+      fig.add_trace(go.Scatterpolar(
+        r=avg_values,
+        theta=theta,
+        mode='lines+markers',
+        line=dict(color=supercat_base_colors[row["supercategory"]], width=1, shape='spline'),
+        marker=dict(size=3),
+        name=f"{row['supercategory']}",
+      ))
+
+    fig.update_layout(
+      title="Accuracy scores per question type",
+      polar=dict(
+        radialaxis=dict(
+          visible=True,
+          range=[0, 1],
+          showticklabels=True,
+        ),
+      ),
+      template="seaborn"
+    )
+    return fig
+
+  def visualize_box_accuracy_per_category():
+    supercat_base_colors = {
+      SuperCategory.SIMPLE.value: "#33691E",
+      SuperCategory.COMPLEX.value: "#0D47A1",
+      SuperCategory.NEGATIVE.value: "#EF6C00"
+    }
+
+    metric_columns = ["rouge_1_scores", "rouge_l_scores", "bleu_scores", "meteor_scores", "embedding_sim_scores"]
+    display_metric_names = {
+      "rouge_1_scores": "ROUGE-1",
+      "rouge_l_scores": "ROUGE-L",
+      "bleu_scores": "BLEU",
+      "meteor_scores": "METEOR",
+      "embedding_sim_scores": "Emb-sim."
+    }
+
+    filtered_df = accuracy_scores_df[accuracy_scores_df["subcategory"].notna()].copy()
+    melted_df = filtered_df.melt(
+      id_vars=["supercategory", "subcategory"],
+      value_vars=metric_columns,
+      var_name="metric",
+      value_name="score"
+    )
+    melted_df = melted_df.explode("score")
+    melted_df["score"] = melted_df["score"].astype(float)
+
+    # Create color map for (supercategory | metric)
+    color_map = {}
+    for supercat, base in supercat_base_colors.items():
+      variants = generate_color_variants(base, len(metric_columns))
+      for metric, color in zip(metric_columns, variants):
+        color_key = f"{supercat} | {metric}"
+        color_map[color_key] = color
+
+    melted_df["color_key"] = melted_df["supercategory"] + " | " + melted_df["metric"]
+    fig = go.Figure()
+    subcategories = melted_df["subcategory"].unique()
+
+    for metric in metric_columns:
+      for supercat in supercat_base_colors.keys():
+        df_subset = melted_df[
+          (melted_df["metric"] == metric) &
+          (melted_df["supercategory"] == supercat)
+          ]
+        if df_subset.empty:
+          continue
+        color_key = f"{supercat} | {metric}"
+        for subcat in subcategories:
+          df_cat = df_subset[df_subset["subcategory"] == subcat]
+          if df_cat.empty:
+            continue
+          fig.add_trace(go.Box(
+            y=df_cat["score"],
+            x=[subcat] * len(df_cat),
+            name=f"{metric}",
+            marker_color=color_map[color_key],
+            boxpoints=False,
+            line_width=1,
+            offsetgroup=metric,
+            legendgroup=color_key,
+            showlegend=(subcat == subcategories[0]),
+            hoveron='boxes',
+            boxmean='sd'
+          ))
+
+    # Adjust legend
+    legend_annotations = []
+    legend_shapes = []
+
+    x_start, y_start = 1, 1
+    height_header, width_metric_label = 0.1, 0.06
+    cell_width, cell_height = 0.05, 0.08
+    x_margin, y_margin = 0.01, 0.04
+
+    # Right-aligned metric labels
+    for row_i, metric in enumerate(metric_columns):
+      legend_annotations.append(dict(
+        x=x_start + width_metric_label,
+        y=y_start - height_header - row_i * (cell_height + y_margin),
+        xref="paper", yref="paper",
+        text=f"{display_metric_names[metric]}",
+        showarrow=False,
+        font=dict(size=11),
+        xanchor="right",
+        yanchor="top"
+      ))
+
+    # Supercategory headers ABOVE the boxes
+    for col_i, supercat in enumerate(supercat_base_colors.keys()):
+      legend_annotations.append(dict(
+        x=x_start + x_margin + width_metric_label + col_i * (cell_width + x_margin),
+        y=y_start,
+        xref="paper", yref="paper",
+        text=f"{supercat}",
+        showarrow=False,
+        font=dict(size=11),
+        xanchor="left"
+      ))
+
+    for row_i, metric in enumerate(metric_columns):
+      for col_i, supercat in enumerate(supercat_base_colors.keys()):
+        color_key = f"{supercat} | {metric}"
+        color = color_map.get(color_key, "#CCCCCC")
+
+        x0 = x_start + x_margin + width_metric_label + col_i * (cell_width + x_margin)
+        x1 = x0 + cell_width
+        y0 = y_start - height_header - row_i * (cell_height + y_margin)
+        y1 = y0 - cell_height
+
+        legend_shapes.append(dict(
+          type="rect",
+          xref="paper", yref="paper",
+          x0=x0, y0=y0,
+          x1=x1, y1=y1,
+          fillcolor=color,
+          line=dict(width=0)
+        ))
+
+    fig.update_layout(
+      boxmode='group',
+      title='Accuracy scores per question subcategory',
+      yaxis=dict(range=[0, 1], title="Score"),
+      xaxis=dict(title="", tickangle=-90),
+      template="seaborn",
+      showlegend=False,
+      shapes=legend_shapes,
+      annotations=legend_annotations,
+      margin=dict(r=400)  # extra right margin for the legend
+    )
+
+    return fig
+
+  return accuracy_scores_df, visualize_radar_scatter_average_per_super_category(), visualize_box_accuracy_per_category()
+
 

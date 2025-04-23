@@ -134,8 +134,8 @@ def create_retrieval_scores(
     fp = sum(partial_fp_actual)
     fn = sum(partial_fn_expected)
 
-    precision = tp_retrieval / (tp_retrieval + fp)
-    recall = tp_expectation / (tp_expectation + fn)
+    precision = tp_retrieval / (tp_retrieval + fp) if tp_retrieval + fp > 0 else 0.0
+    recall = tp_expectation / (tp_expectation + fn) if tp_expectation + fn > 0 else 0.0
     f1 = 2 * (precision * recall) / (precision + recall) if precision + recall > 0 else 0.0
     logger.info(
         f"""Summed results:

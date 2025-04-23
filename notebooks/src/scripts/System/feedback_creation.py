@@ -15,6 +15,13 @@ def create_feedback_response_latency(response_latency: float) -> Feedback:
     )
     return response_latency_feedback
 
+def create_feedback_accuracy(values: Dict[str, float]) -> Feedback:
+    return Feedback(
+        target=FeedbackTarget.SYSTEM,
+        type=FeedbackType.ACCURACY_TO_EXPECTED_RETRIEVAL,
+        value=values
+    )
+
 def create_feedback_correctness(score: int, notes: Optional[str] = None) -> Feedback:
     return Feedback(
         target=FeedbackTarget.SYSTEM,
