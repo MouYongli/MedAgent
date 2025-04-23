@@ -7,6 +7,10 @@ The purpose of the listed [Jupyter Notebooks](https://jupyter.org/install) is to
 
 Access to the [MongoDB](https://www.mongodb.com/try/download/community) is **currently NOT done via backend calls**. This will be refactored step by step.
 - To prevent conflicts with the main system data, a separate document collection is used: `nb_document_store`
+- The data model utilized in this part of the project can be seen in the next subsection
+
+### Data model for MongoDB
+<img src="./assets/DataModel_MongoDB.png" alt="Data model for MongoDB" width="1000">
 
 ## What you'll find in this README
 
@@ -18,11 +22,12 @@ Access to the [MongoDB](https://www.mongodb.com/try/download/community) is **cur
 
 ## Contained Notebooks
 
-| Notebook                                                       | Purpose                                                                                                                                           | Integrated in Frontend? |
-|:---------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------------:|
-| [`1_guideline.ipynb`](./nbs/1_guideline.ipynb)                 | Tests loading and parsing AWMF guideline structure; includes visual inspection and analysis of document types. Only needs execution once.         |            ✗            |
-| [`2_question_dataset.ipynb`](./nbs/2_question_dataset.ipynb)   | Interactively inspects and manipulates question classification and guideline linkage, exploring how structured datasets map to document coverage. |            ✗            |
-| [`3_simple_generation.ipynb`](./nbs/3_simple_generation.ipynb) | Prototypes a basic guideline-to-answer pipeline using the backend generator (e.g., LLM); used to test prompt engineering and model behavior.      |            ✗            |
+| Notebook                                                       | Purpose                                                                                                                                                                    | Integrated in Frontend? |
+|:---------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------------:|
+| [`1_guideline.ipynb`](./nbs/1_guideline.ipynb)                 | Tests loading and parsing AWMF guideline structure; includes visual inspection and analysis of document types. Only needs execution once.                                  |            ✗            |
+| [`2_question_dataset.ipynb`](./nbs/2_question_dataset.ipynb)   | Interactively inspects and manipulates question classification and guideline linkage, exploring how structured datasets map to document coverage.                          |            ✗            |
+| [`3_simple_generation.ipynb`](./nbs/3_simple_generation.ipynb) | Prototypes a basic generate-answer pipeline using the backend generator (e.g., LLM); used to test prompt engineering and model behavior.                                   |            ✗            |
+| [`4_naive_rag.ipynb`](./nbs/4_naive_rag.ipynb)                 | Prototypes a basic RAG pipeline with guidelines using the backends vector-based retriever and generator; used to test retrieval quality and enhance in generation quality. |            ✗            |                                                                                                                                
 
 ## How to Run
 You can run the notebooks inside a Docker container using the provided Conda environment:
@@ -44,4 +49,4 @@ You can run the notebooks inside a Docker container using the provided Conda env
 
 
 ## Transform to frontend
-TODO
+
