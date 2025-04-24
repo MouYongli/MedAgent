@@ -3,13 +3,15 @@
 import math
 
 import numpy as np
-import plotly.express as px
 import pandas as pd
+import plotly.express as px
 
 from general.helper.logging import logger
 
+
 def get_number_of_documents(collection):
     return collection.count_documents({})
+
 
 def get_number_of_outdated_documents(collection):
     return collection.count_documents({
@@ -18,6 +20,7 @@ def get_number_of_outdated_documents(collection):
             {"validity_information.extended_validity": False}
         ]
     })
+
 
 def get_total_page_count(collection):
     page_counts = []
@@ -29,6 +32,7 @@ def get_total_page_count(collection):
             logger.error(f"Could not extract page count for {doc['_id']}")
 
     return sum(page_counts)
+
 
 def get_average_publication_interval_in_days(collection):
     """
@@ -58,6 +62,7 @@ def get_average_publication_interval_in_days(collection):
 
     return avg_days
 
+
 def get_number_of_oms_specific_guidelines(collection):
     """
        Count the number of guidelines that are OMS-specific.
@@ -71,6 +76,7 @@ def get_number_of_oms_specific_guidelines(collection):
         }
     })
     return count
+
 
 def visualize_page_count(collection, bin_size=25):
     page_counts = []
@@ -121,7 +127,7 @@ def visualize_page_count(collection, bin_size=25):
 
     # Reverse the y-axis so that the smallest range is at the top
     y_min = 0
-    y_max = int(grouped["bin_start"].max()) + 2*bin_size
+    y_max = int(grouped["bin_start"].max()) + 2 * bin_size
     fig.update_yaxes(range=[y_max, y_min], showgrid=True)
 
     # Compute dynamic tick spacing for the x-axis (guideline count)
@@ -132,6 +138,7 @@ def visualize_page_count(collection, bin_size=25):
     fig.update_xaxes(tickmode='linear', dtick=dtick_x, tickformat="d", showgrid=True)
 
     return fig
+
 
 def visualize_publication_dates(collection):
     """Analyse publication dates using validity_information.guidelines_creation_date."""
@@ -175,12 +182,13 @@ def visualize_publication_dates(collection):
         template="seaborn",
         title="Guidelines Publication Over Time"
     )
-    fig_scatter.update_traces(mode="lines+markers", fill="tozeroy", fillcolor="rgba(0, 0, 255, 0.2)", line=dict(color='rgba(0, 0, 255, 0.1)'))
+    fig_scatter.update_traces(mode="lines+markers", fill="tozeroy", fillcolor="rgba(0, 0, 255, 0.2)",
+                              line=dict(color='rgba(0, 0, 255, 0.1)'))
     fig_scatter.update_yaxes(rangemode="tozero", tickmode="linear", dtick="1")
 
     df["status"] = df.apply(
         lambda row: "expanded valid" if row["extended_validity"] else
-                    ("outdated" if not row["valid"] else "valid"),
+        ("outdated" if not row["valid"] else "valid"),
         axis=1
     )
     df["quarter"] = df["guidelines_creation_date"].dt.to_period("Q").astype(str)  # Converts to YYYY-QX
@@ -194,7 +202,8 @@ def visualize_publication_dates(collection):
     full_quarters_df = pd.DataFrame({"quarter": all_quarters})
     grouped_bar = full_quarters_df.merge(grouped_bar, on="quarter", how="left").fillna(0)
 
-    grouped_bar[["valid", "expanded valid", "outdated"]] = grouped_bar[["valid", "expanded valid", "outdated"]].astype(int)
+    grouped_bar[["valid", "expanded valid", "outdated"]] = grouped_bar[["valid", "expanded valid", "outdated"]].astype(
+        int)
 
     first_quarters = grouped_bar[grouped_bar["quarter"].str.endswith("Q1")]["quarter"].tolist()
 
@@ -248,4 +257,3 @@ def visualize_publication_dates(collection):
     fig_bar.update_traces(x=grouped_bar["quarter_numeric"])
 
     return fig_scatter, fig_bar
-

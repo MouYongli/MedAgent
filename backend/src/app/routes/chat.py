@@ -58,7 +58,8 @@ async def ask_chat(chat_id: str, request: AskRequest):
         raise HTTPException(status_code=404, detail="Chat ID not found")
 
     result = chat.pose_question(request.question)
-    return AskResponse(chat_id=chat.id, response=result.response, retrieval=result.retrieval, response_latency=result.execution_time)
+    return AskResponse(chat_id=chat.id, response=result.response, retrieval=result.retrieval,
+                       response_latency=result.execution_time)
 
 
 @router.get("/list")

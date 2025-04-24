@@ -1,5 +1,6 @@
-from openai import AzureOpenAI
 from typing import List
+
+from openai import AzureOpenAI
 
 
 class OpenAIEmbedder:

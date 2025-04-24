@@ -1,11 +1,12 @@
 import colorsys
 
+
 def generate_color_variants(base_color_hex, n):
     """
     Generate `n` variants of a base color by adjusting brightness.
     """
     base_color_hex = base_color_hex.lstrip("#")
-    r, g, b = [int(base_color_hex[i:i+2], 16)/255.0 for i in (0, 2, 4)]
+    r, g, b = [int(base_color_hex[i:i + 2], 16) / 255.0 for i in (0, 2, 4)]
     h, l, s = colorsys.rgb_to_hls(r, g, b)
 
     color_variants = []

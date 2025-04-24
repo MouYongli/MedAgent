@@ -9,10 +9,12 @@ from urllib.parse import unquote
 import requests
 from PyPDF2 import PdfReader
 
+from general.data_model.guideline_metadata import GuidelineMetadata, GuidelineValidityInformation, \
+    GuidelineDownloadInformation
 from general.helper.logging import logger
-from general.data_model.guideline_metadata import GuidelineMetadata, GuidelineValidityInformation, GuidelineDownloadInformation
 
 UPDATE_EXISTING_ENTRIES = True
+
 
 def parse_filename(filename):
     """
@@ -57,6 +59,7 @@ def parse_filename(filename):
         }
     }
 
+
 def get_pdf_pagecount(file_path):
     """Return the number of pages in the given PDF file."""
     try:
@@ -67,6 +70,7 @@ def get_pdf_pagecount(file_path):
         logger.error(f"Error reading {file_path}: {e}")
         return None
 
+
 def get_plain_text_from_pdf(pdf_file_path, text_output_dir):
     base_name = os.path.basename(pdf_file_path)
     file_name_without_extension = os.path.splitext(base_name)[0]
@@ -76,24 +80,25 @@ def get_plain_text_from_pdf(pdf_file_path, text_output_dir):
         # Read and return the existing text file content
         with open(text_file_path, 'r', encoding="utf-8") as text_file:
             text = text_file.read()
-        #logger.info(f"Text file already exists. Reading from {text_file_path}")
+        # logger.info(f"Text file already exists. Reading from {text_file_path}")
         return text
 
     text = ""
     with open(pdf_file_path, 'rb') as file:
-        #logger.info(f"Transforming text from {pdf_file_path}")
+        # logger.info(f"Transforming text from {pdf_file_path}")
         reader = PdfReader(file)
         for page in reader.pages:
             text += page.extract_text()
 
-    #short_text = (text or "")[:20].replace('\n', '; ')
-    #logger.info(f"Text: {short_text} ...")
+    # short_text = (text or "")[:20].replace('\n', '; ')
+    # logger.info(f"Text: {short_text} ...")
 
     with open(text_file_path, 'w', encoding="utf-8") as text_file:
-        #logger.info(f"Writing text to {text_file_path}")
+        # logger.info(f"Writing text to {text_file_path}")
         text_file.write(text)
 
     return text
+
 
 def download_pdf(url, pdf_output_dir):
     """Download a PDF from the given URL and save it to the filesystem."""
@@ -107,6 +112,7 @@ def download_pdf(url, pdf_output_dir):
         logger.error(f"Could not download {url}")
         raise Exception(f"Failed to download PDF from {url}, status code: {response.status_code}")
 
+
 def store_document(guideline_collection, metadata: GuidelineMetadata, pdf_output_dir, text_output_dir):
     """
     For the given URL, use the file on disk if it exists (to avoid re-downloading)
@@ -114,7 +120,7 @@ def store_document(guideline_collection, metadata: GuidelineMetadata, pdf_output
     """
     url = metadata.download_information.url
     file_path = os.path.join(pdf_output_dir, os.path.basename(url))
-    if UPDATE_EXISTING_ENTRIES or not(os.path.exists(file_path)):
+    if UPDATE_EXISTING_ENTRIES or not (os.path.exists(file_path)):
         download_pdf(url, pdf_output_dir)
 
     base_filename, _ = os.path.splitext(os.path.basename(file_path))
@@ -161,6 +167,7 @@ def store_document(guideline_collection, metadata: GuidelineMetadata, pdf_output
         # logger.info(f"Stored new document with id {result.inserted_id}.")
 
     return metadata
+
 
 def run_guideline_downloader(pdf_output_folder, text_output_folder, file, guideline_collection):
     logger.info(f"Downloading pdfs listed in {file} ...")

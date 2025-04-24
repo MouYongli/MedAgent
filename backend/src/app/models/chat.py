@@ -16,6 +16,7 @@ class ChatResponse:
     """
     Encapsulates the workflow response and metadata.
     """
+
     def __init__(self, response: str, retrieval: List[Dict[str, Any]], execution_time: float):
         self.response = response
         self.retrieval = retrieval

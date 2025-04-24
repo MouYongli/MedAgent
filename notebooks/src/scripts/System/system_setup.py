@@ -1,9 +1,10 @@
 # scripts/System/system_setup.py
 
-import os
 import json
+import os
 import re
 from typing import Any
+
 
 def _resolve_env_variables(obj: Any) -> Any:
     """
@@ -23,6 +24,7 @@ def _resolve_env_variables(obj: Any) -> Any:
     else:
         return obj
 
+
 def load_system_json(path: str) -> dict:
     """
     Loads a workflow system JSON from the given path and resolves environment variables.
@@ -37,4 +39,3 @@ def load_system_json(path: str) -> dict:
         raw_config = json.load(f)
 
     return _resolve_env_variables(raw_config)
-

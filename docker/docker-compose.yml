@@ -32,12 +32,12 @@ services:
         condition: service_healthy
       weaviate:
         condition: service_healthy
-#      postgres-db:
-#        condition: service_healthy
-#      neo4j:
-#        condition: service_healthy
-#      keycloak:
-#        condition: service_healthy
+    #      postgres-db:
+    #        condition: service_healthy
+    #      neo4j:
+    #        condition: service_healthy
+    #      keycloak:
+    #        condition: service_healthy
     networks:
       - backend
 
@@ -53,7 +53,7 @@ services:
     volumes:
       - mongodb-data:/data/db
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -83,7 +83,7 @@ services:
     networks:
       - backend
     healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/v1/.well-known/ready"]
+      test: [ "CMD", "wget", "--spider", "-q", "http://localhost:8080/v1/.well-known/ready" ]
       interval: 10s
       timeout: 5s
       retries: 5

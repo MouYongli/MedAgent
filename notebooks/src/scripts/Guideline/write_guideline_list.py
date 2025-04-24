@@ -17,6 +17,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from general.data_model.guideline_metadata import GuidelineMetadata, GuidelineDownloadInformation
 from general.helper.logging import logger
 
+
 def extract_guideline_metadata(driver, url) -> Optional[GuidelineMetadata]:
     try:
         # Navigate to the URL
@@ -57,6 +58,7 @@ def extract_guideline_metadata(driver, url) -> Optional[GuidelineMetadata]:
                     logger.warning(f"Label unreadable for '{col_label_text}': {e}")
 
             return organizations
+
         leading_organizations, other_contributing_organizations = [], []
         try:
             leading_organizations += find_contained_organization_labels("Federführende Fachgesellschaft")
@@ -75,6 +77,7 @@ def extract_guideline_metadata(driver, url) -> Optional[GuidelineMetadata]:
 
         # find the keywords
         keywords = []
+
         def find_keywords(col_label_text="Schlüsselwörter"):
             row_element = wait.until(
                 EC.presence_of_element_located((
@@ -90,6 +93,7 @@ def extract_guideline_metadata(driver, url) -> Optional[GuidelineMetadata]:
 
             keywords = [kw.strip() for kw in full_text.split(",") if kw.strip()]
             return keywords
+
         try:
             keywords += find_keywords()
         except Exception as e:
@@ -136,7 +140,8 @@ def find_guideline_sides(driver, url):
 
         def scroll():
             element = wait.until(
-                EC.presence_of_element_located((By.CSS_SELECTOR,"#menu_content_container > app-tabs > ion-tabs > div > ion-router-outlet > app-suche > ion-content"))
+                EC.presence_of_element_located((By.CSS_SELECTOR,
+                                                "#menu_content_container > app-tabs > ion-tabs > div > ion-router-outlet > app-suche > ion-content"))
             )
             # Access the shadow DOM to retrieve the scrollable element
             scrollable_element = driver.execute_script(
@@ -171,6 +176,7 @@ def find_guideline_sides(driver, url):
         logger.error("An error occurred in find_guideline_sides: %s", e)
         return []
 
+
 def setup():
     # Set up Chrome options
     chrome_options = Options()
@@ -193,9 +199,11 @@ def setup():
     logger.success("Chromedriver initialized")
     return driver
 
+
 def close(driver):
     driver.quit()
     logger.success("Chromdriver canceled")
+
 
 def run_guideline_finding(output_file, search_url):
     driver = setup()

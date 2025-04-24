@@ -6,10 +6,9 @@ from enum import Enum
 from typing import List, Dict, Any, Union, Optional, Literal, Tuple
 from uuid import UUID
 
+from general.data_model.guideline_metadata import GuidelineMetadata
 from general.data_model.guideline_metadata import serialize_datetime, deserialize_datetime
 from general.data_model.question_dataset import QuestionEntry, SuperCategory, SubCategory
-
-from general.data_model.guideline_metadata import GuidelineMetadata
 
 
 @dataclass
@@ -46,7 +45,8 @@ class WorkflowSystem:
                     res.append(gen_res)
         return res
 
-    def get_all_questions_for_sub_category(self, super_cat: SuperCategory, sub_cat: SubCategory) -> List["GenerationResultEntry"]:
+    def get_all_questions_for_sub_category(self, super_cat: SuperCategory, sub_cat: SubCategory) -> List[
+        "GenerationResultEntry"]:
         res = []
         for chat in self.generation_results:
             for gen_res in chat.entries:
@@ -54,6 +54,7 @@ class WorkflowSystem:
                 if (classification.supercategory == super_cat) and (classification.subcategory == sub_cat):
                     res.append(gen_res)
         return res
+
 
 @dataclass
 class ChatInteraction:
@@ -149,6 +150,7 @@ class GenerationResultEntry:
                 f1 = feedback.value
         return precision, recall, f1
 
+
 @dataclass
 class RetrievalEntry:
     text: str
@@ -166,6 +168,7 @@ class RetrievalEntry:
             "text": self.text,
             "guideline": self.guideline.as_dict() if self.guideline else None,
         }
+
 
 class FeedbackTarget(Enum):
     SYSTEM = "System"
@@ -186,7 +189,9 @@ class FeedbackType(Enum):
     CREATION_TIME = "Full creation time"
     UPDATE_TIME = "Update time"
 
+
 correctness_likert = Literal[1, 2, 3, 4, 5]
+
 
 @dataclass
 class Feedback:
@@ -217,4 +222,3 @@ class Feedback:
             "notes": self.notes,
             "timestamp": serialize_datetime(self.timestamp)
         }
-

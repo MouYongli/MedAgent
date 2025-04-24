@@ -58,7 +58,8 @@ class GuidelineValidityInformation:
         return {
             "valid": self.valid,
             "extended_validity": self.extended_validity,
-            "guidelines_creation_date": serialize_datetime(self.guidelines_creation_date) if self.guidelines_creation_date else "",
+            "guidelines_creation_date": serialize_datetime(
+                self.guidelines_creation_date) if self.guidelines_creation_date else "",
         }
 
 
@@ -83,8 +84,10 @@ class GuidelineMetadata:
             leading_publishing_organizations=data.get("leading_publishing_organizations", []),
             other_contributing_organizations=data.get("other_contributing_organizations", []),
             keywords=data.get("keywords", []),
-            download_information=GuidelineDownloadInformation.from_dict(data["download_information"]) if data.get("download_information") else None,
-            validity_information=GuidelineValidityInformation.from_dict(data["validity_information"]) if data.get("validity_information") else None,
+            download_information=GuidelineDownloadInformation.from_dict(data["download_information"]) if data.get(
+                "download_information") else None,
+            validity_information=GuidelineValidityInformation.from_dict(data["validity_information"]) if data.get(
+                "validity_information") else None,
         )
 
     def as_dict(self) -> Dict[str, Any]:

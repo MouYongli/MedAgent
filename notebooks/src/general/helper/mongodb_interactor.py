@@ -8,10 +8,9 @@ from pymongo import MongoClient
 
 from general.data_model.guideline_metadata import GuidelineMetadata
 from general.data_model.question_dataset import QuestionEntry, QuestionClass, ExpectedAnswer
+from general.data_model.system_interactions import RetrievalEntry
 from general.data_model.system_interactions import WorkflowSystem, GenerationResultEntry, ChatInteraction
 from general.helper.logging import logger
-
-from general.data_model.system_interactions import RetrievalEntry
 
 
 class CollectionName(str, Enum):
@@ -74,7 +73,8 @@ class MongoDBInterface:
           - classification (via QUESTION_TYPES collection)
           - answers (via CORRECT_ANSWERS collection)
         """
-        entry = QuestionEntry.from_dict({k: v for k, v in question_doc.items() if k not in {"classification", "expected_answers"}})
+        entry = QuestionEntry.from_dict(
+            {k: v for k, v in question_doc.items() if k not in {"classification", "expected_answers"}})
 
         # Resolve classification
         if ("classification" in question_doc) and question_doc["classification"]:
@@ -98,7 +98,8 @@ class MongoDBInterface:
         return entry
 
     def document_to_generation_result_entry(self, doc: Dict[str, Any]) -> GenerationResultEntry:
-        gen_res = GenerationResultEntry.from_dict({k: v for k, v in doc.items() if k not in {"question", "retrieval_result"}})
+        gen_res = GenerationResultEntry.from_dict(
+            {k: v for k, v in doc.items() if k not in {"question", "retrieval_result"}})
 
         # Resolve QuestionEntry
         question_doc = self.get_entry(CollectionName.QUESTIONS, "_id", doc["question"])
@@ -167,4 +168,3 @@ class MongoDBInterface:
 
     def close(self):
         self.client.close()
-

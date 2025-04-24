@@ -4,8 +4,8 @@ from typing import Optional
 
 import pandas as pd
 
-from general.helper.logging import logger
 from general.data_model.question_dataset import ExpectedAnswer
+from general.helper.logging import logger
 from general.helper.mongodb_interactor import CollectionName
 
 
@@ -63,11 +63,13 @@ def insert_csv_entry_to_db(dbi, entry):
     supercategory_str = str(entry.get("Question supercategory")).strip()
     subcategory_str = str(entry.get("Question subcategory")).strip()
     answer_text = str(entry.get("Answer")).strip() if pd.notna(entry.get("Answer")) else None
-    guideline_awmf_number = str(entry.get("Answer Guideline")).strip() if pd.notna(entry.get("Answer Guideline")) else None
+    guideline_awmf_number = str(entry.get("Answer Guideline")).strip() if pd.notna(
+        entry.get("Answer Guideline")) else None
     raw_page = entry.get("Answer Gpage")
     guideline_page = int(str(raw_page).strip()) if (pd.notna(raw_page) and str(raw_page).strip().isdigit()) else None
 
-    existing_class = find_question_type(supercategory_str, subcategory_str, dbi.get_collection(CollectionName.QUESTION_TYPES))
+    existing_class = find_question_type(supercategory_str, subcategory_str,
+                                        dbi.get_collection(CollectionName.QUESTION_TYPES))
     if not existing_class:
         logger.error(
             f"Classification not found for question: '{question_text}' -> {supercategory_str}:{subcategory_str}")

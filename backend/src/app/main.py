@@ -3,7 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # noinspection PyUnresolvedReferences
 import app.models.components.component_registry  ## MUST BE KEPT HERE!!
-
 from app.api.routes import pdf_files, vector_database
 from app.routes import chat, workflow
 

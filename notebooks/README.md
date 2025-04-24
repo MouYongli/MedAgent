@@ -1,15 +1,19 @@
 # Notebooks
 
 The purpose of the listed [Jupyter Notebooks](https://jupyter.org/install) is to:
+
 - Rapidly prototype and prepare studies required for the project.
 - Suggest and experiment with visualizations for evaluation metrics.
 - Interact with data directly (currently via MongoDB), before full backend integration.
 
-Access to the [MongoDB](https://www.mongodb.com/try/download/community) is **currently NOT done via backend calls**. This will be refactored step by step.
+Access to the [MongoDB](https://www.mongodb.com/try/download/community) is **currently NOT done via backend calls**.
+This will be refactored step by step.
+
 - To prevent conflicts with the main system data, a separate document collection is used: `nb_document_store`
 - The data model utilized in this part of the project can be seen in the next subsection
 
 ### Data model for MongoDB
+
 <img src="./assets/DataModel_MongoDB.png" alt="Data model for MongoDB" width="1000">
 
 ## What you'll find in this README
@@ -30,9 +34,12 @@ Access to the [MongoDB](https://www.mongodb.com/try/download/community) is **cur
 | [`4_naive_rag.ipynb`](./nbs/4_naive_rag.ipynb)                 | Prototypes a basic RAG pipeline with guidelines using the backends vector-based retriever and generator; used to test retrieval quality and enhance in generation quality. |            ✗            |                                                                                                                                
 
 ## How to Run
+
 You can run the notebooks inside a Docker container using the provided Conda environment:
 
-0. Ensure the docker compose from the main project is running. We require access to both the MongoDB this starts AND the Backend API. Also, assure that you copied the template `.env`, renamed to `.local-env` and fill out the required properties to setup the workflows.
+0. Ensure the docker compose from the main project is running. We require access to both the MongoDB this starts AND the
+   Backend API. Also, assure that you copied the template `.env`, renamed to `.local-env` and fill out the required
+   properties to setup the workflows.
 
 1. Build the container:
    ```bash
@@ -46,7 +53,6 @@ You can run the notebooks inside a Docker container using the provided Conda env
    ``` 
 
 3. Access notebooks under http://localhost:8888/lab/workspaces/auto-L/tree/nbs/1_guideline.ipynb
-
 
 ## Transform to frontend
 

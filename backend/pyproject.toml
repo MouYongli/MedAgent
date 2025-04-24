@@ -8,12 +8,12 @@ version = "0.1.0"
 description = "MedAgent: Medical Guidelines Recommendation System Based on Retrieval Augmented Retrieval and Agentic AI Workflows"
 authors = [
     { name = "Mou YongLi", email = "mou@dbis.rwth-aachen.de" },
-    { name = "Hanbin Chen"},
-    { name = "Meret Unbehaun"},
-    { name = "Saif Nasir"},
-    { name = "Nadine Önelmis"},
-    { name = " Behrus Puladi"},
-    { name = "Stefan Decker"}
+    { name = "Hanbin Chen" },
+    { name = "Meret Unbehaun" },
+    { name = "Saif Nasir" },
+    { name = "Nadine Önelmis" },
+    { name = " Behrus Puladi" },
+    { name = "Stefan Decker" }
 ]
 license = { text = "MIT" }
 readme = "README.md"  # Optional

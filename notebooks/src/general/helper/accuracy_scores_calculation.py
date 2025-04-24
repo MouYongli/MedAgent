@@ -1,9 +1,8 @@
 import os
+from typing import List, Dict
 
 import evaluate
 import numpy as np
-from typing import List, Dict
-
 from dotenv import load_dotenv
 
 from general.data_model.question_dataset import ExpectedAnswer
@@ -12,20 +11,22 @@ from general.helper.embedder import OpenAIEmbedder
 load_dotenv(dotenv_path="../../../.local-env")
 
 embedder = OpenAIEmbedder(
-    api_key = os.getenv("AZURE_OPENAI_API_KEY"),
-    api_base = os.getenv("AZURE_OPENAI_API_BASE"),
-    api_version = os.getenv("AZURE_OPENAI_API_VERSION"),
-    deployment_name = "text-embedding-3-large"
+    api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+    api_base=os.getenv("AZURE_OPENAI_API_BASE"),
+    api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
+    deployment_name="text-embedding-3-large"
 )
 
 rouge = evaluate.load("rouge")  # https://huggingface.co/spaces/evaluate-metric/rouge
 bleu = evaluate.load("bleu")  # https://huggingface.co/spaces/evaluate-metric/bleu
 meteor = evaluate.load("meteor")  # https://huggingface.co/spaces/evaluate-metric/meteor
 
+
 def embedding_cosine_similarity(text1: str, text2: str) -> float:
     embedding_1 = np.array(embedder.embed(text1))
     embedding_2 = np.array(embedder.embed(text2))
     return float(np.dot(embedding_1, embedding_2) / (np.linalg.norm(embedding_1) * np.linalg.norm(embedding_2)))
+
 
 def create_accuracy_scores(
         expected_retrieval: List[ExpectedAnswer],
@@ -49,10 +50,10 @@ def create_accuracy_scores(
 
     if provided_answer is not None and expected_answer is not None:
         bleu_score = bleu.compute(predictions=[provided_answer], references=[[expected_answer]])["bleu"]
-        rouge_scores = rouge.compute(predictions = [provided_answer], references = [expected_answer])
+        rouge_scores = rouge.compute(predictions=[provided_answer], references=[expected_answer])
         rouge_1_score = rouge_scores[f"rouge1"]
         rouge_l_score = rouge_scores[f"rougeL"]
-        meteor_score = meteor.compute(predictions = [provided_answer], references = [expected_answer])[f"meteor"]
+        meteor_score = meteor.compute(predictions=[provided_answer], references=[expected_answer])[f"meteor"]
         emb_cos_sim = embedding_cosine_similarity(provided_answer, expected_answer)
         scaled_emb_sim = (emb_cos_sim + 1) / 2
     else:

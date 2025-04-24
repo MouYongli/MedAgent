@@ -16,6 +16,7 @@ def success(self, message, *args, **kwargs):
     if self.isEnabledFor(SUCCESS_LEVEL_NUM):
         self._log(SUCCESS_LEVEL_NUM, message, args, **kwargs)
 
+
 def progress(self, name, current, total, bar_length=50):
     """Log a progress bar at INFO level, updating on the same line."""
     fraction = current / total if total > 0 else 0
@@ -37,6 +38,7 @@ def progress(self, name, current, total, bar_length=50):
     # Print a newline character when complete to move to the next line
     if current >= total:
         self.handlers[0].stream.write('\n')
+
 
 logging.Logger.note = note
 logging.Logger.success = success

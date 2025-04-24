@@ -20,7 +20,8 @@ class VectorRetriever(Retriever, variant_name="vector_weaviate"):
         vector = self.parameters.get("vector", None)
         vector = render_template(vector, data) if vector else None
 
-        logger.info(f"[VectorRetriever] Endpoint: {endpoint}, Class: {class_name}, Query: {query}, TopK: {top_k}, Using vector: {bool(vector)}")
+        logger.info(
+            f"[VectorRetriever] Endpoint: {endpoint}, Class: {class_name}, Query: {query}, TopK: {top_k}, Using vector: {bool(vector)}")
 
         try:
             async with httpx.AsyncClient() as client:

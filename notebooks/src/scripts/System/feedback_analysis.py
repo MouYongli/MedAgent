@@ -14,827 +14,868 @@ from general.helper.color import generate_color_variants
 
 
 def get_average_response_time(wf_system: WorkflowSystem) -> float:
-  """Average response time for a wf_system in seconds"""
-  response_times = [
-    latency
-    for chat in wf_system.generation_results
-    for entry in chat.entries
-    if (latency := entry.get_response_latency()) is not None
-  ]
-  return sum(response_times) / len(response_times)
+    """Average response time for a wf_system in seconds"""
+    response_times = [
+        latency
+        for chat in wf_system.generation_results
+        for entry in chat.entries
+        if (latency := entry.get_response_latency()) is not None
+    ]
+    return sum(response_times) / len(response_times)
+
 
 def analyze_and_visualize_response_time_per_category(wf_system: WorkflowSystem):
-  """Assumption: only one time interaction per question
-  """
-  def get_latency_stats(entries):
-    latencies = np.array([
-      entry.get_response_latency() for entry in entries
-      if entry.get_response_latency() is not None
-    ])
-    if len(latencies) == 0:
-      return latencies, None, None, None, None
-    return latencies, np.mean(latencies), np.std(latencies, ddof=1) if len(latencies) > 1 else 0.0, np.min(latencies), np.max(latencies)
+    """Assumption: only one time interaction per question
+    """
 
-  rows = [{
-    "supercategory": sc.value,
-    "subcategory": None,
-    "response_latencies": (latencies := get_latency_stats(wf_system.get_all_questions_for_super_category(sc)))[0],
-    "avg_response_latency": latencies[1],
-    "std_deviation_response_latency": latencies[2],
-    "min_response_latency": latencies[3],
-    "max_response_latency": latencies[4],
-  } for sc in all_supercategories] + [{
-    "supercategory": qt.supercategory.value,
-    "subcategory": qt.subcategory.value,
-    "response_latencies": (latencies := get_latency_stats(wf_system.get_all_questions_for_sub_category(super_cat=qt.supercategory, sub_cat=qt.subcategory)))[0],
-    "avg_response_latency": latencies[1],
-    "std_deviation_response_latency": latencies[2],
-    "min_response_latency": latencies[3],
-    "max_response_latency": latencies[4],
-  } for qt in all_question_classes]
+    def get_latency_stats(entries):
+        latencies = np.array([
+            entry.get_response_latency() for entry in entries
+            if entry.get_response_latency() is not None
+        ])
+        if len(latencies) == 0:
+            return latencies, None, None, None, None
+        return latencies, np.mean(latencies), np.std(latencies, ddof=1) if len(latencies) > 1 else 0.0, np.min(
+            latencies), np.max(latencies)
 
-  response_times_df = pd.DataFrame(rows)
+    rows = [{
+        "supercategory": sc.value,
+        "subcategory": None,
+        "response_latencies": (latencies := get_latency_stats(wf_system.get_all_questions_for_super_category(sc)))[0],
+        "avg_response_latency": latencies[1],
+        "std_deviation_response_latency": latencies[2],
+        "min_response_latency": latencies[3],
+        "max_response_latency": latencies[4],
+    } for sc in all_supercategories] + [{
+        "supercategory": qt.supercategory.value,
+        "subcategory": qt.subcategory.value,
+        "response_latencies": (latencies := get_latency_stats(
+            wf_system.get_all_questions_for_sub_category(super_cat=qt.supercategory, sub_cat=qt.subcategory)))[0],
+        "avg_response_latency": latencies[1],
+        "std_deviation_response_latency": latencies[2],
+        "min_response_latency": latencies[3],
+        "max_response_latency": latencies[4],
+    } for qt in all_question_classes]
 
-  def visualize_box_plots_response_time_per_category():
-    supercat_base_colors = {
-      SuperCategory.SIMPLE.value: "#33691E",  # Green
-      SuperCategory.COMPLEX.value: "#0D47A1",  # Blue
-      SuperCategory.NEGATIVE.value: "#EF6C00"  # Orange
-    }
+    response_times_df = pd.DataFrame(rows)
 
-    exploded_df = response_times_df[response_times_df["subcategory"].notna()].explode("response_latencies")
-    exploded_df["response_latencies"] = exploded_df["response_latencies"].astype(float)
+    def visualize_box_plots_response_time_per_category():
+        supercat_base_colors = {
+            SuperCategory.SIMPLE.value: "#33691E",  # Green
+            SuperCategory.COMPLEX.value: "#0D47A1",  # Blue
+            SuperCategory.NEGATIVE.value: "#EF6C00"  # Orange
+        }
 
-    fig = px.box(
-      exploded_df,
-      x="subcategory",
-      y="response_latencies",
-      color="supercategory",
-      color_discrete_map=supercat_base_colors,
-      title="Response Latency per Question Type",
-      labels={
-        "response_latencies": "Response Latency (s)",
-        "subcategory": "Subcategory",
-        "supercategory": "Supercategory",
-      },
-      template="seaborn"
-    )
+        exploded_df = response_times_df[response_times_df["subcategory"].notna()].explode("response_latencies")
+        exploded_df["response_latencies"] = exploded_df["response_latencies"].astype(float)
 
-    fig.update_traces(line_width=1, marker=dict(size=3), boxmean='sd')
-    fig.update_layout(
-      boxmode='overlay',
-      xaxis=dict(
-        autorange=True,
-        title=None,
-        tickangle=-90,
-        showgrid=False
-      ),
-      showlegend=True,
-    )
-    fig.update_yaxes(range=[0, exploded_df["response_latencies"].max() + 1])
-    return fig
+        fig = px.box(
+            exploded_df,
+            x="subcategory",
+            y="response_latencies",
+            color="supercategory",
+            color_discrete_map=supercat_base_colors,
+            title="Response Latency per Question Type",
+            labels={
+                "response_latencies": "Response Latency (s)",
+                "subcategory": "Subcategory",
+                "supercategory": "Supercategory",
+            },
+            template="seaborn"
+        )
 
-  return response_times_df, visualize_box_plots_response_time_per_category()
+        fig.update_traces(line_width=1, marker=dict(size=3), boxmean='sd')
+        fig.update_layout(
+            boxmode='overlay',
+            xaxis=dict(
+                autorange=True,
+                title=None,
+                tickangle=-90,
+                showgrid=False
+            ),
+            showlegend=True,
+        )
+        fig.update_yaxes(range=[0, exploded_df["response_latencies"].max() + 1])
+        return fig
+
+    return response_times_df, visualize_box_plots_response_time_per_category()
+
 
 def get_average_correctness(wf_system: WorkflowSystem) -> float:
-  scores = [
-    score
-    for chat in wf_system.generation_results
-    for entry in chat.entries
-    if (score := entry.get_correctness_score()) is not None
-  ]
-  return sum(scores) / len(scores)
+    scores = [
+        score
+        for chat in wf_system.generation_results
+        for entry in chat.entries
+        if (score := entry.get_correctness_score()) is not None
+    ]
+    return sum(scores) / len(scores)
+
 
 def analyze_and_visualize_correctness_per_category(wf_system: WorkflowSystem):
-  """Assumption: only one time interaction per question
-  """
-  def get_avg_correctness_score(entries):
-    correctness_scores = np.array([
-      entry.get_correctness_score() for entry in entries
-      if entry.get_correctness_score() is not None
-    ])
-    if len(correctness_scores) == 0:
-      return correctness_scores, None
+    """Assumption: only one time interaction per question
+    """
 
-    return correctness_scores, np.mean(correctness_scores)
+    def get_avg_correctness_score(entries):
+        correctness_scores = np.array([
+            entry.get_correctness_score() for entry in entries
+            if entry.get_correctness_score() is not None
+        ])
+        if len(correctness_scores) == 0:
+            return correctness_scores, None
 
-  rows = [{
-    "supercategory": sc.value,
-    "subcategory": None,
-    "correctness_scores": (correctness_scores := get_avg_correctness_score(wf_system.get_all_questions_for_super_category(sc)))[0],
-    "avg_correctness_score": correctness_scores[1],
-  } for sc in all_supercategories] + [{
-    "supercategory": qt.supercategory.value,
-    "subcategory": qt.subcategory.value,
-    "correctness_scores": (correctness_scores := get_avg_correctness_score(wf_system.get_all_questions_for_sub_category(super_cat=qt.supercategory, sub_cat=qt.subcategory)))[0],
-    "avg_correctness_score": correctness_scores[1],
-  } for qt in all_question_classes]
+        return correctness_scores, np.mean(correctness_scores)
 
-  correctness_scores_df = pd.DataFrame(rows)
+    rows = [{
+        "supercategory": sc.value,
+        "subcategory": None,
+        "correctness_scores":
+            (correctness_scores := get_avg_correctness_score(wf_system.get_all_questions_for_super_category(sc)))[0],
+        "avg_correctness_score": correctness_scores[1],
+    } for sc in all_supercategories] + [{
+        "supercategory": qt.supercategory.value,
+        "subcategory": qt.subcategory.value,
+        "correctness_scores": (correctness_scores := get_avg_correctness_score(
+            wf_system.get_all_questions_for_sub_category(super_cat=qt.supercategory, sub_cat=qt.subcategory)))[0],
+        "avg_correctness_score": correctness_scores[1],
+    } for qt in all_question_classes]
 
-  def visualize_box_plots_correctness_score_per_category():
-    supercat_base_colors = {
-      SuperCategory.SIMPLE.value: "#33691E",  # Green
-      SuperCategory.COMPLEX.value: "#0D47A1",  # Blue
-      SuperCategory.NEGATIVE.value: "#EF6C00"  # Orange
-    }
+    correctness_scores_df = pd.DataFrame(rows)
 
-    exploded_df = correctness_scores_df[correctness_scores_df["subcategory"].notna()].explode("correctness_scores")
-    exploded_df["correctness_scores"] = exploded_df["correctness_scores"].astype(float)
+    def visualize_box_plots_correctness_score_per_category():
+        supercat_base_colors = {
+            SuperCategory.SIMPLE.value: "#33691E",  # Green
+            SuperCategory.COMPLEX.value: "#0D47A1",  # Blue
+            SuperCategory.NEGATIVE.value: "#EF6C00"  # Orange
+        }
 
-    fig = px.box(
-      exploded_df,
-      x="subcategory",
-      y="correctness_scores",
-      color="supercategory",
-      color_discrete_map=supercat_base_colors,
-      title="Correctness score per Question Type",
-      labels={
-        "correctness_scores": "Correctness Score",
-        "subcategory": "Subcategory",
-        "supercategory": "Supercategory",
-      },
-      template="seaborn"
-    )
+        exploded_df = correctness_scores_df[correctness_scores_df["subcategory"].notna()].explode("correctness_scores")
+        exploded_df["correctness_scores"] = exploded_df["correctness_scores"].astype(float)
 
-    fig.update_traces(line_width=1, marker=dict(size=3), boxmean='sd')
-    fig.update_layout(
-      boxmode='overlay',
-      xaxis=dict(
-        autorange=True,
-        title=None,
-        tickangle=-90,
-        showgrid=False
-      ),
-      showlegend=True,
-    )
-    fig.update_yaxes(range=[0.5, 5.5])
-    return fig
+        fig = px.box(
+            exploded_df,
+            x="subcategory",
+            y="correctness_scores",
+            color="supercategory",
+            color_discrete_map=supercat_base_colors,
+            title="Correctness score per Question Type",
+            labels={
+                "correctness_scores": "Correctness Score",
+                "subcategory": "Subcategory",
+                "supercategory": "Supercategory",
+            },
+            template="seaborn"
+        )
 
-  return correctness_scores_df, visualize_box_plots_correctness_score_per_category()
+        fig.update_traces(line_width=1, marker=dict(size=3), boxmean='sd')
+        fig.update_layout(
+            boxmode='overlay',
+            xaxis=dict(
+                autorange=True,
+                title=None,
+                tickangle=-90,
+                showgrid=False
+            ),
+            showlegend=True,
+        )
+        fig.update_yaxes(range=[0.5, 5.5])
+        return fig
+
+    return correctness_scores_df, visualize_box_plots_correctness_score_per_category()
 
 
 def get_sum_hallucinations_per_question(wf_system: WorkflowSystem) -> List[float]:
-  halls = [
-    sum([
-      hallucinations_dict["FC"],
-      hallucinations_dict["IC"],
-      hallucinations_dict["CC"]
-    ])
-    for chat in wf_system.generation_results
-    for entry in chat.entries
-    if (hallucinations_dict := entry.get_hallucination_classification()) is not None
-  ]
-  return halls
+    halls = [
+        sum([
+            hallucinations_dict["FC"],
+            hallucinations_dict["IC"],
+            hallucinations_dict["CC"]
+        ])
+        for chat in wf_system.generation_results
+        for entry in chat.entries
+        if (hallucinations_dict := entry.get_hallucination_classification()) is not None
+    ]
+    return halls
+
 
 def analyze_and_visualize_hallucinations(wf_system: WorkflowSystem):
-  rows = [
-    {
-      "wf_system": wf_system.name,
-      "supercategory": qt.supercategory.value,
-      "subcategory": qt.subcategory.value,
-      "related_guidelines": [ea.guideline.awmf_register_number for ea in entry.question.expected_answers] if entry.question.expected_answers else [],
-      "counts_fc": hallucination_dict["FC"] if (hallucination_dict := entry.get_hallucination_classification()) else None,
-      "counts_ic": hallucination_dict["IC"] if hallucination_dict else None,
-      "counts_cc": hallucination_dict["CC"] if hallucination_dict else None,
-      "sum_hallucinations": hallucination_dict["FC"] + hallucination_dict["IC"] + hallucination_dict["CC"] if hallucination_dict else None,
-    }
-    for qt in all_question_classes
-    for entry in wf_system.get_all_questions_for_sub_category(super_cat=qt.supercategory, sub_cat=qt.subcategory)
-  ]
+    rows = [
+        {
+            "wf_system": wf_system.name,
+            "supercategory": qt.supercategory.value,
+            "subcategory": qt.subcategory.value,
+            "related_guidelines": [ea.guideline.awmf_register_number for ea in
+                                   entry.question.expected_answers] if entry.question.expected_answers else [],
+            "counts_fc": hallucination_dict["FC"] if (
+                hallucination_dict := entry.get_hallucination_classification()) else None,
+            "counts_ic": hallucination_dict["IC"] if hallucination_dict else None,
+            "counts_cc": hallucination_dict["CC"] if hallucination_dict else None,
+            "sum_hallucinations": hallucination_dict["FC"] + hallucination_dict["IC"] + hallucination_dict[
+                "CC"] if hallucination_dict else None,
+        }
+        for qt in all_question_classes
+        for entry in wf_system.get_all_questions_for_sub_category(super_cat=qt.supercategory, sub_cat=qt.subcategory)
+    ]
 
-  hallucinations_df = pd.DataFrame(rows)
+    hallucinations_df = pd.DataFrame(rows)
 
-  def plot_hallucination_heatmap_for_supercategory(df, supercategory, color, z_min, z_max):
-    def prepare_data():
-      filtered_df = df[(df["supercategory"] == supercategory.value) & (df["subcategory"].notna())].copy()
-      z = filtered_df[["counts_fc", "counts_ic", "counts_cc"]].T.to_numpy()
-      x_labels = [f"Q{idx} ({subcat})" for idx, subcat in zip(filtered_df.index, filtered_df["subcategory"])]
-      y_labels = ["Fact<br>conflicting", "Input<br>conflicting", "Context<br>conflicting"]
-      return filtered_df, z, x_labels, y_labels
+    def plot_hallucination_heatmap_for_supercategory(df, supercategory, color, z_min, z_max):
+        def prepare_data():
+            filtered_df = df[(df["supercategory"] == supercategory.value) & (df["subcategory"].notna())].copy()
+            z = filtered_df[["counts_fc", "counts_ic", "counts_cc"]].T.to_numpy()
+            x_labels = [f"Q{idx} ({subcat})" for idx, subcat in zip(filtered_df.index, filtered_df["subcategory"])]
+            y_labels = ["Fact<br>conflicting", "Input<br>conflicting", "Context<br>conflicting"]
+            return filtered_df, z, x_labels, y_labels
 
-    def group_by_subcategory(df_subset):
-      subcat_positions = {}
-      for i, subcat in enumerate(df_subset["subcategory"]):
-        subcat_positions.setdefault(subcat, []).append(i)
-      return subcat_positions
+        def group_by_subcategory(df_subset):
+            subcat_positions = {}
+            for i, subcat in enumerate(df_subset["subcategory"]):
+                subcat_positions.setdefault(subcat, []).append(i)
+            return subcat_positions
 
-    def create_shapes_and_annotations(subcat_positions, x_labels, y_range):
-      shapes = []
-      annotations = []
-      for subcat, indices in subcat_positions.items():
-        start = min(indices)
-        end = max(indices)
-        center = (start + end) / 2
+        def create_shapes_and_annotations(subcat_positions, x_labels, y_range):
+            shapes = []
+            annotations = []
+            for subcat, indices in subcat_positions.items():
+                start = min(indices)
+                end = max(indices)
+                center = (start + end) / 2
 
-        # Annotation
-        annotations.append(dict(
-          x=center,
-          y=-0.07,
-          text=subcat,
-          showarrow=False,
-          xref='x',
-          yref='paper',
-          xanchor='center'
-        ))
+                # Annotation
+                annotations.append(dict(
+                    x=center,
+                    y=-0.07,
+                    text=subcat,
+                    showarrow=False,
+                    xref='x',
+                    yref='paper',
+                    xanchor='center'
+                ))
 
-        # Vertical line
-        if end + 1 < len(x_labels):
-          shapes.append(dict(
-            type="line",
-            x0=end + 0.5,
-            x1=end + 0.5,
-            y0=y_range[0],
-            y1=y_range[1],
-            line=dict(color="black", width=1),
-            xref='x',
-            yref='y'
-          ))
-      return shapes, annotations
+                # Vertical line
+                if end + 1 < len(x_labels):
+                    shapes.append(dict(
+                        type="line",
+                        x0=end + 0.5,
+                        x1=end + 0.5,
+                        y0=y_range[0],
+                        y1=y_range[1],
+                        line=dict(color="black", width=1),
+                        xref='x',
+                        yref='y'
+                    ))
+            return shapes, annotations
 
-    def create_heatmap(z, x_labels, y_labels, shapes, annotations):
-      fig = go.Figure(data=go.Heatmap(
-        z=z,
-        x=x_labels,
-        y=y_labels,
-        zmin=z_min,
-        zmax=z_max,
-        colorscale=[
-          [0.0, 'rgba(255, 255, 255, 0.75)'],
-          [1.0, color]
-        ],
-        colorbar=dict(
-          title=dict(
-            text="# Hallucinations<br>&nbsp;",
-            side="top",
-            font=dict(size=12)
-          ),
-          tickcolor='lightgray',
-          tickfont=dict(size=10),
-          ticks='outside',
-          outlinewidth=0,
-          thickness=15,
-          len=1
-        )
-      ))
+        def create_heatmap(z, x_labels, y_labels, shapes, annotations):
+            fig = go.Figure(data=go.Heatmap(
+                z=z,
+                x=x_labels,
+                y=y_labels,
+                zmin=z_min,
+                zmax=z_max,
+                colorscale=[
+                    [0.0, 'rgba(255, 255, 255, 0.75)'],
+                    [1.0, color]
+                ],
+                colorbar=dict(
+                    title=dict(
+                        text="# Hallucinations<br>&nbsp;",
+                        side="top",
+                        font=dict(size=12)
+                    ),
+                    tickcolor='lightgray',
+                    tickfont=dict(size=10),
+                    ticks='outside',
+                    outlinewidth=0,
+                    thickness=15,
+                    len=1
+                )
+            ))
 
-      fig.update_layout(
-        title=f"Hallucinations per Question (Supercategory: {supercategory.value})",
-        xaxis=dict(
-          title='Subcategories with individual cell per question',
-          title_standoff=40,
-          tickson='boundaries',
-          showgrid=True,
-          gridwidth=1,
-          showticklabels=False
-        ),
-        yaxis=dict(
-          title=None,
-          tickson='boundaries',
-          showgrid=True,
-          gridwidth=1
-        ),
-        template="seaborn",
-        shapes=shapes,
-        annotations=annotations,
-      )
-      return fig
-
-    filtered_df, z, x_labels, y_labels = prepare_data()
-    subcat_positions = group_by_subcategory(filtered_df)
-    shapes, annotations = create_shapes_and_annotations(subcat_positions, x_labels, y_range=[-0.5, 2.5])
-    return create_heatmap(z, x_labels, y_labels, shapes, annotations)
-
-  max_count = hallucinations_df[["counts_fc", "counts_ic", "counts_cc"]].max(axis=1).max()
-  simple_fig = plot_hallucination_heatmap_for_supercategory(df=hallucinations_df, supercategory=SuperCategory.SIMPLE, color='rgba(51, 105, 30, 0.75)', z_min=0, z_max=max_count)
-  complex_fig = plot_hallucination_heatmap_for_supercategory(df=hallucinations_df, supercategory=SuperCategory.COMPLEX, color='rgba(13, 71, 161, 0.75)', z_min=0, z_max=max_count)
-  negative_fig = plot_hallucination_heatmap_for_supercategory(df=hallucinations_df, supercategory=SuperCategory.NEGATIVE, color='rgba(239, 108, 0, 0.75)', z_min=0, z_max=max_count)
-
-  def generate_subplot_heatmap_grid(simple_fig, complex_fig, negative_fig, title_text):
-    def add_heatmaps(fig, figs):
-      for i, subplot_fig in enumerate(figs, start=1):
-        for trace in subplot_fig.data:
-          if isinstance(trace, go.Heatmap):
-            trace.colorbar = dict(
-              title=trace.colorbar.title if i == 1 else "&nbsp;<br>&nbsp;",
-              tickcolor='lightgray',
-              tickfont=dict(size=10),
-              ticks='outside',
-              outlinewidth=0,
-              thickness=15,
-              len=1,
-              x=1.01 + (i - 1) * 0.015,
-              tickvals=None if i==3 else [],
+            fig.update_layout(
+                title=f"Hallucinations per Question (Supercategory: {supercategory.value})",
+                xaxis=dict(
+                    title='Subcategories with individual cell per question',
+                    title_standoff=40,
+                    tickson='boundaries',
+                    showgrid=True,
+                    gridwidth=1,
+                    showticklabels=False
+                ),
+                yaxis=dict(
+                    title=None,
+                    tickson='boundaries',
+                    showgrid=True,
+                    gridwidth=1
+                ),
+                template="seaborn",
+                shapes=shapes,
+                annotations=annotations,
             )
-            fig.add_trace(trace, row=1, col=i)
+            return fig
 
-    def calculate_domains(cols_per_subplot, padding_ratio):
-      total_cols = sum(cols_per_subplot) + padding_ratio * 2
-      domain_starts = [(sum(cols_per_subplot[:i]) + i * padding_ratio) / total_cols for i in range(3)]
-      domain_ends = [(sum(cols_per_subplot[:i + 1]) + i * padding_ratio) / total_cols for i in range(3)]
-      return domain_starts, domain_ends
+        filtered_df, z, x_labels, y_labels = prepare_data()
+        subcat_positions = group_by_subcategory(filtered_df)
+        shapes, annotations = create_shapes_and_annotations(subcat_positions, x_labels, y_range=[-0.5, 2.5])
+        return create_heatmap(z, x_labels, y_labels, shapes, annotations)
 
-    def add_annotations_and_shapes(fig, subplot_figs, xrefs):
-      for subplot_fig, xref in zip(subplot_figs, xrefs):
-        for ann in subplot_fig.layout.annotations or []:
-          fig.add_annotation(
-            x=ann.x,
-            y=ann.y,
-            text=ann.text,
-            showarrow=ann.showarrow,
-            xanchor=ann.xanchor,
-            xref=xref,
-            yref='paper'
-          )
-        for shape in subplot_fig.layout.shapes or []:
-          shape_dict = shape.to_plotly_json()
-          shape_dict["xref"] = xref
-          shape_dict["yref"] = "y" if xref == "x" else f"y{xref[1:]}"
-          fig.add_shape(**shape_dict)
+    max_count = hallucinations_df[["counts_fc", "counts_ic", "counts_cc"]].max(axis=1).max()
+    simple_fig = plot_hallucination_heatmap_for_supercategory(df=hallucinations_df, supercategory=SuperCategory.SIMPLE,
+                                                              color='rgba(51, 105, 30, 0.75)', z_min=0, z_max=max_count)
+    complex_fig = plot_hallucination_heatmap_for_supercategory(df=hallucinations_df,
+                                                               supercategory=SuperCategory.COMPLEX,
+                                                               color='rgba(13, 71, 161, 0.75)', z_min=0,
+                                                               z_max=max_count)
+    negative_fig = plot_hallucination_heatmap_for_supercategory(df=hallucinations_df,
+                                                                supercategory=SuperCategory.NEGATIVE,
+                                                                color='rgba(239, 108, 0, 0.75)', z_min=0,
+                                                                z_max=max_count)
 
-    def add_grid_rectangles(fig, cols_per_subplot):
-      for i in range(3):
-        fig.add_shape(
-          type="rect",
-          xref=f"x{i + 1}" if i > 0 else "x",
-          yref=f"y{i + 1}" if i > 0 else "y",
-          x0=-1,
-          x1=cols_per_subplot[i] + 1,
-          y0=-0.5,
-          y1=2.5,
-          line=dict(color="lightgray", width=1.5),
-          fillcolor="rgba(0,0,0,0)",
-          layer="above",
+    def generate_subplot_heatmap_grid(simple_fig, complex_fig, negative_fig, title_text):
+        def add_heatmaps(fig, figs):
+            for i, subplot_fig in enumerate(figs, start=1):
+                for trace in subplot_fig.data:
+                    if isinstance(trace, go.Heatmap):
+                        trace.colorbar = dict(
+                            title=trace.colorbar.title if i == 1 else "&nbsp;<br>&nbsp;",
+                            tickcolor='lightgray',
+                            tickfont=dict(size=10),
+                            ticks='outside',
+                            outlinewidth=0,
+                            thickness=15,
+                            len=1,
+                            x=1.01 + (i - 1) * 0.015,
+                            tickvals=None if i == 3 else [],
+                        )
+                        fig.add_trace(trace, row=1, col=i)
+
+        def calculate_domains(cols_per_subplot, padding_ratio):
+            total_cols = sum(cols_per_subplot) + padding_ratio * 2
+            domain_starts = [(sum(cols_per_subplot[:i]) + i * padding_ratio) / total_cols for i in range(3)]
+            domain_ends = [(sum(cols_per_subplot[:i + 1]) + i * padding_ratio) / total_cols for i in range(3)]
+            return domain_starts, domain_ends
+
+        def add_annotations_and_shapes(fig, subplot_figs, xrefs):
+            for subplot_fig, xref in zip(subplot_figs, xrefs):
+                for ann in subplot_fig.layout.annotations or []:
+                    fig.add_annotation(
+                        x=ann.x,
+                        y=ann.y,
+                        text=ann.text,
+                        showarrow=ann.showarrow,
+                        xanchor=ann.xanchor,
+                        xref=xref,
+                        yref='paper'
+                    )
+                for shape in subplot_fig.layout.shapes or []:
+                    shape_dict = shape.to_plotly_json()
+                    shape_dict["xref"] = xref
+                    shape_dict["yref"] = "y" if xref == "x" else f"y{xref[1:]}"
+                    fig.add_shape(**shape_dict)
+
+        def add_grid_rectangles(fig, cols_per_subplot):
+            for i in range(3):
+                fig.add_shape(
+                    type="rect",
+                    xref=f"x{i + 1}" if i > 0 else "x",
+                    yref=f"y{i + 1}" if i > 0 else "y",
+                    x0=-1,
+                    x1=cols_per_subplot[i] + 1,
+                    y0=-0.5,
+                    y1=2.5,
+                    line=dict(color="lightgray", width=1.5),
+                    fillcolor="rgba(0,0,0,0)",
+                    layer="above",
+                )
+
+        fig = make_subplots(rows=1, cols=3, shared_yaxes=True, horizontal_spacing=0.02)
+        add_heatmaps(fig, [simple_fig, complex_fig, negative_fig])
+
+        cols_per_subplot = [len(simple_fig.data[0].x), len(complex_fig.data[0].x), len(negative_fig.data[0].x)]
+        domain_starts, domain_ends = calculate_domains(cols_per_subplot, padding_ratio=2)
+
+        fig.update_layout(
+            title_text=title_text,
+            title_x=0.5,
+            template="seaborn",
+            xaxis=dict(domain=[domain_starts[0], domain_ends[0]], tickson='boundaries', showgrid=True,
+                       showticklabels=False, range=[-0.5, cols_per_subplot[0] - 0.5]),
+            xaxis2=dict(domain=[domain_starts[1], domain_ends[1]], tickson='boundaries', showgrid=True,
+                        showticklabels=False, range=[-0.5, cols_per_subplot[1] - 0.5]),
+            xaxis3=dict(domain=[domain_starts[2], domain_ends[2]], tickson='boundaries', showgrid=True,
+                        showticklabels=False, range=[-0.5, cols_per_subplot[2] - 0.5]),
+            yaxis=dict(tickson='boundaries', showgrid=True, gridwidth=1, showticklabels=True),
+            yaxis2=dict(tickson='boundaries', showgrid=True, gridwidth=1, showticklabels=False),
+            yaxis3=dict(tickson='boundaries', showgrid=True, gridwidth=1, showticklabels=False),
         )
 
-    fig = make_subplots(rows=1, cols=3, shared_yaxes=True, horizontal_spacing=0.02)
-    add_heatmaps(fig, [simple_fig, complex_fig, negative_fig])
+        add_annotations_and_shapes(fig, [simple_fig, complex_fig, negative_fig], ['x', 'x2', 'x3'])
 
-    cols_per_subplot = [len(simple_fig.data[0].x), len(complex_fig.data[0].x), len(negative_fig.data[0].x)]
-    domain_starts, domain_ends = calculate_domains(cols_per_subplot, padding_ratio=2)
+        fig.add_annotation(
+            text="Subcategories (with one cell per assigned question)",
+            x=0.5,
+            y=-0.2,
+            showarrow=False,
+            font=dict(size=14),
+            xref="paper",
+            yref="paper"
+        )
 
-    fig.update_layout(
-      title_text=title_text,
-      title_x=0.5,
-      template="seaborn",
-      xaxis=dict(domain=[domain_starts[0], domain_ends[0]], tickson='boundaries', showgrid=True, showticklabels=False, range=[-0.5, cols_per_subplot[0] - 0.5]),
-      xaxis2=dict(domain=[domain_starts[1], domain_ends[1]], tickson='boundaries', showgrid=True, showticklabels=False, range=[-0.5, cols_per_subplot[1] - 0.5]),
-      xaxis3=dict(domain=[domain_starts[2], domain_ends[2]], tickson='boundaries', showgrid=True, showticklabels=False, range=[-0.5, cols_per_subplot[2] - 0.5]),
-      yaxis=dict(tickson='boundaries', showgrid=True, gridwidth=1, showticklabels=True),
-      yaxis2=dict(tickson='boundaries', showgrid=True, gridwidth=1, showticklabels=False),
-      yaxis3=dict(tickson='boundaries', showgrid=True, gridwidth=1, showticklabels=False),
-    )
+        for i, title in enumerate(
+                ["... for simple questions", "... for complex questions", "... for negative questions"]):
+            center = (domain_starts[i] + domain_ends[i]) / 2
+            fig.add_annotation(
+                text=title,
+                x=center,
+                y=1.08,
+                xref='paper',
+                yref='paper',
+                showarrow=False,
+                xanchor='center',
+                font=dict(size=14, color="#333")
+            )
 
-    add_annotations_and_shapes(fig, [simple_fig, complex_fig, negative_fig], ['x', 'x2', 'x3'])
+        add_grid_rectangles(fig, cols_per_subplot)
 
-    fig.add_annotation(
-      text="Subcategories (with one cell per assigned question)",
-      x=0.5,
-      y=-0.2,
-      showarrow=False,
-      font=dict(size=14),
-      xref="paper",
-      yref="paper"
-    )
+        return fig
 
-    for i, title in enumerate(["... for simple questions", "... for complex questions", "... for negative questions"]):
-      center = (domain_starts[i] + domain_ends[i]) / 2
-      fig.add_annotation(
-        text=title,
-        x=center,
-        y=1.08,
-        xref='paper',
-        yref='paper',
-        showarrow=False,
-        xanchor='center',
-        font=dict(size=14, color="#333")
-      )
-
-    add_grid_rectangles(fig, cols_per_subplot)
-
-    return fig
-
-  return hallucinations_df, generate_subplot_heatmap_grid(simple_fig, complex_fig, negative_fig, "Hallucination Types Count")
+    return hallucinations_df, generate_subplot_heatmap_grid(simple_fig, complex_fig, negative_fig,
+                                                            "Hallucination Types Count")
 
 
 def get_average_retrieval_scores(wf_system: WorkflowSystem) -> Tuple[float, float, float]:
-  scores = [
-    {"precision": p, "recall": r, "f1": f}
-    for chat in wf_system.generation_results
-    for entry in chat.entries
-    if (res := entry.get_retrieval_scores())  and (p := res[0]) is not None and (r := res[1]) is not None and (f := res[2]) is not None
-  ]
+    scores = [
+        {"precision": p, "recall": r, "f1": f}
+        for chat in wf_system.generation_results
+        for entry in chat.entries
+        if (res := entry.get_retrieval_scores()) and (p := res[0]) is not None and (r := res[1]) is not None and (
+            f := res[2]) is not None
+    ]
 
-  if not scores:
-    return 0.0, 0.0, 0.0
+    if not scores:
+        return 0.0, 0.0, 0.0
 
-  return (
-    sum(score["precision"] for score in scores) / len(scores),
-    sum(score["recall"] for score in scores) / len(scores),
-    sum(score["f1"] for score in scores) / len(scores),
-  )
+    return (
+        sum(score["precision"] for score in scores) / len(scores),
+        sum(score["recall"] for score in scores) / len(scores),
+        sum(score["f1"] for score in scores) / len(scores),
+    )
 
 
 def analyze_and_visualize_retrieval_scores_per_category(wf_system: WorkflowSystem):
-  """Assumption: only one time interaction per question
-  """
-  def get_avg_retrieval_score(entries):
-    retrieval_scores = np.array([
-      {"precision": p, "recall": r, "f1": f}
-      for entry in entries
-      if (res := entry.get_retrieval_scores()) and (p := res[0]) is not None and (r := res[1]) is not None and (
-        f := res[2]) is not None
-    ])
-    if len(retrieval_scores) == 0:
-      return retrieval_scores, None, retrieval_scores, None, retrieval_scores, None,
+    """Assumption: only one time interaction per question
+    """
 
-    precision_scores = [score["precision"] for score in retrieval_scores]
-    recall_scores = [score["recall"] for score in retrieval_scores]
-    f1_scores = [score["f1"] for score in retrieval_scores]
-    return precision_scores, np.mean(precision_scores), recall_scores, np.mean(recall_scores), f1_scores, np.mean(f1_scores)
+    def get_avg_retrieval_score(entries):
+        retrieval_scores = np.array([
+            {"precision": p, "recall": r, "f1": f}
+            for entry in entries
+            if (res := entry.get_retrieval_scores()) and (p := res[0]) is not None and (r := res[1]) is not None and (
+                f := res[2]) is not None
+        ])
+        if len(retrieval_scores) == 0:
+            return retrieval_scores, None, retrieval_scores, None, retrieval_scores, None,
 
-  rows = [{
-    "supercategory": sc.value,
-    "subcategory": None,
-    "retrieval_precision_scores": (scores := get_avg_retrieval_score(wf_system.get_all_questions_for_super_category(sc)))[0],
-    "avg_retrieval_precision_score": scores[1],
-    "retrieval_recall_scores": scores[2],
-    "avg_retrieval_recall_score": scores[3],
-    "retrieval_f1_scores": scores[4],
-    "avg_retrieval_f1_score": scores[5],
-  } for sc in all_supercategories] + [{
-    "supercategory": qt.supercategory.value,
-    "subcategory": qt.subcategory.value,
-    "retrieval_precision_scores": (scores := get_avg_retrieval_score(wf_system.get_all_questions_for_sub_category(super_cat=qt.supercategory, sub_cat=qt.subcategory)))[0],
-    "avg_retrieval_precision_score": scores[1],
-    "retrieval_recall_scores": scores[2],
-    "avg_retrieval_recall_score": scores[3],
-    "retrieval_f1_scores": scores[4],
-    "avg_retrieval_f1_score": scores[5],
-  } for qt in all_question_classes]
+        precision_scores = [score["precision"] for score in retrieval_scores]
+        recall_scores = [score["recall"] for score in retrieval_scores]
+        f1_scores = [score["f1"] for score in retrieval_scores]
+        return precision_scores, np.mean(precision_scores), recall_scores, np.mean(recall_scores), f1_scores, np.mean(
+            f1_scores)
 
-  retrieval_scores_df = pd.DataFrame(rows)
+    rows = [{
+        "supercategory": sc.value,
+        "subcategory": None,
+        "retrieval_precision_scores":
+            (scores := get_avg_retrieval_score(wf_system.get_all_questions_for_super_category(sc)))[0],
+        "avg_retrieval_precision_score": scores[1],
+        "retrieval_recall_scores": scores[2],
+        "avg_retrieval_recall_score": scores[3],
+        "retrieval_f1_scores": scores[4],
+        "avg_retrieval_f1_score": scores[5],
+    } for sc in all_supercategories] + [{
+        "supercategory": qt.supercategory.value,
+        "subcategory": qt.subcategory.value,
+        "retrieval_precision_scores": (scores := get_avg_retrieval_score(
+            wf_system.get_all_questions_for_sub_category(super_cat=qt.supercategory, sub_cat=qt.subcategory)))[0],
+        "avg_retrieval_precision_score": scores[1],
+        "retrieval_recall_scores": scores[2],
+        "avg_retrieval_recall_score": scores[3],
+        "retrieval_f1_scores": scores[4],
+        "avg_retrieval_f1_score": scores[5],
+    } for qt in all_question_classes]
 
-  def visualize_box_plot(scores_df: pd.DataFrame, score_col: str, y_label: str, title: str):
-    """Reusable visualization function for box plots."""
-    exploded_df = scores_df[scores_df["subcategory"].notna()].explode(score_col)
-    exploded_df[score_col] = exploded_df[score_col].astype(float)
+    retrieval_scores_df = pd.DataFrame(rows)
 
-    supercat_base_colors = {
-      SuperCategory.SIMPLE.value: "#33691E",  # Green
-      SuperCategory.COMPLEX.value: "#0D47A1",  # Blue
-      SuperCategory.NEGATIVE.value: "#EF6C00"  # Orange
-    }
+    def visualize_box_plot(scores_df: pd.DataFrame, score_col: str, y_label: str, title: str):
+        """Reusable visualization function for box plots."""
+        exploded_df = scores_df[scores_df["subcategory"].notna()].explode(score_col)
+        exploded_df[score_col] = exploded_df[score_col].astype(float)
 
-    fig = px.box(
-      exploded_df,
-      x="subcategory",
-      y=score_col,
-      color="supercategory",
-      color_discrete_map=supercat_base_colors,
-      title=title,
-      labels={"subcategory": "Subcategory", "supercategory": "Supercategory", score_col: y_label},
-      template="seaborn"
-    )
-    fig.update_traces(line_width=1, marker=dict(size=3), boxmean='sd')
-    fig.update_layout(
-      boxmode="overlay",
-      xaxis=dict(autorange=True, tickangle=-90, showgrid=False),
-      yaxis=dict(range=[0, 1]),
-      showlegend=True,
-    )
-    return fig
+        supercat_base_colors = {
+            SuperCategory.SIMPLE.value: "#33691E",  # Green
+            SuperCategory.COMPLEX.value: "#0D47A1",  # Blue
+            SuperCategory.NEGATIVE.value: "#EF6C00"  # Orange
+        }
 
-  precision_fig = visualize_box_plot(retrieval_scores_df, "retrieval_precision_scores", "Precision Scores", "Precision by Question Type")
-  recall_fig = visualize_box_plot(retrieval_scores_df, "retrieval_recall_scores", "Recall Scores", "Recall by Question Type")
-  f1_fig = visualize_box_plot(retrieval_scores_df, "retrieval_f1_scores", "F1 Scores", "F1 Score by Question Type")
+        fig = px.box(
+            exploded_df,
+            x="subcategory",
+            y=score_col,
+            color="supercategory",
+            color_discrete_map=supercat_base_colors,
+            title=title,
+            labels={"subcategory": "Subcategory", "supercategory": "Supercategory", score_col: y_label},
+            template="seaborn"
+        )
+        fig.update_traces(line_width=1, marker=dict(size=3), boxmean='sd')
+        fig.update_layout(
+            boxmode="overlay",
+            xaxis=dict(autorange=True, tickangle=-90, showgrid=False),
+            yaxis=dict(range=[0, 1]),
+            showlegend=True,
+        )
+        return fig
 
-  return retrieval_scores_df, precision_fig, recall_fig, f1_fig
+    precision_fig = visualize_box_plot(retrieval_scores_df, "retrieval_precision_scores", "Precision Scores",
+                                       "Precision by Question Type")
+    recall_fig = visualize_box_plot(retrieval_scores_df, "retrieval_recall_scores", "Recall Scores",
+                                    "Recall by Question Type")
+    f1_fig = visualize_box_plot(retrieval_scores_df, "retrieval_f1_scores", "F1 Scores", "F1 Score by Question Type")
+
+    return retrieval_scores_df, precision_fig, recall_fig, f1_fig
 
 
 def get_average_factuality(wf_system: WorkflowSystem) -> float:
-  scores = [
-    score
-    for chat in wf_system.generation_results
-    for entry in chat.entries
-    if (score := entry.get_correctness_score()) is not None
-  ]
-  return sum(scores) / len(scores)
+    scores = [
+        score
+        for chat in wf_system.generation_results
+        for entry in chat.entries
+        if (score := entry.get_correctness_score()) is not None
+    ]
+    return sum(scores) / len(scores)
+
 
 def analyze_and_visualize_factuality_per_category(wf_system: WorkflowSystem):
-  """Assumption: only one time interaction per question
-  """
-  def get_avg_factuality_score(entries):
-    factuality_scores = np.array([
-      entry.get_factuality_score() for entry in entries
-      if entry.get_factuality_score() is not None
-    ])
-    if len(factuality_scores) == 0:
-      return factuality_scores, None
+    """Assumption: only one time interaction per question
+    """
 
-    return factuality_scores, np.mean(factuality_scores)
+    def get_avg_factuality_score(entries):
+        factuality_scores = np.array([
+            entry.get_factuality_score() for entry in entries
+            if entry.get_factuality_score() is not None
+        ])
+        if len(factuality_scores) == 0:
+            return factuality_scores, None
 
-  rows = [{
-    "supercategory": sc.value,
-    "subcategory": None,
-    "factuality_scores": (factuality_scores := get_avg_factuality_score(wf_system.get_all_questions_for_super_category(sc)))[0],
-    "avg_factuality_score": factuality_scores[1],
-  } for sc in all_supercategories] + [{
-    "supercategory": qt.supercategory.value,
-    "subcategory": qt.subcategory.value,
-    "factuality_scores": (factuality_scores := get_avg_factuality_score(wf_system.get_all_questions_for_sub_category(super_cat=qt.supercategory, sub_cat=qt.subcategory)))[0],
-    "avg_correctness_score": factuality_scores[1],
-  } for qt in all_question_classes]
+        return factuality_scores, np.mean(factuality_scores)
 
-  factuality_scores_df = pd.DataFrame(rows)
+    rows = [{
+        "supercategory": sc.value,
+        "subcategory": None,
+        "factuality_scores":
+            (factuality_scores := get_avg_factuality_score(wf_system.get_all_questions_for_super_category(sc)))[0],
+        "avg_factuality_score": factuality_scores[1],
+    } for sc in all_supercategories] + [{
+        "supercategory": qt.supercategory.value,
+        "subcategory": qt.subcategory.value,
+        "factuality_scores": (factuality_scores := get_avg_factuality_score(
+            wf_system.get_all_questions_for_sub_category(super_cat=qt.supercategory, sub_cat=qt.subcategory)))[0],
+        "avg_correctness_score": factuality_scores[1],
+    } for qt in all_question_classes]
 
-  def visualize_box_plots_factuality_score_per_category():
-    supercat_base_colors = {
-      SuperCategory.SIMPLE.value: "#33691E",  # Green
-      SuperCategory.COMPLEX.value: "#0D47A1",  # Blue
-      SuperCategory.NEGATIVE.value: "#EF6C00"  # Orange
-    }
+    factuality_scores_df = pd.DataFrame(rows)
 
-    exploded_df = factuality_scores_df[factuality_scores_df["subcategory"].notna()].explode("factuality_scores")
-    exploded_df["factuality_scores"] = exploded_df["factuality_scores"].astype(float)
+    def visualize_box_plots_factuality_score_per_category():
+        supercat_base_colors = {
+            SuperCategory.SIMPLE.value: "#33691E",  # Green
+            SuperCategory.COMPLEX.value: "#0D47A1",  # Blue
+            SuperCategory.NEGATIVE.value: "#EF6C00"  # Orange
+        }
 
-    fig = px.box(
-      exploded_df,
-      x="subcategory",
-      y="factuality_scores",
-      color="supercategory",
-      color_discrete_map=supercat_base_colors,
-      title="Factuality score per Question Type",
-      labels={
-        "factuality_scores": "Factuality Score",
-        "subcategory": "Subcategory",
-        "supercategory": "Supercategory",
-      },
-      template="seaborn"
-    )
-    fig.update_traces(line_width=1, marker=dict(size=3), boxmean='sd')
-    fig.update_layout(
-      boxmode='overlay',
-      xaxis=dict(
-        autorange=True,
-        title=None,
-        tickangle=-90,
-        showgrid=False
-      ),
-      showlegend=True,
-    )
-    fig.update_yaxes(range=[0, 1])
-    return fig
+        exploded_df = factuality_scores_df[factuality_scores_df["subcategory"].notna()].explode("factuality_scores")
+        exploded_df["factuality_scores"] = exploded_df["factuality_scores"].astype(float)
 
-  return factuality_scores_df, visualize_box_plots_factuality_score_per_category()
+        fig = px.box(
+            exploded_df,
+            x="subcategory",
+            y="factuality_scores",
+            color="supercategory",
+            color_discrete_map=supercat_base_colors,
+            title="Factuality score per Question Type",
+            labels={
+                "factuality_scores": "Factuality Score",
+                "subcategory": "Subcategory",
+                "supercategory": "Supercategory",
+            },
+            template="seaborn"
+        )
+        fig.update_traces(line_width=1, marker=dict(size=3), boxmean='sd')
+        fig.update_layout(
+            boxmode='overlay',
+            xaxis=dict(
+                autorange=True,
+                title=None,
+                tickangle=-90,
+                showgrid=False
+            ),
+            showlegend=True,
+        )
+        fig.update_yaxes(range=[0, 1])
+        return fig
+
+    return factuality_scores_df, visualize_box_plots_factuality_score_per_category()
+
 
 def get_average_accuracy_scores(wf_system: WorkflowSystem) -> Tuple[float, float, float, float, float]:
-  scores = [
-    {"rouge_1": r1, "rouge_l": rl, "bleu": b, "meteor": m, "embedding_sim": s}
-    for chat in wf_system.generation_results
-    for entry in chat.entries
-    if (res := entry.get_accuracy_to_expected_retrieval())
-       and (r1 := res["ROUGE-1"]) is not None and (rl := res["ROUGE-L"]) is not None
-       and (b := res["BLEU"]) is not None and (m := res["METEOR"]) is not None and (s := res["Embedding similarity"]) is not None
-  ]
+    scores = [
+        {"rouge_1": r1, "rouge_l": rl, "bleu": b, "meteor": m, "embedding_sim": s}
+        for chat in wf_system.generation_results
+        for entry in chat.entries
+        if (res := entry.get_accuracy_to_expected_retrieval())
+           and (r1 := res["ROUGE-1"]) is not None and (rl := res["ROUGE-L"]) is not None
+           and (b := res["BLEU"]) is not None and (m := res["METEOR"]) is not None and (
+               s := res["Embedding similarity"]) is not None
+    ]
 
-  if not scores:
-    return 0.0, 0.0, 0.0, 0.0, 0.0
+    if not scores:
+        return 0.0, 0.0, 0.0, 0.0, 0.0
 
-  return (
-    sum(score["rouge_1"] for score in scores) / len(scores),
-    sum(score["rouge_l"] for score in scores) / len(scores),
-    sum(score["bleu"] for score in scores) / len(scores),
-    sum(score["meteor"] for score in scores) / len(scores),
-    sum(score["embedding_sim"] for score in scores) / len(scores),
-  )
+    return (
+        sum(score["rouge_1"] for score in scores) / len(scores),
+        sum(score["rouge_l"] for score in scores) / len(scores),
+        sum(score["bleu"] for score in scores) / len(scores),
+        sum(score["meteor"] for score in scores) / len(scores),
+        sum(score["embedding_sim"] for score in scores) / len(scores),
+    )
 
 
 def analyze_and_visualize_accuracy_per_category(wf_system: WorkflowSystem):
-  """Assumption: only one time interaction per question
-  """
-  def get_avg_accuracy_scores(entries):
-    accuracy_scores = np.array([
-      {"rouge_1": r1, "rouge_l": rl, "bleu": b, "meteor": m, "embedding_sim": s}
-      for entry in entries
-      if (res := entry.get_accuracy_to_expected_retrieval())
-         and (r1 := res["ROUGE-1"]) is not None and (rl := res["ROUGE-L"]) is not None
-         and (b := res["BLEU"]) is not None and (m := res["METEOR"]) is not None and (s := res["Embedding similarity"]) is not None
-    ])
-    if len(accuracy_scores) == 0:
-      return accuracy_scores, None, accuracy_scores, None, accuracy_scores, None, accuracy_scores, None, accuracy_scores, None
+    """Assumption: only one time interaction per question
+    """
 
-    rouge_1_scores = [score["rouge_1"] for score in accuracy_scores]
-    rouge_l_scores = [score["rouge_l"] for score in accuracy_scores]
-    bleu_scores = [score["bleu"] for score in accuracy_scores]
-    meteor_scores = [score["meteor"] for score in accuracy_scores]
-    embedding_sim_scores = [score["embedding_sim"] for score in accuracy_scores]
+    def get_avg_accuracy_scores(entries):
+        accuracy_scores = np.array([
+            {"rouge_1": r1, "rouge_l": rl, "bleu": b, "meteor": m, "embedding_sim": s}
+            for entry in entries
+            if (res := entry.get_accuracy_to_expected_retrieval())
+               and (r1 := res["ROUGE-1"]) is not None and (rl := res["ROUGE-L"]) is not None
+               and (b := res["BLEU"]) is not None and (m := res["METEOR"]) is not None and (
+                   s := res["Embedding similarity"]) is not None
+        ])
+        if len(accuracy_scores) == 0:
+            return accuracy_scores, None, accuracy_scores, None, accuracy_scores, None, accuracy_scores, None, accuracy_scores, None
 
-    return rouge_1_scores, np.mean(rouge_1_scores), rouge_l_scores, np.mean(rouge_l_scores), bleu_scores, np.mean(bleu_scores), meteor_scores, np.mean(meteor_scores), embedding_sim_scores, np.mean(embedding_sim_scores)
+        rouge_1_scores = [score["rouge_1"] for score in accuracy_scores]
+        rouge_l_scores = [score["rouge_l"] for score in accuracy_scores]
+        bleu_scores = [score["bleu"] for score in accuracy_scores]
+        meteor_scores = [score["meteor"] for score in accuracy_scores]
+        embedding_sim_scores = [score["embedding_sim"] for score in accuracy_scores]
 
-  rows = [{
-    "supercategory": sc.value,
-    "subcategory": None,
-    "rouge_1_scores": (accuracy_scores := get_avg_accuracy_scores(wf_system.get_all_questions_for_super_category(sc)))[0],
-    "avg_rouge_1_score": accuracy_scores[1],
-    "rouge_l_scores": accuracy_scores[2],
-    "avg_rouge_l_score": accuracy_scores[3],
-    "bleu_scores": accuracy_scores[4],
-    "avg_bleu_score": accuracy_scores[5],
-    "meteor_scores": accuracy_scores[6],
-    "avg_meteor_score": accuracy_scores[7],
-    "embedding_sim_scores": accuracy_scores[8],
-    "avg_embedding_sim_score": accuracy_scores[9],
-  } for sc in all_supercategories] + [{
-    "supercategory": qt.supercategory.value,
-    "subcategory": qt.subcategory.value,
-    "rouge_1_scores": (accuracy_scores := get_avg_accuracy_scores(wf_system.get_all_questions_for_sub_category(super_cat=qt.supercategory, sub_cat=qt.subcategory)))[0],
-    "avg_rouge_1_score": accuracy_scores[1],
-    "rouge_l_scores": accuracy_scores[2],
-    "avg_rouge_l_score": accuracy_scores[3],
-    "bleu_scores": accuracy_scores[4],
-    "avg_bleu_score": accuracy_scores[5],
-    "meteor_scores": accuracy_scores[6],
-    "avg_meteor_score": accuracy_scores[7],
-    "embedding_sim_scores": accuracy_scores[8],
-    "avg_embedding_sim_score": accuracy_scores[9],
-  } for qt in all_question_classes]
+        return rouge_1_scores, np.mean(rouge_1_scores), rouge_l_scores, np.mean(rouge_l_scores), bleu_scores, np.mean(
+            bleu_scores), meteor_scores, np.mean(meteor_scores), embedding_sim_scores, np.mean(embedding_sim_scores)
 
-  accuracy_scores_df = pd.DataFrame(rows)
+    rows = [{
+        "supercategory": sc.value,
+        "subcategory": None,
+        "rouge_1_scores":
+            (accuracy_scores := get_avg_accuracy_scores(wf_system.get_all_questions_for_super_category(sc)))[0],
+        "avg_rouge_1_score": accuracy_scores[1],
+        "rouge_l_scores": accuracy_scores[2],
+        "avg_rouge_l_score": accuracy_scores[3],
+        "bleu_scores": accuracy_scores[4],
+        "avg_bleu_score": accuracy_scores[5],
+        "meteor_scores": accuracy_scores[6],
+        "avg_meteor_score": accuracy_scores[7],
+        "embedding_sim_scores": accuracy_scores[8],
+        "avg_embedding_sim_score": accuracy_scores[9],
+    } for sc in all_supercategories] + [{
+        "supercategory": qt.supercategory.value,
+        "subcategory": qt.subcategory.value,
+        "rouge_1_scores": (accuracy_scores := get_avg_accuracy_scores(
+            wf_system.get_all_questions_for_sub_category(super_cat=qt.supercategory, sub_cat=qt.subcategory)))[0],
+        "avg_rouge_1_score": accuracy_scores[1],
+        "rouge_l_scores": accuracy_scores[2],
+        "avg_rouge_l_score": accuracy_scores[3],
+        "bleu_scores": accuracy_scores[4],
+        "avg_bleu_score": accuracy_scores[5],
+        "meteor_scores": accuracy_scores[6],
+        "avg_meteor_score": accuracy_scores[7],
+        "embedding_sim_scores": accuracy_scores[8],
+        "avg_embedding_sim_score": accuracy_scores[9],
+    } for qt in all_question_classes]
 
-  def visualize_radar_scatter_average_per_super_category():
-    supercat_base_colors = {
-      SuperCategory.SIMPLE.value: "#33691E",  # Green
-      SuperCategory.COMPLEX.value: "#0D47A1",  # Blue
-      SuperCategory.NEGATIVE.value: "#EF6C00"  # Orange
-    }
+    accuracy_scores_df = pd.DataFrame(rows)
 
-    filtered_df = accuracy_scores_df[accuracy_scores_df["subcategory"].isna()]
-    metrics = [ 'rouge_1', 'rouge_l', 'bleu', 'meteor', 'embedding_sim' ]
-    labels = [ 'ROUGE-1', 'ROUGE-L', 'BLEU', 'METEOR', 'Embedding similarity' ]
+    def visualize_radar_scatter_average_per_super_category():
+        supercat_base_colors = {
+            SuperCategory.SIMPLE.value: "#33691E",  # Green
+            SuperCategory.COMPLEX.value: "#0D47A1",  # Blue
+            SuperCategory.NEGATIVE.value: "#EF6C00"  # Orange
+        }
 
-    fig = go.Figure()
+        filtered_df = accuracy_scores_df[accuracy_scores_df["subcategory"].isna()]
+        metrics = ['rouge_1', 'rouge_l', 'bleu', 'meteor', 'embedding_sim']
+        labels = ['ROUGE-1', 'ROUGE-L', 'BLEU', 'METEOR', 'Embedding similarity']
 
-    for _, row in filtered_df.iterrows():
-      avg_values = [row[f"avg_{metric}_score"] for metric in metrics]
+        fig = go.Figure()
 
-      theta = labels + [labels[0]]
-      avg_values += [avg_values[0]]
+        for _, row in filtered_df.iterrows():
+            avg_values = [row[f"avg_{metric}_score"] for metric in metrics]
 
-      fig.add_trace(go.Scatterpolar(
-        r=avg_values,
-        theta=theta,
-        mode='lines+markers',
-        line=dict(color=supercat_base_colors[row["supercategory"]], width=1, shape='spline'),
-        marker=dict(size=3),
-        name=f"{row['supercategory']}",
-      ))
+            theta = labels + [labels[0]]
+            avg_values += [avg_values[0]]
 
-    fig.update_layout(
-      title="Accuracy scores per question type",
-      polar=dict(
-        radialaxis=dict(
-          visible=True,
-          range=[0, 1],
-          showticklabels=True,
-        ),
-      ),
-      template="seaborn"
-    )
-    return fig
+            fig.add_trace(go.Scatterpolar(
+                r=avg_values,
+                theta=theta,
+                mode='lines+markers',
+                line=dict(color=supercat_base_colors[row["supercategory"]], width=1, shape='spline'),
+                marker=dict(size=3),
+                name=f"{row['supercategory']}",
+            ))
 
-  def visualize_box_accuracy_per_category():
-    supercat_base_colors = {
-      SuperCategory.SIMPLE.value: "#33691E",
-      SuperCategory.COMPLEX.value: "#0D47A1",
-      SuperCategory.NEGATIVE.value: "#EF6C00"
-    }
+        fig.update_layout(
+            title="Accuracy scores per question type",
+            polar=dict(
+                radialaxis=dict(
+                    visible=True,
+                    range=[0, 1],
+                    showticklabels=True,
+                ),
+            ),
+            template="seaborn"
+        )
+        return fig
 
-    metric_columns = ["rouge_1_scores", "rouge_l_scores", "bleu_scores", "meteor_scores", "embedding_sim_scores"]
-    display_metric_names = {
-      "rouge_1_scores": "ROUGE-1",
-      "rouge_l_scores": "ROUGE-L",
-      "bleu_scores": "BLEU",
-      "meteor_scores": "METEOR",
-      "embedding_sim_scores": "Emb-sim."
-    }
+    def visualize_box_accuracy_per_category():
+        supercat_base_colors = {
+            SuperCategory.SIMPLE.value: "#33691E",
+            SuperCategory.COMPLEX.value: "#0D47A1",
+            SuperCategory.NEGATIVE.value: "#EF6C00"
+        }
 
-    filtered_df = accuracy_scores_df[accuracy_scores_df["subcategory"].notna()].copy()
-    melted_df = filtered_df.melt(
-      id_vars=["supercategory", "subcategory"],
-      value_vars=metric_columns,
-      var_name="metric",
-      value_name="score"
-    )
-    melted_df = melted_df.explode("score")
-    melted_df["score"] = melted_df["score"].astype(float)
+        metric_columns = ["rouge_1_scores", "rouge_l_scores", "bleu_scores", "meteor_scores", "embedding_sim_scores"]
+        display_metric_names = {
+            "rouge_1_scores": "ROUGE-1",
+            "rouge_l_scores": "ROUGE-L",
+            "bleu_scores": "BLEU",
+            "meteor_scores": "METEOR",
+            "embedding_sim_scores": "Emb-sim."
+        }
 
-    # Create color map for (supercategory | metric)
-    color_map = {}
-    for supercat, base in supercat_base_colors.items():
-      variants = generate_color_variants(base, len(metric_columns))
-      for metric, color in zip(metric_columns, variants):
-        color_key = f"{supercat} | {metric}"
-        color_map[color_key] = color
+        filtered_df = accuracy_scores_df[accuracy_scores_df["subcategory"].notna()].copy()
+        melted_df = filtered_df.melt(
+            id_vars=["supercategory", "subcategory"],
+            value_vars=metric_columns,
+            var_name="metric",
+            value_name="score"
+        )
+        melted_df = melted_df.explode("score")
+        melted_df["score"] = melted_df["score"].astype(float)
 
-    melted_df["color_key"] = melted_df["supercategory"] + " | " + melted_df["metric"]
-    fig = go.Figure()
-    subcategories = melted_df["subcategory"].unique()
+        # Create color map for (supercategory | metric)
+        color_map = {}
+        for supercat, base in supercat_base_colors.items():
+            variants = generate_color_variants(base, len(metric_columns))
+            for metric, color in zip(metric_columns, variants):
+                color_key = f"{supercat} | {metric}"
+                color_map[color_key] = color
 
-    for metric in metric_columns:
-      for supercat in supercat_base_colors.keys():
-        df_subset = melted_df[
-          (melted_df["metric"] == metric) &
-          (melted_df["supercategory"] == supercat)
-          ]
-        if df_subset.empty:
-          continue
-        color_key = f"{supercat} | {metric}"
-        for subcat in subcategories:
-          df_cat = df_subset[df_subset["subcategory"] == subcat]
-          if df_cat.empty:
-            continue
-          fig.add_trace(go.Box(
-            y=df_cat["score"],
-            x=[subcat] * len(df_cat),
-            name=f"{metric}",
-            marker_color=color_map[color_key],
-            boxpoints=False,
-            line_width=1,
-            offsetgroup=metric,
-            legendgroup=color_key,
-            showlegend=(subcat == subcategories[0]),
-            hoveron='boxes',
-            boxmean='sd'
-          ))
+        melted_df["color_key"] = melted_df["supercategory"] + " | " + melted_df["metric"]
+        fig = go.Figure()
+        subcategories = melted_df["subcategory"].unique()
 
-    # Adjust legend
-    legend_annotations = []
-    legend_shapes = []
+        for metric in metric_columns:
+            for supercat in supercat_base_colors.keys():
+                df_subset = melted_df[
+                    (melted_df["metric"] == metric) &
+                    (melted_df["supercategory"] == supercat)
+                    ]
+                if df_subset.empty:
+                    continue
+                color_key = f"{supercat} | {metric}"
+                for subcat in subcategories:
+                    df_cat = df_subset[df_subset["subcategory"] == subcat]
+                    if df_cat.empty:
+                        continue
+                    fig.add_trace(go.Box(
+                        y=df_cat["score"],
+                        x=[subcat] * len(df_cat),
+                        name=f"{metric}",
+                        marker_color=color_map[color_key],
+                        boxpoints=False,
+                        line_width=1,
+                        offsetgroup=metric,
+                        legendgroup=color_key,
+                        showlegend=(subcat == subcategories[0]),
+                        hoveron='boxes',
+                        boxmean='sd'
+                    ))
 
-    x_start, y_start = 1, 1
-    height_header, width_metric_label = 0.1, 0.06
-    cell_width, cell_height = 0.05, 0.08
-    x_margin, y_margin = 0.01, 0.04
+        # Adjust legend
+        legend_annotations = []
+        legend_shapes = []
 
-    # Right-aligned metric labels
-    for row_i, metric in enumerate(metric_columns):
-      legend_annotations.append(dict(
-        x=x_start + width_metric_label,
-        y=y_start - height_header - row_i * (cell_height + y_margin),
-        xref="paper", yref="paper",
-        text=f"{display_metric_names[metric]}",
-        showarrow=False,
-        font=dict(size=11),
-        xanchor="right",
-        yanchor="top"
-      ))
+        x_start, y_start = 1, 1
+        height_header, width_metric_label = 0.1, 0.06
+        cell_width, cell_height = 0.05, 0.08
+        x_margin, y_margin = 0.01, 0.04
 
-    # Supercategory headers ABOVE the boxes
-    for col_i, supercat in enumerate(supercat_base_colors.keys()):
-      legend_annotations.append(dict(
-        x=x_start + x_margin + width_metric_label + col_i * (cell_width + x_margin),
-        y=y_start,
-        xref="paper", yref="paper",
-        text=f"{supercat}",
-        showarrow=False,
-        font=dict(size=11),
-        xanchor="left"
-      ))
+        # Right-aligned metric labels
+        for row_i, metric in enumerate(metric_columns):
+            legend_annotations.append(dict(
+                x=x_start + width_metric_label,
+                y=y_start - height_header - row_i * (cell_height + y_margin),
+                xref="paper", yref="paper",
+                text=f"{display_metric_names[metric]}",
+                showarrow=False,
+                font=dict(size=11),
+                xanchor="right",
+                yanchor="top"
+            ))
 
-    for row_i, metric in enumerate(metric_columns):
-      for col_i, supercat in enumerate(supercat_base_colors.keys()):
-        color_key = f"{supercat} | {metric}"
-        color = color_map.get(color_key, "#CCCCCC")
+        # Supercategory headers ABOVE the boxes
+        for col_i, supercat in enumerate(supercat_base_colors.keys()):
+            legend_annotations.append(dict(
+                x=x_start + x_margin + width_metric_label + col_i * (cell_width + x_margin),
+                y=y_start,
+                xref="paper", yref="paper",
+                text=f"{supercat}",
+                showarrow=False,
+                font=dict(size=11),
+                xanchor="left"
+            ))
 
-        x0 = x_start + x_margin + width_metric_label + col_i * (cell_width + x_margin)
-        x1 = x0 + cell_width
-        y0 = y_start - height_header - row_i * (cell_height + y_margin)
-        y1 = y0 - cell_height
+        for row_i, metric in enumerate(metric_columns):
+            for col_i, supercat in enumerate(supercat_base_colors.keys()):
+                color_key = f"{supercat} | {metric}"
+                color = color_map.get(color_key, "#CCCCCC")
 
-        legend_shapes.append(dict(
-          type="rect",
-          xref="paper", yref="paper",
-          x0=x0, y0=y0,
-          x1=x1, y1=y1,
-          fillcolor=color,
-          line=dict(width=0)
-        ))
+                x0 = x_start + x_margin + width_metric_label + col_i * (cell_width + x_margin)
+                x1 = x0 + cell_width
+                y0 = y_start - height_header - row_i * (cell_height + y_margin)
+                y1 = y0 - cell_height
 
-    fig.update_layout(
-      boxmode='group',
-      title='Accuracy scores per question subcategory',
-      yaxis=dict(range=[0, 1], title="Score"),
-      xaxis=dict(title="", tickangle=-90),
-      template="seaborn",
-      showlegend=False,
-      shapes=legend_shapes,
-      annotations=legend_annotations,
-      margin=dict(r=400)  # extra right margin for the legend
-    )
+                legend_shapes.append(dict(
+                    type="rect",
+                    xref="paper", yref="paper",
+                    x0=x0, y0=y0,
+                    x1=x1, y1=y1,
+                    fillcolor=color,
+                    line=dict(width=0)
+                ))
 
-    return fig
+        fig.update_layout(
+            boxmode='group',
+            title='Accuracy scores per question subcategory',
+            yaxis=dict(range=[0, 1], title="Score"),
+            xaxis=dict(title="", tickangle=-90),
+            template="seaborn",
+            showlegend=False,
+            shapes=legend_shapes,
+            annotations=legend_annotations,
+            margin=dict(r=400)  # extra right margin for the legend
+        )
 
-  return accuracy_scores_df, visualize_radar_scatter_average_per_super_category(), visualize_box_accuracy_per_category()
+        return fig
 
-
+    return accuracy_scores_df, visualize_radar_scatter_average_per_super_category(), visualize_box_accuracy_per_category()

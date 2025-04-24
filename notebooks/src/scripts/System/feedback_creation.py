@@ -2,7 +2,8 @@
 
 from typing import Optional, Dict, Tuple
 
-from general.data_model.system_interactions import Feedback, FeedbackTarget, FeedbackType, ChatInteraction, GenerationResultEntry
+from general.data_model.system_interactions import Feedback, FeedbackTarget, FeedbackType, ChatInteraction, \
+    GenerationResultEntry
 from general.helper.logging import logger
 from general.helper.mongodb_interactor import MongoDBInterface, CollectionName
 
@@ -15,12 +16,14 @@ def create_feedback_response_latency(response_latency: float) -> Feedback:
     )
     return response_latency_feedback
 
+
 def create_feedback_accuracy(values: Dict[str, float]) -> Feedback:
     return Feedback(
         target=FeedbackTarget.SYSTEM,
         type=FeedbackType.ACCURACY_TO_EXPECTED_RETRIEVAL,
         value=values
     )
+
 
 def create_feedback_correctness(score: int, notes: Optional[str] = None) -> Feedback:
     return Feedback(
@@ -31,6 +34,7 @@ def create_feedback_correctness(score: int, notes: Optional[str] = None) -> Feed
         notes=notes
     )
 
+
 def create_feedback_hallucination_classification(counts: Dict[str, int], notes: Optional[str] = None) -> Feedback:
     return Feedback(
         target=FeedbackTarget.SYSTEM,
@@ -39,6 +43,7 @@ def create_feedback_hallucination_classification(counts: Dict[str, int], notes: 
         manual=True,
         notes=notes
     )
+
 
 def create_feedback_retrieval_scores(precision: float, recall: float, f1: float) -> Tuple[Feedback, Feedback, Feedback]:
     precision_feedback = Feedback(
@@ -58,6 +63,7 @@ def create_feedback_retrieval_scores(precision: float, recall: float, f1: float)
     )
     return precision_feedback, recall_feedback, f1_feedback
 
+
 def create_feedback_factuality_score(fs: int, fo: int, notes: Optional[str] = None) -> Feedback:
     if notes is None:
         notes = ""
@@ -69,6 +75,7 @@ def create_feedback_factuality_score(fs: int, fo: int, notes: Optional[str] = No
         manual=True,
         notes=notes
     )
+
 
 def insert_feedback(dbi: MongoDBInterface, chat: ChatInteraction, entry: GenerationResultEntry, feedback: Feedback):
     chat_doc = dbi.get_entry(CollectionName.CHAT_INTERACTIONS, "chat_id", chat.chat_id)
@@ -100,6 +107,3 @@ def insert_feedback(dbi: MongoDBInterface, chat: ChatInteraction, entry: Generat
         raise Exception("Feedback insertion failed: update operation did not modify entry.")
     else:
         logger.info(f"Feedback inserted for entry {matching_entry['_id']} in chat {chat.chat_id}.")
-
-
-

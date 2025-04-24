@@ -3,15 +3,16 @@
 import pandas as pd
 import plotly.express as px
 
-from general.data_model.question_dataset import SuperCategory,SubCategory
+from general.data_model.question_dataset import SuperCategory, SubCategory
 from general.helper.color import generate_color_variants
 
 
 def get_total_question_count(questions_collection):
     return questions_collection.count_documents({})
 
+
 def get_super_cat_question_count(questions_collection, question_types_collection, super_cat: SuperCategory):
-    result = list(questions_collection.aggregate(pipeline = [
+    result = list(questions_collection.aggregate(pipeline=[
         {
             "$lookup": {
                 "from": question_types_collection.name,
@@ -20,18 +21,20 @@ def get_super_cat_question_count(questions_collection, question_types_collection
                 "as": "question_type_data"
             }
         },
-        { "$unwind": "$question_type_data" },
+        {"$unwind": "$question_type_data"},
         {
             "$match": {
                 "question_type_data.supercategory": super_cat.value,
             }
         },
-        { "$count": "count" }
+        {"$count": "count"}
     ]))
     return result[0]["count"] if result else 0
 
-def get_sub_cat_question_count(questions_collection, question_types_collection, super_cat: SuperCategory, sub_cat: SubCategory):
-    result = list(questions_collection.aggregate(pipeline = [
+
+def get_sub_cat_question_count(questions_collection, question_types_collection, super_cat: SuperCategory,
+                               sub_cat: SubCategory):
+    result = list(questions_collection.aggregate(pipeline=[
         {
             "$lookup": {
                 "from": question_types_collection.name,
@@ -40,16 +43,17 @@ def get_sub_cat_question_count(questions_collection, question_types_collection, 
                 "as": "question_type_data"
             }
         },
-        { "$unwind": "$question_type_data" },
+        {"$unwind": "$question_type_data"},
         {
             "$match": {
                 "question_type_data.supercategory": super_cat.value,
                 "question_type_data.subcategory": sub_cat.value,
             }
         },
-        { "$count": "count" }
+        {"$count": "count"}
     ]))
     return result[0]["count"] if result else 0
+
 
 def get_oms_spec_guidelines(guideline_collection):
     keyword = "Mund-, Kiefer- und Gesichtschirurgie"
@@ -63,16 +67,19 @@ def get_oms_spec_guidelines(guideline_collection):
     ))
     return oms_guidelines
 
+
 def get_guidelines_with_answer(guideline_collection, answer_collection):
     guideline_ids = answer_collection.distinct("guideline")
 
     guidelines_with_answers = list(guideline_collection.find({
-        "_id": { "$in": guideline_ids }
+        "_id": {"$in": guideline_ids}
     }))
     return guidelines_with_answers
 
+
 def get_answer_count_for_guideline(guideline, answer_collection):
     return answer_collection.count_documents({"guideline": guideline["_id"]})
+
 
 def get_question_count_for_guideline(guideline, answer_collection, question_collection):
     expected_answers = answer_collection.distinct("_id", {"guideline": guideline["_id"]})
@@ -80,10 +87,12 @@ def get_question_count_for_guideline(guideline, answer_collection, question_coll
         return 0
 
     return question_collection.count_documents({
-        "expected_answers": { "$elemMatch": { "$in": expected_answers } }
+        "expected_answers": {"$elemMatch": {"$in": expected_answers}}
     })
 
-def get_question_with_classification_for_guideline(guideline, answer_collection, question_collection, question_types_collection):
+
+def get_question_with_classification_for_guideline(guideline, answer_collection, question_collection,
+                                                   question_types_collection):
     """
     For each guideline, return a list of questions linked to it,
     with classification info and question ID.
@@ -105,7 +114,8 @@ def get_question_with_classification_for_guideline(guideline, answer_collection,
     if not expected_answers:
         return []
 
-    question_cursor = question_collection.find({"expected_answers": {"$in": expected_answers}}, {"_id": 1, "classification": 1})
+    question_cursor = question_collection.find({"expected_answers": {"$in": expected_answers}},
+                                               {"_id": 1, "classification": 1})
 
     results = []
     for question in question_cursor:
@@ -122,17 +132,20 @@ def get_question_with_classification_for_guideline(guideline, answer_collection,
 
     return results
 
-def analyze_and_visualize_question_distribution(questions_collection, question_type_collection, all_classes, supercategories):
+
+def analyze_and_visualize_question_distribution(questions_collection, question_type_collection, all_classes,
+                                                supercategories):
     # count for all types
     rows = [{
         "supercategory": sc.value,
         "subcategory": None,
         "count": get_super_cat_question_count(questions_collection, question_type_collection, sc)
-    } for sc in supercategories ] + [{
+    } for sc in supercategories] + [{
         "supercategory": qt.supercategory.value,
         "subcategory": qt.subcategory.value,
-        "count": get_sub_cat_question_count(questions_collection, question_type_collection, qt.supercategory, qt.subcategory)
-    } for qt in all_classes ]
+        "count": get_sub_cat_question_count(questions_collection, question_type_collection, qt.supercategory,
+                                            qt.subcategory)
+    } for qt in all_classes]
 
     question_dist_df = pd.DataFrame(rows)
     question_dist_labeled = question_dist_df.copy()
@@ -140,7 +153,8 @@ def analyze_and_visualize_question_distribution(questions_collection, question_t
     def format_label(cat, count):
         return f"{cat} <span style='color: gray; font-style: italic; font-size: 8pt'>[{count}]</span>"
 
-    supercat_totals = question_dist_labeled[question_dist_labeled["subcategory"].isnull()].set_index("supercategory")["count"].to_dict()
+    supercat_totals = question_dist_labeled[question_dist_labeled["subcategory"].isnull()].set_index("supercategory")[
+        "count"].to_dict()
     question_dist_labeled["supercategory_label"] = question_dist_labeled["supercategory"].map({
         super_cat: format_label(super_cat, count)
         for super_cat, count in supercat_totals.items()
@@ -193,7 +207,8 @@ def analyze_and_visualize_question_distribution(questions_collection, question_t
 
 
 def analyze_and_visualize_question_per_guideline(questions_coll, question_type_coll, gl_coll, answer_coll):
-    oms_spec_guidelines, with_answer_guidelines = get_oms_spec_guidelines(gl_coll), get_guidelines_with_answer(gl_coll, answer_coll)
+    oms_spec_guidelines, with_answer_guidelines = get_oms_spec_guidelines(gl_coll), get_guidelines_with_answer(gl_coll,
+                                                                                                               answer_coll)
 
     guideline_map = {
         doc["_id"]: {
@@ -201,7 +216,8 @@ def analyze_and_visualize_question_per_guideline(questions_coll, question_type_c
             "oms_spec": doc in oms_spec_guidelines,
             "answer_count": get_answer_count_for_guideline(doc, answer_coll),
             "question_count": get_question_count_for_guideline(doc, answer_coll, questions_coll),
-            "questions": get_question_with_classification_for_guideline(doc, answer_coll, questions_coll, question_type_coll)
+            "questions": get_question_with_classification_for_guideline(doc, answer_coll, questions_coll,
+                                                                        question_type_coll)
         }
         for doc in oms_spec_guidelines + with_answer_guidelines
     }
@@ -219,13 +235,17 @@ def analyze_and_visualize_question_per_guideline(questions_coll, question_type_c
             return sum(1 for q in questions if isinstance(q, dict) and q.get("supercategory") == category)
 
         df_fig = df.copy()
-        df_fig[SuperCategory.SIMPLE.value] = df_fig["questions"].apply(lambda q: count_cat(q, SuperCategory.SIMPLE.value))
-        df_fig[SuperCategory.COMPLEX.value] = df_fig["questions"].apply(lambda q: count_cat(q, SuperCategory.COMPLEX.value))
-        df_fig[SuperCategory.NEGATIVE.value] = df_fig["questions"].apply(lambda q: count_cat(q, SuperCategory.NEGATIVE.value))
+        df_fig[SuperCategory.SIMPLE.value] = df_fig["questions"].apply(
+            lambda q: count_cat(q, SuperCategory.SIMPLE.value))
+        df_fig[SuperCategory.COMPLEX.value] = df_fig["questions"].apply(
+            lambda q: count_cat(q, SuperCategory.COMPLEX.value))
+        df_fig[SuperCategory.NEGATIVE.value] = df_fig["questions"].apply(
+            lambda q: count_cat(q, SuperCategory.NEGATIVE.value))
 
         df_fig["awmf_register_number"] = df_fig["awmf_register_number"].fillna("Unknown")
         df_fig["awmf_label"] = df_fig.apply(
-            lambda row: f"<span style='color: gray; font-style: italic;'>{row['awmf_register_number']}</span>" if not row["oms_spec"] else row["awmf_register_number"],
+            lambda row: f"<span style='color: gray; font-style: italic;'>{row['awmf_register_number']}</span>" if not
+            row["oms_spec"] else row["awmf_register_number"],
             axis=1
         )
         df_fig = df_fig[df_fig["question_count"] >= min_total_questions]

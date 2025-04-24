@@ -33,7 +33,8 @@ def get_vectorizer_config(vectorizer: str, source_properties: List[str]):
     elif vectorizer == "text2vec-transformers":
         return [Configure.NamedVectors.text2vec_transformers(name='default', source_properties=source_properties)]
     else:
-        raise HTTPException(status_code=400, detail=f"Unsupported vectorizer '{vectorizer}'. Supported: {AVAILABLE_VECTORIZERS}")
+        raise HTTPException(status_code=400,
+                            detail=f"Unsupported vectorizer '{vectorizer}'. Supported: {AVAILABLE_VECTORIZERS}")
 
 
 def validate_class_exists(class_name: str):
@@ -129,7 +130,8 @@ def init_weaviate_collection(req: InitRequest):
                     raise HTTPException(status_code=400, detail=f"Property '{prop}' is not of type 'text'.")
         else:
             if vec != "none":
-                raise HTTPException(status_code=400, detail=f"To configure a vectorizer ({vec}), a list of vectorizer properties needs to be provided specifying what to use as index")
+                raise HTTPException(status_code=400,
+                                    detail=f"To configure a vectorizer ({vec}), a list of vectorizer properties needs to be provided specifying what to use as index")
 
     validate_vectorizer_properties(req.vectorizer_properties, vectorizer, req.properties)
     source_props = req.vectorizer_properties or []

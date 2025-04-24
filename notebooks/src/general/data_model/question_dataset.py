@@ -35,7 +35,9 @@ class NegativeSubCategory(Enum):
     BROKEN_INPUT = "Broken input"
     FALSE_ASSUMPTION = "False assumption"
 
+
 SubCategory = Union[SimpleSubCategory, ComplexSubCategory, NegativeSubCategory]
+
 
 @dataclass(frozen=True)
 class QuestionClass:
@@ -58,6 +60,7 @@ class QuestionClass:
             "supercategory": self.supercategory.value,
             "subcategory": self.subcategory.value
         }
+
 
 all_question_classes = [
     QuestionClass(supercat, subcat)

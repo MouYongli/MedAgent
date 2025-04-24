@@ -7,7 +7,8 @@ class AbstractComponent(ABC):
     variants: Dict[str, Type['AbstractComponent']] = {}
     default_parameters: Dict[str, Any] = {}
 
-    def __new__(cls, id: str, name: str, parameters: Optional[Dict[str, Any]] = None, variant: Optional[str] = None) -> 'AbstractComponent':
+    def __new__(cls, id: str, name: str, parameters: Optional[Dict[str, Any]] = None,
+                variant: Optional[str] = None) -> 'AbstractComponent':
         if variant:
             if variant not in cls.variants:
                 raise ValueError(f"Variant '{variant}' is not registered for component '{cls.__name__}'")
