@@ -141,7 +141,7 @@ Especially important for smooth interaction with the MongoDB is the service for 
 
 The services need to wrap the direct interaction with the MongoDB. Also, write test cases?
 
-With these services set up, the implementation of guideline management endpoints should be quite straightforward. The frontend can then utilize these endpoints and visualize the respective results.
+With these services set up, the implementation of guideline management endpoints should be quite straightforward. The frontend can then utilize these endpoints and visualize the respective result
 - Special attention to PDF handling and also visualization of chunks etc.
 - Think of useful filters upfront and make them easy to trigger in the frontend (e.g., get all questions for a specific guideline).
 
@@ -197,19 +197,3 @@ This requires some MongoDB classes, like
 
 About the frontend integration not much can be said. Take inspiration from the jupyter notebooks. For the visualization, provide some nice way of also displaying results of multiple runs at the same time for a nice comparison.
 - Plotly as the main visualizer should be fine
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
----
