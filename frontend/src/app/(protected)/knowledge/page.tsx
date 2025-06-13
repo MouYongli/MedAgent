@@ -18,6 +18,9 @@ const KnowledgePage: React.FC = () => {
         <Link href="/knowledge/pdfs" sx={{ mt: 2, display: 'block' }}>
           PDF Files
         </Link>
+        <Link href="/knowledge/kgindexer" sx={{ mt: 2, display: 'block' }}>
+          Knowledge Graph
+        </Link>
       </Box>
     </Container>
   );

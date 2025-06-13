@@ -24,6 +24,7 @@ const menuItems = [
     children: [
       { key: 'pdf', label: 'PDF Files' },
       { key: 'vdb', label: 'Vector Databases' },
+      { key: 'kg', label: 'Knowledge Graph' },
     ],
   },
   {
