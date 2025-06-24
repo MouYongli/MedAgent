@@ -1,5 +1,5 @@
-# backend/app/app.py
 
+# backend/app/app.py
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,15 +11,15 @@ from app.dependencies.pinecone_driver import get_pinecone_index
 from app.dependencies.vector_retriever import get_vector_retriever
 from app.dependencies.para_chunks import load_para_chunks
 
-app = FastAPI(
+
+fast_app = FastAPI(
     title="PDF File Manager",
-    description="Provides file upload, query, and delete functions via FastAPI.",
-    version="0.1.0",
+    description="Provides file upload, query, and deletion functionalities via FastAPI.",
+    version="0.1.0"
 )
 
-
-# Allow CORS so the frontend can access from a different port
-app.add_middleware(
+# Allow cross-origin requests so that the frontend can access the API from a different port
+fast_app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Allow all origins in development
     allow_credentials=True,
@@ -28,6 +28,7 @@ app.add_middleware(
 )
 
 # Register file management routes
+
 app.include_router(pdf_files.router, prefix="/api/knowledge/pdf", tags=["files"])
 # Register chat routes
 app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
@@ -55,3 +56,4 @@ if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+
