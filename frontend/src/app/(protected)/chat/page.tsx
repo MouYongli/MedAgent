@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   List,
   ListItem,
@@ -35,6 +35,25 @@ const likertOptions = [
   { value: 'very_consistent', label: 'Very consistent' },
 ];
 
+function parseMessage(content: string) {
+  // Split by newline first to preserve line breaks
+  return content.split('\n').map((line, i) => {
+    // Replace **bold** with <strong>
+    const parts = line.split(/(\*\*[^*]+\*\*)/g);
+    return (
+      <React.Fragment key={i}>
+        {parts.map((part, j) =>
+          part.startsWith('**') && part.endsWith('**') ? (
+            <strong key={j}>{part.slice(2, -2)}</strong>
+          ) : (
+            <React.Fragment key={j}>{part}</React.Fragment>
+          )
+        )}
+        {i < content.split('\n').length - 1 && <br />}
+      </React.Fragment>
+    );
+  });
+}
 const ChatPage: React.FC = () => {
   // Initial chat messages (example)
   const [messages, setMessages] = useState<Message[]>([
@@ -50,8 +69,9 @@ const ChatPage: React.FC = () => {
   const [chunks, setChunks] = useState<any[]>([]); // Add this state for chunks
   const [chunkFeedback, setChunkFeedback] = useState<{ [key: number]: 'up' | 'down' | null }>({});
   const [ratingComplete, setRatingComplete] = useState(false);
+  const [streamingComplete, setStreamingComplete] = useState(false);
   // Send message
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!inputValue.trim()) return;
     setMessages((prev) => [
       ...prev,
@@ -65,25 +85,85 @@ const ChatPage: React.FC = () => {
     setInputValue('');
     setLoading(true);
 
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-
-    // Save chunks from stub_data for the current stubIndex
-    setChunks(stubData[stubIndex]?.chunks ?? []);
-    setChunkFeedback({}); // Clear chunk feedback after sending
-    setRatingComplete(false); // Reset rating completion state
-    setSelectedLikert(null);
+    // Prepare for streaming response
+    const assistantId = uuidv4();
     setMessages((prev) => [
       ...prev,
       {
-        id: uuidv4(),
+        id: assistantId,
         sender: 'Alice',
-        content: stubData[stubIndex]?.answer ?? '', // Use the answer property as string content
+        content: '',
         isUser: false,
       },
     ]);
-    setStubIndex((prev) => prev + 1); // Increment stub index for next message
+    setChunkFeedback({});
+    setRatingComplete(false);
+    setSelectedLikert(null);
+    setStreamingComplete(false);
+    let localStreamingComplete = false;
+    try {
+      
+      const response = await fetch('http://localhost:8000/api/chat/send/stream', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sender: "anonymous monkey",content: inputValue }),
+      });
+      
+      if (!response.body) throw new Error('No response body');
+      setLoading(false);
+      
+      
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      
+      let accumulated = '';
+      
+      while (!localStreamingComplete) {
+        const { value, done: doneReading } = await reader.read();
+        if (doneReading) {
+          localStreamingComplete = true;
+          setStreamingComplete(true);
+          break;
+        }
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n').filter(Boolean);
+        
+        for (const line of lines) {
+          let data;
+          try {
+            data = JSON.parse(line);
+          } catch {
+            continue;
+          }
+          if (data.content !== undefined) {
+            accumulated += data.content;
+            
+            setMessages((prev) =>
+              prev.map((msg) =>
+                msg.id === assistantId
+                  ? { ...msg, content: accumulated }
+                  : msg
+              )
+            );
+          }
+          if (data.done) {
+            setChunks(data.chunks ?? []);
+            setStubIndex((prev) => prev + 1);
+            localStreamingComplete = true;
+            setStreamingComplete(true);
+            break;
+          }
+          
+        }
+      }
+      // console.log("Accumulated content:", accumulated);
+    } catch (err) {
+      console.log('Error during streaming:', err);
+      
+    }
+    
+    
+    setLoading(false);
   };
 
   const handleKeyPress = (event: React.KeyboardEvent) => {
@@ -114,7 +194,10 @@ const ChatPage: React.FC = () => {
     console.log("Implement data storage logic")
     console.log("User Data:", userData);
     setRatingComplete(true);
+
   }
+
+ 
 
   return (
     <Container maxWidth="md" sx={{ py: 3 }}>
@@ -149,8 +232,8 @@ const ChatPage: React.FC = () => {
                 wordWrap: 'break-word',
               }}
             >
-              <Typography variant="body1">
-                {item.content}
+              <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>
+                {parseMessage(item.content)}
               </Typography>
             </Box>
           </ListItem>
@@ -191,12 +274,27 @@ const ChatPage: React.FC = () => {
                   wordWrap: 'break-word',
                 }}
               >
-                <Typography variant="body1">
-                  {messages[messages.length - 1].content}
+                <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>
+                  {parseMessage(messages[messages.length - 1].content)}
                 </Typography>
               </Box>
+              
             </ListItem>
-            <ListItem
+            {!streamingComplete && (
+                <ListItem
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'flex-start',
+                    px: 2,
+                    py: 1,
+                  }}
+                >
+                  <Box sx={{ width: '60%' }}>
+                    <LinearProgress />
+                  </Box>
+                </ListItem>
+              )}
+            {streamingComplete && (<ListItem
               sx={{
                 display: 'flex',
                 justifyContent: 'flex-start',
@@ -254,7 +352,7 @@ const ChatPage: React.FC = () => {
               >
                 {Object.keys(chunkFeedback).length !== 0 && selectedLikert ? (ratingComplete ?  'Completed' :  'Complete Rating') : 'Rate'}
               </Button>
-            </ListItem>
+            </ListItem>)}
           </>
         )}
       </List>
@@ -300,22 +398,22 @@ const ChatPage: React.FC = () => {
                   </Typography>
                   <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
                     <IconButton
-                      color={chunkFeedback[chunk.id] === 'up' ? 'primary' : 'default'}
+                      color={chunkFeedback[idx] === 'up' ? 'primary' : 'default'}
                       onClick={() =>
                         setChunkFeedback((prev) => ({
                           ...prev,
-                          [chunk.id]: prev[chunk.id] === 'up' ? null : 'up',
+                          [idx]: prev[idx] === 'up' ? null : 'up',
                         }))
                       }
                     >
                       <ThumbUpAltOutlinedIcon />
                     </IconButton>
                     <IconButton
-                      color={chunkFeedback[chunk.id] === 'down' ? 'primary' : 'default'}
+                      color={chunkFeedback[idx] === 'down' ? 'primary' : 'default'}
                       onClick={() =>
                         setChunkFeedback((prev) => ({
                           ...prev,
-                          [chunk.id]: prev[chunk.id] === 'down' ? null : 'down',
+                          [idx]: prev[idx] === 'down' ? null : 'down',
                         }))
                       }
                       >
