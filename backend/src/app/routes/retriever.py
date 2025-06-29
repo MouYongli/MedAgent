@@ -1,3 +1,4 @@
+from app.services.graph_retriever_service import retrieve_chunks_graph_db
 from fastapi import APIRouter, HTTPException
 from app.schemas.retriever_request import RetrieverRequest
 from app.schemas.retriever_response import RetrieverResponse
@@ -16,6 +17,6 @@ def retrieve_from_vector_db(request: RetrieverRequest):
 
 @router.post("/graph", response_model=RetrieverResponse)
 def retrieve_from_graph_db(request: RetrieverRequest):
-    # Placeholder for graph database retrieval logic
-    # This function should implement the logic to retrieve data from a graph database
-    raise NotImplementedError("Graph DB retrieval not implemented yet.")
+    retrieved_chunks = retrieve_chunks_graph_db(request.query)
+
+    return RetrieverResponse(query=request.query, chunks=retrieved_chunks)

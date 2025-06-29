@@ -4,6 +4,7 @@ from app.services.generator_service import (
     generate_text_service,
     call_ollama_api_stream,
 )
+from app.services.graph_retriever_service import retrieve_chunks_graph_db
 from app.services.vector_retriever_service import retrieve_chunks_vector_db
 import json
 
@@ -35,6 +36,102 @@ def send_message_stream_service(message: str):
     chat_history.append(ChatMessage(sender="user", content=message))
 
     chunks = retrieve_chunks_vector_db(message)
+    chunk_list = []
+    for chunk in chunks:
+        chunk_list.append(
+            {
+                "page_content": chunk.page_content,
+                "book_name": chunk.book_name,
+                "id": chunk.id,
+                "page_number": chunk.page_number,
+            }
+        )
+    # yield {"type": "chunks", "chunks": chunk_list}
+
+    user_prompt = """Context: \n"""
+    for i, chunk in enumerate(chunks):
+        user_prompt += f"{i + 1}: {chunk.page_content}\n"
+    user_prompt += f"Query: {message}\n"
+
+    # Use the generator from generate_text_stream_service
+    for gen_response in call_ollama_api_stream(user_prompt):
+        try:
+            gen_response = json.loads(gen_response)
+        except json.JSONDecodeError:
+            yield {
+                "type": "error",
+                "content": f"Error decoding JSON response: {gen_response}",
+            }
+
+        if gen_response.get("done", False):
+            yield {
+                "type": "answer",
+                "content": gen_response["message"]["content"],
+                "done": gen_response["done"],
+                "chunks": chunk_list,
+            }
+        else:
+            yield {
+                "type": "answer",
+                "content": gen_response["message"]["content"],
+                "done": gen_response["done"],
+            }
+
+    chat_history.append(ChatMessage(sender="assistant", content="Streamed response"))
+
+
+def send_message_stream_service_vector(message: str):
+    chat_history.append(ChatMessage(sender="user", content=message))
+
+    chunks = retrieve_chunks_vector_db(message)
+    chunk_list = []
+    for chunk in chunks:
+        chunk_list.append(
+            {
+                "page_content": chunk.page_content,
+                "book_name": chunk.book_name,
+                "id": chunk.id,
+                "page_number": chunk.page_number,
+            }
+        )
+    # yield {"type": "chunks", "chunks": chunk_list}
+
+    user_prompt = """Context: \n"""
+    for i, chunk in enumerate(chunks):
+        user_prompt += f"{i + 1}: {chunk.page_content}\n"
+    user_prompt += f"Query: {message}\n"
+
+    # Use the generator from generate_text_stream_service
+    for gen_response in call_ollama_api_stream(user_prompt):
+        try:
+            gen_response = json.loads(gen_response)
+        except json.JSONDecodeError:
+            yield {
+                "type": "error",
+                "content": f"Error decoding JSON response: {gen_response}",
+            }
+
+        if gen_response.get("done", False):
+            yield {
+                "type": "answer",
+                "content": gen_response["message"]["content"],
+                "done": gen_response["done"],
+                "chunks": chunk_list,
+            }
+        else:
+            yield {
+                "type": "answer",
+                "content": gen_response["message"]["content"],
+                "done": gen_response["done"],
+            }
+
+    chat_history.append(ChatMessage(sender="assistant", content="Streamed response"))
+
+
+def send_message_stream_service_graph(message: str):
+    chat_history.append(ChatMessage(sender="user", content=message))
+
+    chunks = retrieve_chunks_graph_db(message)
     chunk_list = []
     for chunk in chunks:
         chunk_list.append(

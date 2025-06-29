@@ -1,6 +1,8 @@
 
 # backend/app/app.py
 
+from app.dependencies.graph_retriever import get_graph_retriever
+from app.dependencies.tf_matrix import load_tf_matrix
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import pdf_files  # Import pdf_files
@@ -44,11 +46,15 @@ app.include_router(
 @app.on_event("startup")
 async def load_singletons():
     # Initialize Pinecone index singleton
-    get_pinecone_index()
+    # get_pinecone_index()
     # Initialize VectorRetriever singleton (with default top_k)
     get_vector_retriever()
 
     load_para_chunks()
+
+    load_tf_matrix()
+
+    get_graph_retriever()
 
 
 # Start the service: can be run with `python app/main.py` or `uvicorn app.main:app --reload`
